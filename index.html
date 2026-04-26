@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOEIC練習アプリ</title>
+<style>
+:root{
+  --bg:#0f1117;
+  --surface:#1a1d27;
+  --surface2:#22263a;
+  --border:#2e3248;
+  --text:#dde1f5;
+  --sub:#7b80a0;
+  --primary:#7b8ff7;
+  --primary-dim:#3d4a9e;
+  --accent:#f7c948;
+  --green:#4db87a;
+  --green-bg:#0d2b1a;
+  --red:#f06b6b;
+  --red-bg:#2b0d0d;
+  --yellow-bg:#2b2300;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+/* ── Header ── */
+header{background:linear-gradient(135deg,#0d1133,#1a1d40);padding:16px 24px;border-bottom:1px solid var(--border)}
+header h1{font-size:1.25rem;letter-spacing:.5px;color:white}
+header p{font-size:.78rem;color:var(--sub);margin-top:3px}
+/* ── Tabs ── */
+.tabs{display:flex;background:#10131e;border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{padding:12px 22px;color:var(--sub);cursor:pointer;font-size:.85rem;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s}
+.tab:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.tab.active{color:white;border-bottom-color:var(--accent);background:rgba(123,143,247,.08)}
+/* ── Layout ── */
+.content{max-width:880px;margin:22px auto;padding:0 16px 56px}
+.part-section{display:none}
+.part-section.active{display:block}
+/* ── Part intro ── */
+.part-intro{background:var(--surface);border-radius:10px;padding:16px 20px;margin-bottom:18px;border-left:3px solid var(--primary)}
+.part-intro h2{font-size:1rem;color:var(--primary)}
+.part-intro p{font-size:.8rem;color:var(--sub);margin-top:4px;line-height:1.5}
+/* ── Score box ── */
+.score-box{background:var(--surface);border-radius:10px;padding:13px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:1px solid var(--border)}
+.score-label{font-size:.78rem;color:var(--sub)}
+.score-val{font-size:1.05rem;font-weight:700;color:var(--primary);min-width:90px}
+.progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;flex:1;min-width:60px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary-dim),var(--primary));border-radius:3px;transition:width .4s}
+/* ── Mistake button & panel ── */
+.miss-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--sub);cursor:pointer;font-size:.78rem;font-weight:600;transition:all .2s;white-space:nowrap}
+.miss-btn:hover{border-color:var(--accent);color:var(--accent)}
+.miss-btn.has-miss{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.miss-panel{background:#180e0e;border:1px solid #4a2020;border-radius:8px;padding:14px 16px;margin-bottom:18px;display:none}
+.miss-panel.open{display:block}
+.miss-panel h4{font-size:.8rem;color:var(--red);margin-bottom:10px;letter-spacing:.5px}
+.miss-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background .15s;margin-bottom:4px;border:1px solid #3a2020}
+.miss-item:hover{background:#2a1414}
+.miss-item-num{font-size:.72rem;color:var(--sub);min-width:62px;flex-shrink:0}
+.miss-item-text{font-size:.82rem;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.miss-count{font-size:.75rem;color:var(--red);font-weight:700;background:#3a1010;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.miss-empty{font-size:.8rem;color:var(--sub);text-align:center;padding:8px}
+/* ── Question card ── */
+.q-card{background:var(--surface);border-radius:10px;padding:20px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s}
+.q-card:hover{border-color:var(--primary-dim)}
+.q-num{font-size:.72rem;color:var(--sub);margin-bottom:6px;letter-spacing:.5px}
+.q-text{font-size:.93rem;line-height:1.75;margin-bottom:15px;color:var(--text)}
+.q-text em{font-style:normal;font-weight:700;color:var(--accent)}
+/* ── Options ── */
+.options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:500px){.options{grid-template-columns:1fr}}
+.opt{padding:10px 13px;border:1.5px solid var(--border);border-radius:7px;cursor:pointer;font-size:.86rem;color:var(--text);background:var(--surface2);transition:all .2s}
+.opt:hover:not(.disabled){border-color:var(--primary);background:rgba(123,143,247,.1)}
+.opt.correct{border-color:var(--green)!important;background:var(--green-bg)!important;color:var(--green)!important;font-weight:600}
+.opt.wrong{border-color:var(--red)!important;background:var(--red-bg)!important;color:var(--red)!important}
+.opt.disabled{cursor:default}
+/* ── Explanation ── */
+.explanation{margin-top:11px;padding:10px 13px;background:#141828;border-left:3px solid var(--primary-dim);border-radius:0 6px 6px 0;font-size:.81rem;color:var(--sub);line-height:1.6;display:none}
+.explanation.show{display:block}
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 20px;border-radius:7px;border:none;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s}
+.btn-primary{background:var(--primary-dim);color:white}
+.btn-primary:hover{background:var(--primary)}
+.btn-ghost{background:transparent;color:var(--sub);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:var(--sub)}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+/* ── Part 6 ── */
+.set-card{background:var(--surface);border-radius:10px;padding:20px;margin-bottom:18px;border:1px solid var(--border)}
+.set-title{font-weight:700;color:var(--primary);margin-bottom:3px;font-size:.93rem}
+.set-type{font-size:.75rem;color:var(--sub);margin-bottom:13px}
+.passage{background:#13161f;border:1px solid var(--border);border-radius:7px;padding:15px 17px;margin-bottom:16px;font-size:.86rem;line-height:1.95;color:#c8ccdf;white-space:pre-wrap}
+.blank-sel{display:inline;margin:0 2px;border:none;border-bottom:1.5px solid var(--primary);background:transparent;font-size:.86rem;color:var(--primary);font-weight:600;min-width:110px;padding:0 3px;cursor:pointer;outline:none}
+.blank-sel option{background:#1a1d27;color:var(--text)}
+.blank-sel.correct-sel{color:var(--green)!important;border-bottom-color:var(--green)!important}
+.blank-sel.wrong-sel{color:var(--red)!important;border-bottom-color:var(--red)!important}
+.p6-qs{margin-top:4px}
+.p6-q{margin-bottom:14px;padding-top:11px;border-top:1px solid var(--border)}
+.p6-q:first-child{border-top:none;padding-top:0}
+.p6-qnum{font-size:.72rem;color:var(--sub);margin-bottom:5px}
+.p6-qtext{font-size:.84rem;color:var(--sub);margin-bottom:9px}
+/* ── Part 7 ── */
+.reading{background:#13161f;border:1px solid var(--border);border-radius:7px;padding:16px 18px;margin-bottom:16px;font-size:.86rem;line-height:1.95;color:#c8ccdf}
+.reading h3{font-size:.93rem;font-weight:700;color:var(--primary);margin-bottom:9px}
+.reading p{margin-bottom:7px}
+.reading ul{padding-left:18px;margin-bottom:7px}
+.reading li{margin-bottom:3px}
+.reading table{width:100%;border-collapse:collapse;margin-bottom:8px}
+.reading td,.reading th{padding:6px 10px;border:1px solid var(--border);font-size:.83rem}
+.reading th{background:var(--surface2);font-weight:600;color:var(--primary)}
+.double-passage{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+@media(max-width:640px){.double-passage{grid-template-columns:1fr}}
+/* ── Instant Translation ── */
+.inst-card{background:var(--surface);border-radius:10px;padding:20px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s}
+.inst-card.state-correct{border-color:var(--green)}
+.inst-card.state-wrong{border-color:var(--red)}
+.inst-card.state-skip{border-color:#554400}
+.inst-jp{font-size:.95rem;line-height:1.7;margin-bottom:13px;color:var(--text);font-weight:500}
+.inst-input{width:100%;background:#13161f;border:1.5px solid var(--border);border-radius:7px;padding:10px 13px;color:var(--text);font-size:.88rem;line-height:1.6;resize:vertical;min-height:70px;outline:none;transition:border-color .2s;font-family:inherit}
+.inst-input:focus{border-color:var(--primary-dim)}
+.inst-input:disabled{color:var(--sub)}
+.inst-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.inst-result{margin-top:13px;padding:12px 14px;border-radius:7px;font-size:.84rem;line-height:1.65;display:none}
+.inst-result.show{display:block}
+.inst-result.correct-result{background:var(--green-bg);border:1px solid #2a5a3a}
+.inst-result.wrong-result{background:var(--red-bg);border:1px solid #5a2a2a}
+.inst-result.skip-result{background:var(--yellow-bg);border:1px solid #554400}
+.inst-result.checking{background:var(--surface2);border:1px solid var(--border)}
+.model-answer{margin-bottom:6px;font-size:.86rem}
+.model-answer strong{color:var(--accent)}
+.inst-exp{font-size:.8rem;color:var(--sub);margin-top:6px;line-height:1.6}
+.selfeval{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn-correct{background:var(--green-bg);color:var(--green);border:1.5px solid #2a5a3a;padding:7px 18px;border-radius:7px;cursor:pointer;font-size:.84rem;font-weight:600;transition:all .2s}
+.btn-correct:hover{background:#1a4028}
+.btn-wrong2{background:var(--red-bg);color:var(--red);border:1.5px solid #5a2a2a;padding:7px 18px;border-radius:7px;cursor:pointer;font-size:.84rem;font-weight:600;transition:all .2s}
+.btn-wrong2:hover{background:#3a1010}
+.result-badge{display:inline-block;font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:10px;margin-left:8px;vertical-align:middle}
+.badge-ok{background:var(--green-bg);color:var(--green);border:1px solid #2a5a3a}
+.badge-ng{background:var(--red-bg);color:var(--red);border:1px solid #5a2a2a}
+.badge-skip{background:var(--yellow-bg);color:var(--accent);border:1px solid #554400}
+</style>
+</head>
+<body>
+<header>
+  <h1>TOEIC 練習アプリ</h1>
+  <p>Part 5 / Part 6 / Part 7 / 瞬間英作文</p>
+</header>
+<div class="tabs">
+  <div class="tab active" onclick="showPart('p5',this)">Part 5 <small>(50問)</small></div>
+  <div class="tab" onclick="showPart('p6',this)">Part 6 <small>(7セット)</small></div>
+  <div class="tab" onclick="showPart('p7',this)">Part 7 <small>(7セット)</small></div>
+  <div class="tab" onclick="showPart('instant',this)">瞬間英作文 <small>(50問)</small></div>
+</div>
+<div class="content">
+
+<!-- PART 5 -->
+<div id="p5" class="part-section active">
+  <div class="part-intro"><h2>Part 5 — 短文穴埋め問題</h2><p>各文の空欄に入る最も適切な語句を(A)〜(D)から選んでください。全50問。</p></div>
+  <div class="score-box">
+    <div><div class="score-label">スコア</div><div class="score-val" id="p5score">0 / 0</div></div>
+    <div class="progress-bar"><div class="progress-fill" id="p5bar" style="width:0%"></div></div>
+    <button class="miss-btn" id="p5-missbtn" onclick="toggleMiss('p5')">❌ ミス <span id="p5-misscount">0</span>問</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetPart('p5')">リセット</button>
+  </div>
+  <div class="miss-panel" id="p5-misspanel"><h4>❌ 間違えた問題</h4><div id="p5-misslist"></div></div>
+  <div id="p5-questions"></div>
+</div>
+
+<!-- PART 6 -->
+<div id="p6" class="part-section">
+  <div class="part-intro"><h2>Part 6 — 長文穴埋め問題</h2><p>文章を読み、空欄に入る最も適切な語句を選んでください。全7セット。</p></div>
+  <div class="score-box">
+    <div><div class="score-label">スコア</div><div class="score-val" id="p6score">0 / 0</div></div>
+    <div class="progress-bar"><div class="progress-fill" id="p6bar" style="width:0%"></div></div>
+    <button class="miss-btn" id="p6-missbtn" onclick="toggleMiss('p6')">❌ ミス <span id="p6-misscount">0</span>問</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetPart('p6')">リセット</button>
+  </div>
+  <div class="miss-panel" id="p6-misspanel"><h4>❌ 間違えた問題</h4><div id="p6-misslist"></div></div>
+  <div id="p6-sets"></div>
+</div>
+
+<!-- PART 7 -->
+<div id="p7" class="part-section">
+  <div class="part-intro"><h2>Part 7 — 読解問題</h2><p>文章を読み、各設問に答えてください。全7セット。</p></div>
+  <div class="score-box">
+    <div><div class="score-label">スコア</div><div class="score-val" id="p7score">0 / 0</div></div>
+    <div class="progress-bar"><div class="progress-fill" id="p7bar" style="width:0%"></div></div>
+    <button class="miss-btn" id="p7-missbtn" onclick="toggleMiss('p7')">❌ ミス <span id="p7-misscount">0</span>問</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetPart('p7')">リセット</button>
+  </div>
+  <div class="miss-panel" id="p7-misspanel"><h4>❌ 間違えた問題</h4><div id="p7-misslist"></div></div>
+  <div id="p7-sets"></div>
+</div>
+
+<!-- INSTANT TRANSLATION -->
+<div id="instant" class="part-section">
+  <div class="part-intro"><h2>瞬間英作文</h2><p>日本語を見て英文を入力してください。「答え合わせ」で模範解答を確認し、自己評価してください。全50問。</p></div>
+  <div class="score-box">
+    <div><div class="score-label">スコア</div><div class="score-val" id="iscore">0 / 0</div></div>
+    <div class="progress-bar"><div class="progress-fill" id="ibar" style="width:0%"></div></div>
+    <button class="miss-btn" id="instant-missbtn" onclick="toggleMiss('instant')">❌ ミス <span id="instant-misscount">0</span>問</button>
+    <button class="btn btn-ghost btn-sm" onclick="resetPart('instant')">リセット</button>
+  </div>
+  <div class="miss-panel" id="instant-misspanel"><h4>❌ 間違えた問題</h4><div id="instant-misslist"></div></div>
+  <div id="instant-questions"></div>
+</div>
+
+</div><!-- .content -->
+
+<script>
+// ============================================================
+// DATA — Part 5 (50問)
+// ============================================================
+const P5=[
+  {q:"The manager asked all employees to submit their reports ------- the end of the day.",opts:["until","by","during","within"],ans:1,exp:"期限を示す前置詞は by（〜までに）。until は継続を示す。"},
+  {q:"The new regulation will ------- affect all departments in the company.",opts:["significant","significance","significantly","signify"],ans:2,exp:"動詞 affect を修飾するので副詞 significantly が正解。"},
+  {q:"Please let us know if the conference room is ------- for Friday afternoon.",opts:["avail","available","availability","availably"],ans:1,exp:"be 動詞の後ろに来る補語は形容詞。available（利用可能な）が正解。"},
+  {q:"The project requires the ------- of the department head before it can proceed.",opts:["approve","approving","approval","approved"],ans:2,exp:"冠詞 the の後は名詞。approval（承認）が正解。"},
+  {q:"Our company has built a ------- reputation for delivering high-quality products.",opts:["rely","reliance","reliable","reliably"],ans:2,exp:"名詞 reputation を修飾する形容詞 reliable（信頼できる）が正解。"},
+  {q:"All technicians must ------- check the equipment before each use.",opts:["careful","care","careless","carefully"],ans:3,exp:"動詞 check を修飾する副詞 carefully（注意深く）が正解。"},
+  {q:"The ------- team will review all applications by next Monday.",opts:["manage","manager","management","managerial"],ans:3,exp:"名詞 team を修飾する形容詞 managerial（管理上の）が正解。"},
+  {q:"Our pricing is ------- with other firms in the industry.",opts:["compete","competitive","competition","competitively"],ans:1,exp:"be 動詞の補語は形容詞。competitive（競争力のある）が正解。"},
+  {q:"Customers who call after business hours will ------- receive a callback the next day.",opts:["prompt","promptness","promptly","prompted"],ans:2,exp:"動詞 receive を修飾する副詞 promptly（迅速に）が正解。"},
+  {q:"------- at the annual conference was higher than expected this year.",opts:["Attend","Attendant","Attendance","Attending"],ans:2,exp:"主語になれる名詞 Attendance（出席）が正解。"},
+  {q:"The board of directors voted ------- to approve the merger.",opts:["unanimous","unanimously","unanimity","unanimousness"],ans:1,exp:"動詞 voted を修飾する副詞 unanimously（全会一致で）が正解。"},
+  {q:"She made an ------- contribution to the success of the new product launch.",opts:["exception","exceptional","exceptionally","except"],ans:1,exp:"名詞 contribution を修飾するのは形容詞 exceptional（並外れた）。"},
+  {q:"A high level of ------- in English is required for this position.",opts:["proficient","proficiency","proficiently","proficience"],ans:1,exp:"冠詞 A と前置詞 of の間は名詞 proficiency（熟達）が正解。"},
+  {q:"The safety manual must be read ------- by all new employees.",opts:["thorough","thoroughness","thoroughly","thorougher"],ans:2,exp:"be 動詞 + 過去分詞を修飾するのは副詞 thoroughly（徹底的に）。"},
+  {q:"The new schedule is more ------- than the previous one.",opts:["flex","flexible","flexibility","flexibly"],ans:1,exp:"比較級 more の後は形容詞 flexible（柔軟な）が正解。"},
+  {q:"The company ------- in operation for over 50 years.",opts:["is","has been","will be","had been"],ans:1,exp:"for を伴う継続の文は現在完了形 has been が正解。"},
+  {q:"The budget proposal ------- by the finance committee last Thursday.",opts:["approves","was approved","has approved","will approve"],ans:1,exp:"last Thursday という過去表現があるので受動態の過去形 was approved が正解。"},
+  {q:"The new branch office ------- opened next spring.",opts:["was","is","will be","had been"],ans:2,exp:"next spring という未来の表現があるので will be が正解。"},
+  {q:"By the time the director arrived, the team ------- the presentation.",opts:["completed","has completed","had completed","will complete"],ans:2,exp:"過去の時点より前の完了を示す過去完了形 had completed が正解。"},
+  {q:"Our sales figures ------- steadily over the past three quarters.",opts:["increase","increased","have increased","had increased"],ans:2,exp:"over the past three quarters は現在完了 have increased を示す。"},
+  {q:"The IT department ------- the software issue when the manager called.",opts:["was resolving","resolved","has resolved","resolves"],ans:0,exp:"「電話があったとき、まさに〜していた」という過去進行形 was resolving が正解。"},
+  {q:"By next Friday, the construction crew ------- the renovation.",opts:["will finish","has finished","finished","will have finished"],ans:3,exp:"by next Friday は未来完了形 will have finished を示す。"},
+  {q:"The company ------- its revenue by 20% last fiscal year.",opts:["increase","increases","increased","has increased"],ans:2,exp:"last fiscal year という過去表現があるので単純過去 increased が正解。"},
+  {q:"The policy ------- all staff to wear identification badges at all times.",opts:["require","requires","required","is requiring"],ans:1,exp:"現在の規則を述べる文では単純現在形 requires が正解。"},
+  {q:"The CEO ------- in this industry for 25 years before he retired.",opts:["has worked","worked","had worked","was working"],ans:2,exp:"過去の基準点（retired）より前の継続は過去完了 had worked が正解。"},
+  {q:"Ms. Chen is ------- charge of the new marketing campaign.",opts:["on","in","at","for"],ans:1,exp:"in charge of は「〜を担当している」という慣用表現。"},
+  {q:"The lawyer signed the contract ------- behalf of her client.",opts:["in","by","on","at"],ans:2,exp:"on behalf of は「〜の代わりに、〜を代表して」という慣用表現。"},
+  {q:"All reports must be submitted ------- the deadline.",opts:["until","by","in","at"],ans:1,exp:"by the deadline は「締め切りまでに」。by は期限を示す前置詞。"},
+  {q:"------- addition to the salary, employees receive a generous benefits package.",opts:["For","By","In","With"],ans:2,exp:"In addition to は「〜に加えて」という慣用表現。"},
+  {q:"The keynote speaker will present her findings ------- the annual conference.",opts:["in","on","at","by"],ans:2,exp:"at a conference など、イベントの場所には at を使う。"},
+  {q:"The training session is scheduled ------- 9:00 A.M. ------- noon.",opts:["from / to","at / to","from / until","between / to"],ans:2,exp:"from A until B は「AからBまで」という時間の範囲を示す表現。"},
+  {q:"Please forward this memo to all staff ------- the accounting department.",opts:["except","despite","although","unless"],ans:0,exp:"except（〜を除いて）が正解。"},
+  {q:"------- the heavy rain, the outdoor event continued as planned.",opts:["Although","Because of","Despite","Since"],ans:2,exp:"Despite（〜にもかかわらず）は名詞句を取る前置詞。"},
+  {q:"------- the price is high, the product quality justifies the cost.",opts:["Because","Although","Unless","So that"],ans:1,exp:"Although（〜であるが）は逆接の接続詞。"},
+  {q:"We need to finalize the report ------- the client has requested it urgently.",opts:["although","because","unless","whereas"],ans:1,exp:"because（なぜなら）は理由を示す接続詞。"},
+  {q:"The shipment arrived on time; -------, the invoice contained several errors.",opts:["therefore","however","moreover","otherwise"],ans:1,exp:"however（しかし）は逆接の接続詞副詞。セミコロンの後に使える。"},
+  {q:"Sales have been declining for months; -------, management has decided to restructure.",opts:["however","although","therefore","unless"],ans:2,exp:"therefore（したがって）は結果を示す接続詞副詞。"},
+  {q:"The project cannot move forward ------- the budget is approved.",opts:["although","unless","because","while"],ans:1,exp:"unless（〜でない限り）は条件の否定を示す接続詞。"},
+  {q:"------- she was attending the conference, her assistant handled all incoming calls.",opts:["Although","While","Unless","Therefore"],ans:1,exp:"while（〜している間）は同時進行を示す接続詞。"},
+  {q:"You may take Friday off ------- you complete the report by Thursday.",opts:["unless","provided that","although","however"],ans:1,exp:"provided that（〜という条件で）は条件を示す接続詞句。"},
+  {q:"Please ------- about our current promotional offers by calling our customer service line.",opts:["inquire","require","acquire","inspire"],ans:0,exp:"inquire about〜（〜について問い合わせる）が正解。"},
+  {q:"The hotel can ------- up to 500 guests for banquets and special events.",opts:["accommodate","accumulate","acclimate","accelerate"],ans:0,exp:"accommodate（収容する、対応する）が文脈に合う語。"},
+  {q:"The company will ------- employees for any work-related travel expenses.",opts:["reimbursed","reimburse","reimbursement","reimbursing"],ans:1,exp:"will の後は原形動詞。reimburse（払い戻す）が正解。"},
+  {q:"The new CEO plans to ------- a more flexible work-from-home policy.",opts:["implement","imply","impose","import"],ans:0,exp:"implement（実施する）は「政策や計画を実行に移す」意味。"},
+  {q:"The two teams will ------- closely to ensure the project is completed on time.",opts:["collaborate","celebrate","correlate","elaborate"],ans:0,exp:"collaborate（協力する）は「共に取り組む」意味。"},
+  {q:"The new software is designed to ------- communication between departments.",opts:["fascinate","facilitate","fabricate","fluctuate"],ans:1,exp:"facilitate（促進する）が正解。"},
+  {q:"The research team was asked to ------- a series of tests to verify the results.",opts:["carry out","carry on","carry over","carry off"],ans:0,exp:"carry out（実施する）は「業務・実験・計画を遂行する」意味。"},
+  {q:"The auditors will ------- the accounting irregularities reported last quarter.",opts:["look into","look over","look up","look after"],ans:0,exp:"look into（調査する）は「問題・事件を調べる」意味。"},
+  {q:"Due to the storm, the board meeting has been ------- until next week.",opts:["put off","put out","put away","put up"],ans:0,exp:"put off（延期する）は postpone と同義。"},
+  {q:"The design team needs to ------- a creative solution before the deadline.",opts:["come up with","come along with","come down with","come out with"],ans:0,exp:"come up with（思いつく）は「アイデアや解決策を生み出す」意味。"},
+];
+
+// ============================================================
+// DATA — Part 6 (7セット)
+// ============================================================
+const P6=[
+  {title:"Questions 131–134",type:"Eメール",
+   passage:`To: All Staff\nFrom: Human Resources\nSubject: Updated Vacation Policy\n\nDear Team,\n\nWe are writing to inform you of changes to our annual leave policy. Effective the first of next month, all full-time employees will be (131) ------- to 15 days of paid vacation per year, an increase from the previous 10 days.\n\nEmployees who wish to carry over unused vacation days must (132) ------- submit a formal request to their department manager no later than December 15. Requests submitted after this date will not be (133) -------.\n\nPlease note that approval of vacation requests remains (134) ------- the discretion of your direct supervisor. We encourage all employees to plan their schedules in advance.\n\nHuman Resources Department`,
+   qs:[
+     {n:131,opts:["entitled","allowed","provided","granted"],ans:0,exp:"be entitled to〜（〜を受ける権利がある）は福利厚生の文書でよく使われる。"},
+     {n:132,opts:["formally","formerly","fortunately","forcefully"],ans:0,exp:"submit a formal request を修飾する副詞は formally（正式に）。"},
+     {n:133,opts:["considered","considering","considerate","considerable"],ans:0,exp:"will not be considered（考慮されない）という受動態の形が正解。"},
+     {n:134,opts:["at","on","in","by"],ans:0,exp:"at the discretion of〜（〜の裁量で）という慣用表現。"},
+   ]},
+  {title:"Questions 135–138",type:"社内通知",
+   passage:`MEMORANDUM\n\nTO: All Department Heads\nFROM: Office of the President\nSUBJECT: Quarterly Business Review\n\nThis memo serves as a reminder that our quarterly business review will (135) ------- on May 3 at 9:00 A.M. in the main conference room.\n\nAll department heads are (136) ------- to prepare a 10-minute presentation summarizing their team's Q1 performance.\n\nPlease send your slides to my assistant no later than April 29. This will allow sufficient time for (137) ------- and technical review.\n\nFailure to submit materials by the deadline may (138) ------- in your presentation being postponed.\n\nThank you for your prompt attention.`,
+   qs:[
+     {n:135,opts:["take place","take part","take over","take off"],ans:0,exp:"take place（開催される）はイベントや会議に使う慣用表現。"},
+     {n:136,opts:["required","requesting","requirement","require"],ans:0,exp:"are required to〜（〜することが求められる）という受動態。"},
+     {n:137,opts:["edit","editor","editorial","editing"],ans:3,exp:"前置詞 for の後は名詞か動名詞。editing（編集）が正解。"},
+     {n:138,opts:["result","results","resulting","resulted"],ans:0,exp:"may result in〜（〜という結果になる可能性がある）という句動詞。"},
+   ]},
+  {title:"Questions 139–142",type:"求人票",
+   passage:`POSITION AVAILABLE: Senior Marketing Analyst\n\nGreenfield Solutions is (139) ------- applications for the position of Senior Marketing Analyst.\n\nThe ideal candidate will have a minimum of five years of experience in digital marketing and a proven (140) ------- of developing successful campaigns. (141) -------, applicants must possess strong analytical skills and be proficient in data visualization tools.\n\nKey responsibilities include developing marketing strategies, managing social media channels, and (142) ------- market trends to identify new business opportunities.\n\nInterested applicants should submit a resume and cover letter to careers@greenfieldsolutions.com.`,
+   qs:[
+     {n:139,opts:["accepting","accepted","accept","acceptance"],ans:0,exp:"is accepting applications（申し込みを受け付けている）という現在進行形。"},
+     {n:140,opts:["track record","track down","keep track","fast track"],ans:0,exp:"a proven track record of〜（〜における実績）はビジネス文書の定番表現。"},
+     {n:141,opts:["However","Therefore","Additionally","Although"],ans:2,exp:"Additionally（さらに）は条件を追加するときに使う接続詞副詞。"},
+     {n:142,opts:["analyze","analyzing","analyzed","analysis"],ans:1,exp:"and で並列された動名詞句では analyzing が正解。"},
+   ]},
+  {title:"Questions 143–146",type:"社内メモ（改装通知）",
+   passage:`NOTICE TO ALL EMPLOYEES\n\nSubject: Office Renovation – Temporary Workspace Changes\n\nOur office renovation project will begin on Monday, June 1. During this period, certain areas will be (143) ------- accessible.\n\nEmployees on floors 3 and 4 will be (144) ------- to temporary workspaces on the ground floor.\n\nThe renovation is (145) ------- to be completed within six weeks. However, timelines may be subject to change.\n\nIf you have any questions or concerns, please (146) ------- them to your department coordinator.\n\nThank you for your understanding.`,
+   qs:[
+     {n:143,opts:["temporarily","temporary","temporalize","tempo"],ans:0,exp:"形容詞 accessible を修飾するのは副詞 temporarily（一時的に）。"},
+     {n:144,opts:["moved","moving","relocate","relocated"],ans:3,exp:"will be relocated to〜（〜に移動させられる）という受動態。"},
+     {n:145,opts:["expected","expecting","expectation","expects"],ans:0,exp:"is expected to〜（〜すると予定されている）という受動態の慣用表現。"},
+     {n:146,opts:["direct","directed","directing","direction"],ans:0,exp:"please direct them to〜（〜に問い合わせを向ける）という命令形。"},
+   ]},
+  {title:"Questions 147–150",type:"顧客向けニュースレター",
+   passage:`BRIGHTSIDE RETAIL — CUSTOMER NEWSLETTER\n\nDear Valued Customer,\n\nWe are thrilled to (147) ------- the launch of our new loyalty rewards program, BrightRewards. Starting this month, every purchase you make earns points redeemable for discounts.\n\nFor every ¥100 spent, you will earn 5 points. Once you have (148) ------- 500 points, you can exchange them for a ¥500 coupon. There is no (149) ------- on the number of coupons you can earn.\n\nMembers who spend over ¥10,000 in a single transaction will automatically be (150) ------- to Gold Tier status, offering exclusive benefits and priority customer service.\n\nTo join, create an account on our website or visit any store location.`,
+   qs:[
+     {n:147,opts:["announce","announcement","announcing","announced"],ans:0,exp:"be thrilled to do〜の to は不定詞。動詞の原形 announce が正解。"},
+     {n:148,opts:["accumulated","accumulating","accumulate","accumulation"],ans:0,exp:"have accumulated（〜を積み上げた）という現在完了形。"},
+     {n:149,opts:["limit","limited","limitation","limiting"],ans:0,exp:"there is no limit on〜（〜に上限はない）という名詞構文。"},
+     {n:150,opts:["upgraded","upgrade","upgrading","upgrde"],ans:0,exp:"will be upgraded to〜（〜にアップグレードされる）という受動態。"},
+   ]},
+  {title:"Questions 151–154",type:"顧客対応レター",
+   passage:`Dear Mr. Patterson,\n\nThank you for contacting Meridian Electronics. We sincerely apologize for any (151) ------- you experienced.\n\nAfter reviewing your case, we are pleased to inform you that your request for a replacement unit has been (152) -------. A new item will be shipped within three to five business days.\n\nTo complete the exchange, we ask that you (153) ------- the defective unit to our warehouse using the prepaid shipping label enclosed.\n\nShould you have any questions, please do not hesitate to (154) ------- our customer support team at 0120-555-1234.\n\nSincerely,\nCustomer Relations Team`,
+   qs:[
+     {n:151,opts:["inconvenience","inconvenient","inconveniently","inconveniences"],ans:0,exp:"any の後は不可算名詞として使う inconvenience（不便）が正解。"},
+     {n:152,opts:["approved","approving","approval","approve"],ans:0,exp:"has been approved（承認された）という現在完了受動態。"},
+     {n:153,opts:["return","returns","returned","returning"],ans:0,exp:"ask that you〜の that 節では仮定法現在（原形）を使う。"},
+     {n:154,opts:["contact","contacts","contacted","contacting"],ans:0,exp:"do not hesitate to〜の後は動詞の原形。contact が正解。"},
+   ]},
+  {title:"Questions 155–158",type:"研修案内（社内通達）",
+   passage:`INTERNAL CIRCULAR\n\nSubject: Mandatory Compliance Training\n\nAll employees are (155) ------- to complete the annual compliance training by June 30.\n\nThe training covers updates to data privacy laws, workplace safety protocols, and anti-bribery regulations. Employees (156) ------- complete this training within the specified timeframe may face disciplinary action.\n\nTo register, log in to the company's learning management system and (157) ------- for the "Annual Compliance 2026" course. Once enrolled, you will have 30 days to complete all modules at your (158) -------.\n\nFor technical issues, contact the IT Help Desk at extension 4400.`,
+   qs:[
+     {n:155,opts:["required","requiring","requirement","require"],ans:0,exp:"are required to〜（〜することが求められる）という受動態構文。"},
+     {n:156,opts:["who fail to","who failing to","whose fail to","whom fail to"],ans:0,exp:"Employees を先行詞とする関係代名詞節 who fail to〜（〜しない従業員）。"},
+     {n:157,opts:["enroll","enrolled","enrolling","enrollment"],ans:0,exp:"and で連結された命令形。log in と並列する原形 enroll が正解。"},
+     {n:158,opts:["convenience","convenient","conveniently","convince"],ans:0,exp:"at your convenience（ご都合のよいときに）という慣用表現。名詞が正解。"},
+   ]},
+];
+
+// ============================================================
+// DATA — Part 7 (7セット)
+// ============================================================
+const P7=[
+  {title:"Questions 147–149",type:"Eメール",
+   passage:`<h3>Email</h3><p><strong>From:</strong> Laura Bennett &lt;l.bennett@primegroup.com&gt;<br><strong>To:</strong> All Staff<br><strong>Date:</strong> Monday, March 10<br><strong>Subject:</strong> Office Closure — Public Holiday</p><p>Dear Colleagues,</p><p>This is a reminder that our offices will be closed on Friday, March 14, in observance of the national public holiday. Normal business operations will resume on Monday, March 17.</p><p>If you have any urgent matters, please ensure they are addressed by end of business on Thursday, March 13. Clients should be notified in advance of any potential delays.</p><p>For emergency situations over the holiday period, please contact the on-call team at emergency@primegroup.com.</p><p>Best regards,<br>Laura Bennett, Office Manager</p>`,
+   qs:[
+     {q:"Why was the email sent?",opts:["To announce a company restructuring","To inform staff of an upcoming office closure","To introduce a new emergency contact system","To reschedule a client meeting"],ans:1,exp:"第1段落「our offices will be closed on Friday」から休業のお知らせ。"},
+     {q:"What are employees asked to do before the holiday?",opts:["Submit vacation request forms","Attend a mandatory staff meeting","Handle urgent matters by Thursday evening","Contact clients about new policies"],ans:2,exp:"「please ensure they are addressed by end of business on Thursday」が根拠。"},
+     {q:"Who should be contacted during the holiday for emergencies?",opts:["Laura Bennett directly","The on-call team","The HR department","The client services team"],ans:1,exp:"「contact the on-call team at emergency@primegroup.com」が根拠。"},
+   ]},
+  {title:"Questions 150–152",type:"広告",
+   passage:`<h3>Advertisement</h3><p style="font-weight:bold;color:#7b8ff7">SKYVIEW CONFERENCE CENTRE — Your Premier Venue for Business Events</p><p>Located in the heart of the city, Skyview Conference Centre offers state-of-the-art facilities for meetings, seminars, and corporate events of all sizes.</p><ul><li><strong>Capacity:</strong> Up to 800 attendees in our Grand Hall; smaller rooms for 10–50 guests</li><li><strong>Technology:</strong> High-speed Wi-Fi, LED projection, and video conferencing</li><li><strong>Catering:</strong> Full-service catering with customizable menus</li><li><strong>Parking:</strong> Complimentary underground parking for 200 vehicles</li></ul><p>Special weekday rates are available for bookings made at least 30 days in advance. Nonprofit organizations may qualify for a 15% discount.</p><p>Contact our events team at events@skyviewcentre.com or call 03-5678-9000.</p>`,
+   qs:[
+     {q:"What is indicated about Skyview Conference Centre?",opts:["It is located outside the city center","It can host events for large and small groups","It does not offer catering services","It requires a membership to book"],ans:1,exp:"「up to 800 attendees」と「smaller rooms for 10–50 guests」から大小様々なグループに対応できる。"},
+     {q:"What must customers do to receive the special weekday rate?",opts:["Book at least 30 days in advance","Become a registered member","Book on a weekend","Spend over a certain amount"],ans:0,exp:"「bookings made at least 30 days in advance」から30日前の予約が条件。"},
+     {q:"Who may receive a discount?",opts:["Companies booking for more than 100 people","Customers who book online","Nonprofit organizations","Repeat customers"],ans:2,exp:"「Nonprofit organizations may qualify for a 15% discount」が根拠。"},
+   ]},
+  {title:"Questions 153–155",type:"お知らせ",
+   passage:`<h3>Notice to Residents — Harborview Apartments</h3><p><strong>Subject: Scheduled Maintenance — Elevator and Water Supply</strong></p><p>Essential maintenance work will be carried out on <strong>Saturday, April 19</strong>, from <strong>8:00 A.M. to 4:00 P.M.</strong></p><p><strong>Elevator:</strong> Both elevators will be out of service. Residents are asked to use the stairwells on the east and west sides.</p><p><strong>Water Supply:</strong> Hot water will be unavailable between 9:00 A.M. and 1:00 P.M. Cold water service will not be affected.</p><p>We apologize for the inconvenience. If you require assistance moving large items, please contact the building manager at ext. 101 at least two days in advance.</p><p>Harborview Apartments Management</p>`,
+   qs:[
+     {q:"What will NOT be available from 9:00 A.M. to 1:00 P.M.?",opts:["Cold water","Use of the stairwells","Hot water","Elevator service"],ans:2,exp:"「Hot water will be unavailable between 9:00 A.M. and 1:00 P.M.」が根拠。"},
+     {q:"How can residents get assistance with moving large items?",opts:["By emailing the management office","By contacting the building manager at least two days before","By visiting the front desk on the day","By leaving a note for maintenance staff"],ans:1,exp:"「contact the building manager at ext. 101 at least two days in advance」が根拠。"},
+     {q:"What is stated about cold water service?",opts:["It will be suspended all day","It will be suspended in the morning only","It will not be affected","It will be limited to certain floors"],ans:2,exp:"「Cold water service will not be affected」が根拠。"},
+   ]},
+  {title:"Questions 156–158",type:"記事",
+   passage:`<h3>Business Spotlight: EcoPackage Solutions</h3><p>EcoPackage Solutions, a startup founded in 2021, has rapidly emerged as a leader in sustainable packaging. The company designs biodegradable packaging from agricultural waste such as rice husks and corn starch.</p><p>CEO Amanda Torres attributes the company's growth to increasing demand from retailers seeking to meet consumer expectations for eco-friendly products. "More and more brands are committing to zero-waste targets," said Torres.</p><p>EcoPackage recently announced a partnership with a major supermarket chain to supply packaging for over 3,000 products. The company employs 85 people and expects to double its workforce within 18 months.</p><p>EcoPackage raised $12 million in its most recent funding round, which it plans to use to expand manufacturing capacity and enter three new international markets.</p>`,
+   qs:[
+     {q:"What does EcoPackage Solutions produce?",opts:["Electronic recycling equipment","Biodegradable packaging from agricultural materials","Reusable shopping bags","Organic food products"],ans:1,exp:"「designs biodegradable packaging from agricultural waste」が根拠。"},
+     {q:"What reason does Amanda Torres give for the company's growth?",opts:["Government subsidies","Decreasing cost of raw materials","Increasing consumer demand for eco-friendly products","A new patent on their technology"],ans:2,exp:"「increasing demand from retailers seeking to meet consumer expectations」が根拠。"},
+     {q:"How does EcoPackage plan to use its recent funding?",opts:["Hire more executive staff","Acquire a competitor","Expand manufacturing and enter new markets","Develop a new product line"],ans:2,exp:"「expand manufacturing capacity and enter three new international markets」が根拠。"},
+   ]},
+  {title:"Questions 159–161",type:"返品ポリシー",
+   passage:`<h3>NovaTech Electronics — Return & Exchange Policy</h3><p><strong>Standard Returns:</strong> Products may be returned within 30 days of purchase for a full refund, provided they are unused and in original packaging. A valid receipt is required.</p><p><strong>Defective Items:</strong> If a product is found to be defective within 90 days of purchase, customers are entitled to a free repair, replacement, or full refund. Please contact customer support at 0120-800-700 before returning any defective item.</p><p><strong>Non-Returnable Items:</strong> Software licenses, downloadable content, and "Final Sale" items cannot be returned or exchanged under any circumstances.</p><p><strong>Process:</strong> Customers must obtain a Return Merchandise Authorization (RMA) number before returning items. Returns without an RMA number will not be accepted.</p><p>Refunds will be processed within 7–10 business days.</p>`,
+   qs:[
+     {q:"Within how many days must a standard return be made?",opts:["7 days","14 days","30 days","90 days"],ans:2,exp:"「Products may be returned within 30 days of purchase」が根拠。"},
+     {q:"What must customers do before returning a defective product?",opts:["Visit a physical store","Contact customer support","Fill out an online form","Wait for a shipping label"],ans:1,exp:"「Please contact customer support...before returning any defective item」が根拠。"},
+     {q:"What is indicated about software licenses?",opts:["They can be exchanged for store credit","They are covered by the defective item policy","They cannot be returned or exchanged","They must be returned within 14 days"],ans:2,exp:"「Software licenses…cannot be returned or exchanged under any circumstances」が根拠。"},
+   ]},
+  {title:"Questions 162–165",type:"ダブルパッセージ（Eメール＋スケジュール）",double:true,
+   passageA:`<h3>Email</h3><p><strong>From:</strong> Kevin Marsh &lt;k.marsh@deltatraining.com&gt;<br><strong>To:</strong> Sarah Yano &lt;s.yano@novacorp.com&gt;<br><strong>Date:</strong> September 5<br><strong>Subject:</strong> Leadership Development Program</p><p>Dear Ms. Yano,</p><p>Thank you for registering for the Leadership Development Program. We are pleased to confirm your enrollment in <strong>Module 2: Effective Communication and Team Management</strong>.</p><p>Participants are expected to complete the pre-reading materials on our online portal before the first session. All reading must be completed by <strong>September 19</strong>.</p><p>Kindly bring a printed confirmation email and a valid employee ID to the first session. Parking is available on site at no charge.</p><p>To cancel or reschedule, please notify us at least 72 hours in advance to avoid a cancellation fee.</p><p>Kevin Marsh, Program Coordinator</p>`,
+   passageB:`<h3>Program Schedule — Module 2</h3><table><tr><th>Date</th><th>Time</th><th>Topic</th><th>Location</th></tr><tr><td>September 22</td><td>9:00–12:00</td><td>Communication Styles</td><td>Room A</td></tr><tr><td>September 22</td><td>13:00–16:00</td><td>Active Listening Skills</td><td>Room A</td></tr><tr><td>September 29</td><td>9:00–12:00</td><td>Team Dynamics</td><td>Room B</td></tr><tr><td>September 29</td><td>13:00–16:00</td><td>Conflict Resolution</td><td>Room B</td></tr></table>`,
+   qs:[
+     {q:"What module has Ms. Yano registered for?",opts:["Module 1: Fundamentals of Leadership","Module 2: Effective Communication and Team Management","Module 3: Strategic Decision Making","Module 4: Change Management"],ans:1,exp:"「confirm your enrollment in Module 2: Effective Communication and Team Management」が根拠。"},
+     {q:"By what date must pre-reading materials be completed?",opts:["September 5","September 15","September 19","September 22"],ans:2,exp:"「All reading must be completed by September 19」が根拠。"},
+     {q:"What should participants bring to the first session?",opts:["A laptop and headphones","A printed confirmation and employee ID","A completed assignment","A fee payment"],ans:1,exp:"「bring a printed confirmation email and a valid employee ID」が根拠。"},
+     {q:"According to the schedule, where will Team Dynamics be held?",opts:["Room A","Room B","Room C","Online"],ans:1,exp:"スケジュール表の「Team Dynamics — Room B」が根拠。"},
+   ]},
+  {title:"Questions 166–169",type:"ダブルパッセージ（記事＋レビュー）",double:true,
+   passageA:`<h3>Horizon Hotel Reopens After Renovation</h3><p>The Horizon Hotel in downtown Westfield reopened last week following a six-month renovation. The hotel underwent a complete redesign of its public spaces and an upgrade of all <strong>220 guest rooms</strong>.</p><p>General Manager Patricia Lloyd stated that the renovation focused on three priorities: modernizing the guest experience, <strong>improving energy efficiency</strong>, and expanding meeting facilities. The hotel now features a new 400-seat conference center expected to attract corporate clients.</p><p>The hotel also installed solar panels and energy-efficient lighting, reducing estimated energy consumption by 30%. Ms. Lloyd noted that the hotel aims to achieve green certification within the next year.</p>`,
+   passageB:`<h3>Online Review — Horizon Hotel</h3><p><strong>★★★★☆ (4/5) — James R., October 18</strong></p><p>I stayed at the Horizon Hotel for a business conference last weekend. I was impressed by the renovations — the rooms are sleek and modern, and the new conference facilities were outstanding. Our meeting ran smoothly thanks to the excellent AV equipment.</p><p>My only complaint is that the restaurant was busy due to a private event, so I had to wait nearly <strong>45 minutes for a table</strong>. I'd suggest calling ahead. Service, once seated, was excellent.</p><p>I'll definitely return for future business trips.</p>`,
+   qs:[
+     {q:"How many guest rooms does the Horizon Hotel have?",opts:["100","150","220","400"],ans:2,exp:"記事の「an upgrade of all 220 guest rooms」が根拠。"},
+     {q:"What is one stated goal of the hotel's renovation?",opts:["Expanding restaurant seating","Offering new room service options","Improving energy efficiency","Launching a loyalty program"],ans:2,exp:"記事の「improving energy efficiency」が根拠。"},
+     {q:"What did James R. praise about the hotel?",opts:["Restaurant service and food quality","The conference facilities and room quality","Outdoor pool and gym","Friendly front desk staff"],ans:1,exp:"レビューの「rooms are sleek and modern, conference facilities were outstanding」が根拠。"},
+     {q:"What problem did James R. experience?",opts:["His room was not ready","The Wi-Fi was poor","He had a long wait at the restaurant","The conference room was double-booked"],ans:2,exp:"レビューの「I had to wait nearly 45 minutes for a table」が根拠。"},
+   ]},
+];
+
+// ============================================================
+// DATA — 瞬間英作文 (50問)
+// ============================================================
+const INSTANT=[
+  {jp:"彼女は毎朝9時に出勤します。",en:"She comes to work at nine every morning.",alt:"She arrives at work at 9 A.M. every day.",exp:"「出勤する」は come to work / arrive at work。every morning は文末。"},
+  {jp:"私たちの会社は東京に本社があります。",en:"Our company has its headquarters in Tokyo.",alt:"",exp:"headquarters（本社）。has its headquarters in〜。"},
+  {jp:"彼はそのプロジェクトの責任者です。",en:"He is in charge of the project.",alt:"He is responsible for the project.",exp:"「〜の責任者」は be in charge of〜 / be responsible for〜。"},
+  {jp:"この書類に署名をお願いします。",en:"Please sign this document.",alt:"Could you please sign this document?",exp:"「署名する」は sign。document / form / paper。"},
+  {jp:"会議は午後3時に始まります。",en:"The meeting starts at 3 P.M.",alt:"The meeting begins at three in the afternoon.",exp:"「始まる（自動詞）」は start / begin。時刻には at を使う。"},
+  {jp:"彼女はクライアントにメールを送りました。",en:"She sent an email to the client.",alt:"She emailed the client.",exp:"send an email to〜 または email〜 で表現できる。"},
+  {jp:"私たちは締め切りに間に合わせる必要があります。",en:"We need to meet the deadline.",alt:"We have to make the deadline.",exp:"「締め切りに間に合う」は meet the deadline。"},
+  {jp:"この申請書を提出してください。",en:"Please submit this application form.",alt:"Kindly fill out and submit this form.",exp:"「提出する」は submit。application form（申請書）。"},
+  {jp:"彼はその仕事に十分な経験があります。",en:"He has enough experience for the job.",alt:"He has sufficient experience for this position.",exp:"enough / sufficient + 名詞。for the job / for this position。"},
+  {jp:"上司に承認をもらう必要があります。",en:"I need to get approval from my supervisor.",alt:"I need my supervisor's approval.",exp:"「承認を得る」は get approval from〜 / obtain approval。"},
+  {jp:"彼らは先月新しいシステムを導入しました。",en:"They introduced a new system last month.",alt:"They implemented a new system last month.",exp:"「導入する」は introduce / implement / roll out。last month は文末。"},
+  {jp:"その会議は昨日キャンセルされました。",en:"The meeting was canceled yesterday.",alt:"The meeting was called off yesterday.",exp:"受動態 was canceled。call off（中止する）も使える。"},
+  {jp:"私は先週出張でニューヨークに行きました。",en:"I went to New York on a business trip last week.",alt:"",exp:"「出張で」は on a business trip。went to〜（過去形）。"},
+  {jp:"彼女はすでにそのレポートを完成させました。",en:"She has already completed the report.",alt:"She has already finished the report.",exp:"already は現在完了形とともに使う。has already completed〜。"},
+  {jp:"その製品は6ヶ月前に発売されました。",en:"The product was launched six months ago.",alt:"The product was released six months ago.",exp:"「発売する」は launch / release。受動態 was launched〜。"},
+  {jp:"私たちはその問題を解決することができました。",en:"We were able to solve the problem.",alt:"We managed to resolve the issue.",exp:"「〜することができた（過去）」は was/were able to do。"},
+  {jp:"彼は先週の会議に出席しませんでした。",en:"He did not attend the meeting last week.",alt:"He was absent from the meeting last week.",exp:"「出席しない」は not attend / be absent from。"},
+  {jp:"その契約は両社によって署名されました。",en:"The contract was signed by both companies.",alt:"",exp:"受動態 was signed by〜。both companies（両社）。"},
+  {jp:"私たちは今年の売上目標を達成しました。",en:"We achieved our sales target this year.",alt:"We met our sales goal this year.",exp:"「目標を達成する」は achieve / meet + target / goal。"},
+  {jp:"彼女はその部署で10年間働いています。",en:"She has been working in the department for ten years.",alt:"",exp:"継続中の動作は現在完了進行形 has been working + for〜。"},
+  {jp:"私たちは来年新しいオフィスに移転します。",en:"We will relocate to a new office next year.",alt:"We are going to move to a new office next year.",exp:"「移転する」は relocate / move。will または be going to で未来を表す。"},
+  {jp:"その製品は来月発売される予定です。",en:"The product is scheduled to be launched next month.",alt:"The product is expected to be released next month.",exp:"「〜の予定」は be scheduled to do / be expected to do。"},
+  {jp:"私は明日の朝、クライアントに電話します。",en:"I will call the client tomorrow morning.",alt:"I am going to contact the client tomorrow morning.",exp:"call / contact the client。tomorrow morning は文末。"},
+  {jp:"来年度の予算を見直す予定です。",en:"We are planning to review the budget for next fiscal year.",alt:"We plan to revise the budget for the next fiscal year.",exp:"「見直す」は review / revise。fiscal year（会計年度）。"},
+  {jp:"新しいポリシーは4月から施行されます。",en:"The new policy will take effect in April.",alt:"The new policy will come into effect in April.",exp:"「施行される」は take effect / come into effect。"},
+  {jp:"彼らは来週会議を開く予定です。",en:"They are scheduled to hold a meeting next week.",alt:"They plan to have a meeting next week.",exp:"hold a meeting（会議を開く）。be scheduled to〜（〜の予定）。"},
+  {jp:"私たちは今後、より多くのスタッフを採用する予定です。",en:"We plan to hire more staff in the future.",alt:"We are planning to recruit additional employees going forward.",exp:"「採用する」は hire / recruit。in the future（今後）。"},
+  {jp:"新しいシステムはすべての部門に導入される予定です。",en:"The new system is expected to be introduced to all departments.",alt:"",exp:"受動態の不定詞 is expected to be introduced to〜。"},
+  {jp:"彼女は来月部長に昇進する予定です。",en:"She is expected to be promoted to department manager next month.",alt:"",exp:"「昇進する」は be promoted to〜（受動態）。"},
+  {jp:"工事は6週間以内に完了する見込みです。",en:"The construction is expected to be completed within six weeks.",alt:"The renovation is anticipated to be finished within six weeks.",exp:"be expected to be completed（完了すると見込まれる）。within six weeks。"},
+  {jp:"その荷物は明日届けられます。",en:"The package will be delivered tomorrow.",alt:"",exp:"受動態 will be delivered。package（荷物）。"},
+  {jp:"会議室は毎朝清掃されています。",en:"The conference room is cleaned every morning.",alt:"",exp:"習慣的な受動態は現在形 is cleaned。"},
+  {jp:"全員がその決定について通知されました。",en:"Everyone was notified of the decision.",alt:"All staff were informed of the decision.",exp:"notify A of B（AにBを通知する）の受動態。"},
+  {jp:"その申請書は先週承認されました。",en:"The application was approved last week.",alt:"",exp:"受動態 was approved。application（申請書）。"},
+  {jp:"その商品は現在品切れです。",en:"The item is currently out of stock.",alt:"The product is not currently in stock.",exp:"out of stock（在庫切れ）は重要なビジネス表現。"},
+  {jp:"新入社員はすべての研修を受けることが求められています。",en:"New employees are required to attend all training sessions.",alt:"",exp:"be required to do〜（〜することが求められる）。attend training sessions。"},
+  {jp:"払い戻しは5〜7営業日以内に処理されます。",en:"Refunds will be processed within five to seven business days.",alt:"",exp:"business days（営業日）。within〜（〜以内に）。process（処理する）。"},
+  {jp:"締め切りは1週間延期されました。",en:"The deadline has been extended by one week.",alt:"The deadline was pushed back by one week.",exp:"extend the deadline（締め切りを延長する）。by one week（1週間）。"},
+  {jp:"その問題は調査中です。",en:"The issue is under investigation.",alt:"The matter is currently being investigated.",exp:"under investigation（調査中）は定型表現。"},
+  {jp:"このフォームは提出前に必ずご記入ください。",en:"Please make sure to fill out this form before submitting it.",alt:"Please be sure to complete this form prior to submission.",exp:"make sure to do〜（必ず〜する）。fill out a form（フォームに記入する）。"},
+  {jp:"もし何かご不明な点があれば、お気軽にお問い合わせください。",en:"If you have any questions, please feel free to contact us.",alt:"",exp:"please feel free to〜（お気軽に〜してください）は丁寧な依頼表現。"},
+  {jp:"天候にかかわらず、イベントは予定通り開催されます。",en:"Regardless of the weather, the event will be held as scheduled.",alt:"The event will take place as planned regardless of the weather.",exp:"regardless of〜（〜にかかわらず）。as scheduled（予定通り）。"},
+  {jp:"ご都合のよいときにお知らせください。",en:"Please let me know at your convenience.",alt:"Please inform me when it is convenient for you.",exp:"at your convenience（ご都合のよいときに）は定番のビジネス表現。"},
+  {jp:"電車の遅延のため会議に遅刻してしまいました。",en:"I was late for the meeting due to a train delay.",alt:"I arrived late for the meeting because of a train delay.",exp:"due to〜 / because of〜（〜のために）。be late for〜（〜に遅刻する）。"},
+  {jp:"ご不便をおかけして申し訳ございません。",en:"We sincerely apologize for any inconvenience.",alt:"We are sorry for any inconvenience this may have caused.",exp:"apologize for〜（〜をお詫びする）。sincerely（心より）。"},
+  {jp:"詳細については、添付のパンフレットをご参照ください。",en:"Please refer to the attached brochure for details.",alt:"For more information, please see the enclosed pamphlet.",exp:"refer to〜（〜を参照する）。attached / enclosed（添付の）。"},
+  {jp:"この機会にぜひご検討いただければ幸いです。",en:"We hope you will take this opportunity to consider our offer.",alt:"We hope you will take advantage of this opportunity.",exp:"take this opportunity to do〜（この機会に〜する）。"},
+  {jp:"先ほどのメールに誤りがありましたので、訂正版をお送りします。",en:"There was an error in my previous email, so I am sending you a corrected version.",alt:"",exp:"There was an error in〜（〜に誤りがあった）。corrected version（訂正版）。"},
+  {jp:"ご確認の上、問題がなければご署名ください。",en:"Please review the document and sign it if everything is in order.",alt:"Kindly check the contents and sign if there are no issues.",exp:"if everything is in order（問題なければ）は確認を促す定番表現。"},
+  {jp:"ご多忙のところ恐れ入りますが、ご確認いただけますでしょうか。",en:"I am sorry to bother you when you are busy, but could you please check this?",alt:"I apologize for the interruption, but could you kindly review this?",exp:"I am sorry to bother you（お忙しいところ恐れ入ります）は丁寧な依頼の枕詞。"},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const state={
+  p5:{answered:{},correct:0},
+  p6:{answered:{},correct:0},
+  p7:{answered:{},correct:0},
+  instant:{answered:{},correct:0},
+};
+const mistakes={p5:{},p6:{},p7:{},instant:{}};
+
+// ============================================================
+// RENDER — Part 5
+// ============================================================
+function renderP5(){
+  document.getElementById('p5-questions').innerHTML=P5.map((q,i)=>`
+    <div class="q-card" id="p5-card-${i}">
+      <div class="q-num">Question ${i+1} / ${P5.length}</div>
+      <div class="q-text">${q.q.replace(/-------/,'<em>-------</em>')}</div>
+      <div class="options" id="p5-opts-${i}">
+        ${q.opts.map((o,j)=>`<div class="opt" onclick="answerP5(${i},${j})">(${chr(j)}) ${o}</div>`).join('')}
+      </div>
+      <div class="explanation" id="p5-exp-${i}">💡 ${q.exp}</div>
+    </div>`).join('');
+}
+function answerP5(qi,chosen){
+  if(state.p5.answered[qi]!==undefined)return;
+  state.p5.answered[qi]=chosen;
+  const c=P5[qi].ans;
+  document.querySelectorAll(`#p5-opts-${qi} .opt`).forEach((o,j)=>{
+    o.classList.add('disabled');
+    if(j===c)o.classList.add('correct');
+    else if(j===chosen&&chosen!==c)o.classList.add('wrong');
+  });
+  document.getElementById(`p5-exp-${qi}`).classList.add('show');
+  if(chosen!==c){mistakes.p5[qi]=(mistakes.p5[qi]||0)+1;}
+  else state.p5.correct++;
+  updateScore('p5',state.p5.correct,Object.keys(state.p5.answered).length,P5.length);
+  updateMissBtn('p5');
+}
+
+// ============================================================
+// RENDER — Part 6
+// ============================================================
+function renderP6(){
+  let qn=131;
+  document.getElementById('p6-sets').innerHTML=P6.map((set,si)=>{
+    const start=qn; qn+=set.qs.length;
+    const pass=set.passage.replace(/\((\d+)\) -------/g,(m,num)=>{
+      const qi=parseInt(num)-start;
+      return `(${num}) <select class="blank-sel" id="p6-sel-${si}-${qi}" onchange="answerP6(${si},${qi},parseInt(this.value))"><option value="-1">— 選択 —</option>`+
+        set.qs[qi].opts.map((o,j)=>`<option value="${j}">${o}</option>`).join('')+`</select>`;
+    }).replace(/\n/g,'<br>');
+    const qs=set.qs.map((q,qi)=>`
+      <div class="p6-q" id="p6-q-${si}-${qi}">
+        <div class="p6-qnum">Question ${start+qi}</div>
+        <div class="p6-qtext">空欄 (${start+qi}) に最も適切なものを選んでください。</div>
+        <div class="options" id="p6-opts-${si}-${qi}">
+          ${q.opts.map((o,j)=>`<div class="opt" onclick="answerP6(${si},${qi},${j})">(${chr(j)}) ${o}</div>`).join('')}
+        </div>
+        <div class="explanation" id="p6-exp-${si}-${qi}">💡 ${q.exp}</div>
+      </div>`).join('');
+    return `<div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">${set.type}</div>
+      <div class="passage">${pass}</div>
+      <div class="p6-qs">${qs}</div></div>`;
+  }).join('');
+}
+function answerP6(si,qi,chosen){
+  const key=`${si}-${qi}`;
+  if(state.p6.answered[key]!==undefined)return;
+  if(chosen===-1)return;
+  state.p6.answered[key]=chosen;
+  const c=P6[si].qs[qi].ans;
+  document.querySelectorAll(`#p6-opts-${si}-${qi} .opt`).forEach((o,j)=>{
+    o.classList.add('disabled');
+    if(j===c)o.classList.add('correct');
+    else if(j===chosen&&chosen!==c)o.classList.add('wrong');
+  });
+  const sel=document.getElementById(`p6-sel-${si}-${qi}`);
+  if(sel){sel.value=chosen;sel.disabled=true;sel.classList.add(chosen===c?'correct-sel':'wrong-sel');}
+  document.getElementById(`p6-exp-${si}-${qi}`).classList.add('show');
+  if(chosen!==c){mistakes.p6[key]=(mistakes.p6[key]||0)+1;}
+  else state.p6.correct++;
+  const tot=P6.reduce((s,x)=>s+x.qs.length,0);
+  updateScore('p6',state.p6.correct,Object.keys(state.p6.answered).length,tot);
+  updateMissBtn('p6');
+}
+
+// ============================================================
+// RENDER — Part 7
+// ============================================================
+function renderP7(){
+  document.getElementById('p7-sets').innerHTML=P7.map((set,si)=>{
+    const pass=set.double
+      ?`<div class="double-passage"><div class="reading">${set.passageA}</div><div class="reading">${set.passageB}</div></div>`
+      :`<div class="reading">${set.passage}</div>`;
+    const qs=set.qs.map((q,qi)=>`
+      <div class="q-card" id="p7-card-${si}-${qi}" style="margin-bottom:10px">
+        <div class="q-num">Set ${si+1} — Q${qi+1}</div>
+        <div class="q-text">${q.q}</div>
+        <div class="options" id="p7-opts-${si}-${qi}">
+          ${q.opts.map((o,j)=>`<div class="opt" onclick="answerP7(${si},${qi},${j})">(${chr(j)}) ${o}</div>`).join('')}
+        </div>
+        <div class="explanation" id="p7-exp-${si}-${qi}">💡 ${q.exp}</div>
+      </div>`).join('');
+    return `<div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">${set.type}</div>${pass}${qs}</div>`;
+  }).join('');
+}
+function answerP7(si,qi,chosen){
+  const key=`${si}-${qi}`;
+  if(state.p7.answered[key]!==undefined)return;
+  state.p7.answered[key]=chosen;
+  const c=P7[si].qs[qi].ans;
+  document.querySelectorAll(`#p7-opts-${si}-${qi} .opt`).forEach((o,j)=>{
+    o.classList.add('disabled');
+    if(j===c)o.classList.add('correct');
+    else if(j===chosen&&chosen!==c)o.classList.add('wrong');
+  });
+  document.getElementById(`p7-exp-${si}-${qi}`).classList.add('show');
+  if(chosen!==c){mistakes.p7[key]=(mistakes.p7[key]||0)+1;}
+  else state.p7.correct++;
+  const tot=P7.reduce((s,x)=>s+x.qs.length,0);
+  updateScore('p7',state.p7.correct,Object.keys(state.p7.answered).length,tot);
+  updateMissBtn('p7');
+}
+
+// ============================================================
+// RENDER — Instant Translation
+// ============================================================
+function renderInstant(){
+  document.getElementById('instant-questions').innerHTML=INSTANT.map((q,i)=>`
+    <div class="inst-card" id="inst-card-${i}">
+      <div class="q-num">問題 ${i+1} / ${INSTANT.length}</div>
+      <div class="inst-jp">${esc(q.jp)}</div>
+      <textarea class="inst-input" id="inst-in-${i}" placeholder="英文を入力してください…"></textarea>
+      <div class="inst-actions" id="inst-act-${i}">
+        <button class="btn btn-primary btn-sm" onclick="checkInstant(${i})">答え合わせ</button>
+        <button class="btn btn-ghost btn-sm" onclick="skipInstant(${i})">わからない</button>
+      </div>
+      <div class="inst-result" id="inst-res-${i}"></div>
+    </div>`).join('');
+}
+
+function checkInstant(i){
+  if(state.instant.answered[i]!==undefined)return;
+  const inp=document.getElementById(`inst-in-${i}`);
+  inp.disabled=true;
+  const userAns=inp.value.trim();
+  const q=INSTANT[i];
+  // show model answer + self-eval buttons
+  const actEl=document.getElementById(`inst-act-${i}`);
+  actEl.innerHTML=`
+    <div style="font-size:.8rem;color:var(--sub);margin-bottom:6px">自己評価してください：</div>
+    <div class="selfeval">
+      <button class="btn-correct" onclick="evalInstant(${i},true)">○ 正解</button>
+      <button class="btn-wrong2" onclick="evalInstant(${i},false)">× 不正解</button>
+    </div>`;
+  const resEl=document.getElementById(`inst-res-${i}`);
+  resEl.className='inst-result show checking';
+  resEl.innerHTML=buildAnswerHtml(q, userAns, null);
+}
+
+function skipInstant(i){
+  if(state.instant.answered[i]!==undefined)return;
+  document.getElementById(`inst-in-${i}`).disabled=true;
+  document.getElementById(`inst-act-${i}`).innerHTML='';
+  const resEl=document.getElementById(`inst-res-${i}`);
+  resEl.className='inst-result show skip-result';
+  resEl.innerHTML=buildAnswerHtml(INSTANT[i],'',false)+'<span class="result-badge badge-skip">スキップ</span>';
+  state.instant.answered[i]=0;
+  mistakes.instant[i]=(mistakes.instant[i]||0)+1;
+  updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
+  updateMissBtn('instant');
+}
+
+function evalInstant(i,isCorrect){
+  if(state.instant.answered[i]!==undefined)return;
+  state.instant.answered[i]=isCorrect?1:0;
+  const inp=document.getElementById(`inst-in-${i}`);
+  const userAns=inp.value.trim();
+  const q=INSTANT[i];
+  document.getElementById(`inst-act-${i}`).innerHTML='';
+  const card=document.getElementById(`inst-card-${i}`);
+  const resEl=document.getElementById(`inst-res-${i}`);
+  if(isCorrect){
+    state.instant.correct++;
+    card.classList.add('state-correct');
+    resEl.className='inst-result show correct-result';
+    resEl.innerHTML=buildAnswerHtml(q,userAns,true)+'<span class="result-badge badge-ok">○ 正解</span>';
+  } else {
+    card.classList.add('state-wrong');
+    resEl.className='inst-result show wrong-result';
+    resEl.innerHTML=buildAnswerHtml(q,userAns,false)+'<span class="result-badge badge-ng">× 不正解</span>';
+    mistakes.instant[i]=(mistakes.instant[i]||0)+1;
+  }
+  updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
+  updateMissBtn('instant');
+}
+
+function buildAnswerHtml(q, userAns, result){
+  let html='';
+  if(userAns) html+=`<div style="margin-bottom:8px"><span style="font-size:.76rem;color:var(--sub)">あなたの回答：</span><br><span style="color:var(--text)">${esc(userAns)}</span></div>`;
+  html+=`<div class="model-answer"><strong>模範解答：</strong>${esc(q.en)}</div>`;
+  if(q.alt) html+=`<div style="font-size:.78rem;color:var(--sub);margin-top:2px">別解：${esc(q.alt)}</div>`;
+  html+=`<div class="inst-exp">💡 ${q.exp}</div>`;
+  return html;
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ============================================================
+// MISTAKE REVIEW
+// ============================================================
+function toggleMiss(part){
+  const panel=document.getElementById(`${part}-misspanel`);
+  if(!panel.classList.contains('open')) buildMissList(part);
+  panel.classList.toggle('open');
+}
+
+function buildMissList(part){
+  const listEl=document.getElementById(`${part}-misslist`);
+  const m=mistakes[part];
+  const keys=Object.keys(m);
+  if(keys.length===0){listEl.innerHTML='<div class="miss-empty">間違えた問題はありません ✓</div>';return;}
+  let html='';
+  if(part==='p5'){
+    keys.sort((a,b)=>a-b).forEach(k=>{
+      const i=parseInt(k);
+      html+=missItem(`p5-card-${i}`,`Q${i+1}`,P5[i].q.replace(/-------/,'___').slice(0,58)+'…',m[k]);
+    });
+  } else if(part==='p6'){
+    let qn=131;
+    P6.forEach((set,si)=>{
+      set.qs.forEach((_,qi)=>{
+        const key=`${si}-${qi}`;
+        if(m[key]) html+=missItem(`p6-q-${si}-${qi}`,`Q${qn+qi}`,`${set.type} — 空欄(${qn+qi})`,m[key]);
+      });
+      qn+=set.qs.length;
+    });
+  } else if(part==='p7'){
+    P7.forEach((set,si)=>{
+      set.qs.forEach((q,qi)=>{
+        const key=`${si}-${qi}`;
+        if(m[key]) html+=missItem(`p7-card-${si}-${qi}`,`Set${si+1}-Q${qi+1}`,q.q.slice(0,55)+'…',m[key]);
+      });
+    });
+  } else if(part==='instant'){
+    keys.sort((a,b)=>a-b).forEach(k=>{
+      const i=parseInt(k);
+      html+=missItem(`inst-card-${i}`,`問${i+1}`,INSTANT[i].jp,m[k]);
+    });
+  }
+  listEl.innerHTML=html||'<div class="miss-empty">間違えた問題はありません ✓</div>';
+}
+
+function missItem(id,num,text,count){
+  return `<div class="miss-item" onclick="jumpTo('${id}')">
+    <span class="miss-item-num">${num}</span>
+    <span class="miss-item-text">${esc(text)}</span>
+    <span class="miss-count">×${count}回</span>
+  </div>`;
+}
+
+function jumpTo(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  const orig=el.style.borderColor;
+  el.style.borderColor='var(--accent)';
+  setTimeout(()=>{el.style.borderColor=orig||'';},1600);
+}
+
+function updateMissBtn(part){
+  const cnt=Object.keys(mistakes[part]).length;
+  document.getElementById(`${part}-misscount`).textContent=cnt;
+  document.getElementById(`${part}-missbtn`).classList.toggle('has-miss',cnt>0);
+}
+
+// ============================================================
+// SCORE & RESET
+// ============================================================
+function updateScore(part,correct,answered,total){
+  const id=part==='instant'?'i':`${part}`;
+  document.getElementById(`${id}score`).textContent=`${correct} / ${answered}（全${total}問）`;
+  document.getElementById(`${id}bar`).style.width=(total>0?(answered/total)*100:0)+'%';
+}
+
+function resetPart(part){
+  if(!confirm('このパートの回答をリセットしますか？'))return;
+  state[part]={answered:{},correct:0};
+  mistakes[part]={};
+  const totals={p5:P5.length,p6:P6.reduce((s,x)=>s+x.qs.length,0),p7:P7.reduce((s,x)=>s+x.qs.length,0),instant:INSTANT.length};
+  if(part==='p5')renderP5();
+  else if(part==='p6')renderP6();
+  else if(part==='p7')renderP7();
+  else renderInstant();
+  updateScore(part,0,0,totals[part]);
+  document.getElementById(`${part}-misscount`).textContent='0';
+  document.getElementById(`${part}-missbtn`).classList.remove('has-miss');
+  document.getElementById(`${part}-misspanel`).classList.remove('open');
+}
+
+// ============================================================
+// TAB & UTILS
+// ============================================================
+function showPart(part,el){
+  document.querySelectorAll('.part-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(part).classList.add('active');
+  el.classList.add('active');
+}
+function chr(j){return String.fromCharCode(65+j);}
+
+// INIT
+renderP5();renderP6();renderP7();renderInstant();
+</script>
+</body>
+</html>
