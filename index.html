@@ -143,6 +143,19 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .badge-ok{background:var(--green-bg);color:var(--green);border:1px solid #2a5a3a}
 .badge-ng{background:var(--red-bg);color:var(--red);border:1px solid #5a2a2a}
 .badge-skip{background:var(--yellow-bg);color:var(--accent);border:1px solid #554400}
+/* ── Norma Modal ── */
+.norma-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s}
+.norma-overlay.show{opacity:1;pointer-events:auto}
+.norma-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:1001;width:340px;max-width:92vw;background:var(--surface);border-radius:18px;padding:30px 24px;text-align:center;border:1px solid var(--primary-dim);box-shadow:0 12px 50px rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.norma-modal.show{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:auto}
+.norma-icon{font-size:2.6rem;margin-bottom:8px;line-height:1}
+.norma-title{font-size:1.35rem;font-weight:800;color:var(--accent);margin-bottom:4px}
+.norma-sub{font-size:.82rem;color:var(--sub);margin-bottom:20px}
+.norma-stats{display:flex;gap:12px;justify-content:center;margin-bottom:22px}
+.norma-stat{background:var(--surface2);border-radius:10px;padding:12px 18px;border:1px solid var(--border);min-width:118px}
+.norma-stat-val{font-size:1.4rem;font-weight:800;color:var(--primary)}
+.norma-stat-label{font-size:.72rem;color:var(--sub);margin-top:3px}
+.norma-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -156,6 +169,28 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   <div class="tab" onclick="showPart('p7',this)">Part 7 <small>(7セット)</small></div>
   <div class="tab" onclick="showPart('instant',this)">瞬間英作文 <small>(50問)</small></div>
 </div>
+<!-- Norma modal -->
+<div class="norma-overlay" id="norma-overlay" onclick="closeNormaModal()"></div>
+<div class="norma-modal" id="norma-modal">
+  <div class="norma-icon" id="norma-icon">🎉</div>
+  <div class="norma-title" id="norma-title">5問クリア！</div>
+  <div class="norma-sub" id="norma-sub">よく頑張りました！</div>
+  <div class="norma-stats">
+    <div class="norma-stat">
+      <div class="norma-stat-val" id="norma-batch-score">—</div>
+      <div class="norma-stat-label">今回の5問</div>
+    </div>
+    <div class="norma-stat">
+      <div class="norma-stat-val" id="norma-total-rate">—</div>
+      <div class="norma-stat-label">通算正答率</div>
+    </div>
+  </div>
+  <div class="norma-actions">
+    <button class="btn btn-primary" onclick="closeNormaModal()">次の5問へ →</button>
+    <button class="btn btn-ghost" onclick="closeNormaModal()">🔁 復習モード</button>
+  </div>
+</div>
+
 <!-- Global miss overlay + slide panel -->
 <div class="miss-overlay" id="miss-overlay" onclick="closeMissPanel()"></div>
 <div class="miss-panel" id="miss-panel-global">
@@ -463,6 +498,42 @@ const state={
 };
 const mistakes={p5:{},p6:{},p7:{},instant:{}};
 
+// ── Norma state ──
+const norma={p5:0,p6:0,p7:0,instant:0};
+const normaChk={
+  p5:{answered:0,correct:0},p6:{answered:0,correct:0},
+  p7:{answered:0,correct:0},instant:{answered:0,correct:0}
+};
+function checkNorma(part){
+  const answered=Object.keys(state[part].answered).length;
+  const milestone=Math.floor(answered/5);
+  if(milestone>norma[part]){
+    norma[part]=milestone;
+    const chk=normaChk[part];
+    const batchCorrect=state[part].correct-chk.correct;
+    const batchTotal=answered-chk.answered;
+    normaChk[part]={answered,correct:state[part].correct};
+    setTimeout(()=>showNormaModal(milestone,batchCorrect,batchTotal,state[part].correct,answered),350);
+  }
+}
+function showNormaModal(milestone,batchCorrect,batchTotal,totalCorrect,totalAnswered){
+  const rate=totalAnswered>0?Math.round(totalCorrect/totalAnswered*100):0;
+  document.getElementById('norma-title').textContent=`${milestone*5}問クリア！`;
+  document.getElementById('norma-batch-score').textContent=`${batchCorrect}/${batchTotal}`;
+  document.getElementById('norma-total-rate').textContent=`${rate}%`;
+  const perfect=batchCorrect===batchTotal;
+  const good=batchCorrect>=Math.ceil(batchTotal*0.6);
+  document.getElementById('norma-icon').textContent=perfect?'🎉':good?'👍':'💪';
+  document.getElementById('norma-sub').textContent=perfect
+    ?'満点！素晴らしい！':`${batchCorrect}問正解！引き続き頑張ろう`;
+  document.getElementById('norma-overlay').classList.add('show');
+  document.getElementById('norma-modal').classList.add('show');
+}
+function closeNormaModal(){
+  document.getElementById('norma-overlay').classList.remove('show');
+  document.getElementById('norma-modal').classList.remove('show');
+}
+
 // ── Shuffle helpers ──
 const shuf={p5:[],p6:{},p7:{}};
 function shuffleOpts(opts,ans){
@@ -501,6 +572,7 @@ function answerP5(qi,chosen){
   else state.p5.correct++;
   updateScore('p5',state.p5.correct,Object.keys(state.p5.answered).length,P5.length);
   updateMissBtn('p5');
+  checkNorma('p5');
 }
 
 // ============================================================
@@ -553,6 +625,7 @@ function answerP6(si,qi,chosen){
   const tot=P6.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p6',state.p6.correct,Object.keys(state.p6.answered).length,tot);
   updateMissBtn('p6');
+  checkNorma('p6');
 }
 
 // ============================================================
@@ -595,6 +668,7 @@ function answerP7(si,qi,chosen){
   const tot=P7.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p7',state.p7.correct,Object.keys(state.p7.answered).length,tot);
   updateMissBtn('p7');
+  checkNorma('p7');
 }
 
 // ============================================================
@@ -644,6 +718,7 @@ function skipInstant(i){
   mistakes.instant[i]=(mistakes.instant[i]||0)+1;
   updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
   updateMissBtn('instant');
+  checkNorma('instant');
 }
 
 function evalInstant(i,isCorrect){
@@ -668,6 +743,7 @@ function evalInstant(i,isCorrect){
   }
   updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
   updateMissBtn('instant');
+  checkNorma('instant');
 }
 
 function buildAnswerHtml(q, userAns, result){
@@ -776,6 +852,8 @@ function resetPart(part){
   if(!confirm('このパートの回答をリセットしますか？'))return;
   state[part]={answered:{},correct:0};
   mistakes[part]={};
+  norma[part]=0;
+  normaChk[part]={answered:0,correct:0};
   const totals={p5:P5.length,p6:P6.reduce((s,x)=>s+x.qs.length,0),p7:P7.reduce((s,x)=>s+x.qs.length,0),instant:INSTANT.length};
   if(part==='p5')renderP5();
   else if(part==='p6')renderP6();
