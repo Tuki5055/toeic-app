@@ -67,8 +67,11 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .miss-count{font-size:.75rem;color:var(--red);font-weight:700;background:#3a1010;padding:2px 7px;border-radius:10px;white-space:nowrap}
 .miss-empty{font-size:.8rem;color:var(--sub);text-align:center;padding:8px}
 /* ── Question card ── */
-.q-card{background:var(--surface);border-radius:10px;padding:20px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s}
+.q-card{position:relative;background:var(--surface);border-radius:10px;padding:20px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s}
 .q-card:hover{border-color:var(--primary-dim)}
+/* ── Miss count badge ── */
+.miss-badge{position:absolute;top:11px;right:12px;background:var(--red-bg);color:var(--red);border:1px solid #5a2020;border-radius:10px;font-size:.7rem;font-weight:700;padding:2px 8px;display:none;pointer-events:none}
+.miss-badge.on{display:inline-block}
 .q-num{font-size:.72rem;color:var(--sub);margin-bottom:6px;letter-spacing:.5px}
 .q-text{font-size:.93rem;line-height:1.75;margin-bottom:15px;color:var(--text)}
 .q-text em{font-style:normal;font-weight:700;color:var(--accent)}
@@ -100,7 +103,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .blank-sel.correct-sel{color:var(--green)!important;border-bottom-color:var(--green)!important}
 .blank-sel.wrong-sel{color:var(--red)!important;border-bottom-color:var(--red)!important}
 .p6-qs{margin-top:4px}
-.p6-q{margin-bottom:14px;padding-top:11px;border-top:1px solid var(--border)}
+.p6-q{position:relative;margin-bottom:14px;padding-top:11px;border-top:1px solid var(--border)}
 .p6-q:first-child{border-top:none;padding-top:0}
 .p6-qnum{font-size:.72rem;color:var(--sub);margin-bottom:5px}
 .p6-qtext{font-size:.84rem;color:var(--sub);margin-bottom:9px}
@@ -116,7 +119,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .double-passage{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 @media(max-width:640px){.double-passage{grid-template-columns:1fr}}
 /* ── Instant Translation ── */
-.inst-card{background:var(--surface);border-radius:10px;padding:20px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s}
+.inst-card{position:relative;background:var(--surface);border-radius:10px;padding:20px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s}
 .inst-card.state-correct{border-color:var(--green)}
 .inst-card.state-wrong{border-color:var(--red)}
 .inst-card.state-skip{border-color:#554400}
@@ -143,6 +146,14 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .badge-ok{background:var(--green-bg);color:var(--green);border:1px solid #2a5a3a}
 .badge-ng{background:var(--red-bg);color:var(--red);border:1px solid #5a2a2a}
 .badge-skip{background:var(--yellow-bg);color:var(--accent);border:1px solid #554400}
+/* ── Review mode bar & complete card ── */
+.review-bar{background:#1a0d2e;border:1px solid #4a2070;border-radius:8px;padding:10px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.review-bar-left{display:flex;align-items:center;gap:10px}
+.review-bar-label{font-size:.82rem;color:#c084fc;font-weight:700}
+.review-bar-score{font-size:.8rem;color:var(--sub);background:var(--surface2);padding:3px 10px;border-radius:8px;border:1px solid var(--border)}
+.review-complete{background:var(--surface);border-radius:12px;padding:26px 20px;text-align:center;border:1px solid var(--primary-dim);margin-bottom:16px}
+.btn-review{background:#2d1a4e;color:#c084fc;border:1px solid #4a2070;padding:7px 16px;border-radius:7px;cursor:pointer;font-size:.84rem;font-weight:600;transition:all .2s}
+.btn-review:hover{background:#3d2060}
 /* ── Norma Modal ── */
 .norma-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s}
 .norma-overlay.show{opacity:1;pointer-events:auto}
@@ -187,7 +198,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   </div>
   <div class="norma-actions">
     <button class="btn btn-primary" onclick="closeNormaModal()">次の5問へ →</button>
-    <button class="btn btn-ghost" onclick="closeNormaModal()">🔁 復習モード</button>
+    <button class="btn-review" onclick="enterReviewFromNorma()">🔁 復習モード</button>
   </div>
 </div>
 
@@ -196,7 +207,10 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 <div class="miss-panel" id="miss-panel-global">
   <div class="miss-panel-hd">
     <h4>❌ 間違えた問題</h4>
-    <button class="miss-close" onclick="closeMissPanel()">✕</button>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="btn-review" style="padding:4px 10px;font-size:.75rem" onclick="enterReviewFromMiss()">🔁 復習モード</button>
+      <button class="miss-close" onclick="closeMissPanel()">✕</button>
+    </div>
   </div>
   <div id="miss-panel-body"></div>
 </div>
@@ -212,6 +226,14 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
     <button class="miss-btn" id="p5-missbtn" onclick="toggleMiss('p5')">❌ ミス <span id="p5-misscount">0</span>問</button>
     <button class="btn btn-ghost btn-sm" onclick="resetPart('p5')">リセット</button>
   </div>
+  <div class="review-bar" id="p5-review-bar" style="display:none">
+    <div class="review-bar-left">
+      <span class="review-bar-label">🔁 復習モード</span>
+      <span class="review-bar-score">Round <span id="p5-round">1</span> &nbsp;|&nbsp; <span id="p5-review-score">0/0</span> 正解</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="exitReviewMode('p5')">通常モードへ ✕</button>
+  </div>
+  <div id="p5-review" style="display:none"></div>
   <div id="p5-questions"></div>
 </div>
 
@@ -224,6 +246,14 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
     <button class="miss-btn" id="p6-missbtn" onclick="toggleMiss('p6')">❌ ミス <span id="p6-misscount">0</span>問</button>
     <button class="btn btn-ghost btn-sm" onclick="resetPart('p6')">リセット</button>
   </div>
+  <div class="review-bar" id="p6-review-bar" style="display:none">
+    <div class="review-bar-left">
+      <span class="review-bar-label">🔁 復習モード</span>
+      <span class="review-bar-score">Round <span id="p6-round">1</span> &nbsp;|&nbsp; <span id="p6-review-score">0/0</span> 正解</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="exitReviewMode('p6')">通常モードへ ✕</button>
+  </div>
+  <div id="p6-review" style="display:none"></div>
   <div id="p6-sets"></div>
 </div>
 
@@ -236,6 +266,14 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
     <button class="miss-btn" id="p7-missbtn" onclick="toggleMiss('p7')">❌ ミス <span id="p7-misscount">0</span>問</button>
     <button class="btn btn-ghost btn-sm" onclick="resetPart('p7')">リセット</button>
   </div>
+  <div class="review-bar" id="p7-review-bar" style="display:none">
+    <div class="review-bar-left">
+      <span class="review-bar-label">🔁 復習モード</span>
+      <span class="review-bar-score">Round <span id="p7-round">1</span> &nbsp;|&nbsp; <span id="p7-review-score">0/0</span> 正解</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="exitReviewMode('p7')">通常モードへ ✕</button>
+  </div>
+  <div id="p7-review" style="display:none"></div>
   <div id="p7-sets"></div>
 </div>
 
@@ -248,6 +286,14 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
     <button class="miss-btn" id="instant-missbtn" onclick="toggleMiss('instant')">❌ ミス <span id="instant-misscount">0</span>問</button>
     <button class="btn btn-ghost btn-sm" onclick="resetPart('instant')">リセット</button>
   </div>
+  <div class="review-bar" id="instant-review-bar" style="display:none">
+    <div class="review-bar-left">
+      <span class="review-bar-label">🔁 復習モード</span>
+      <span class="review-bar-score">Round <span id="instant-round">1</span> &nbsp;|&nbsp; <span id="instant-review-score">0/0</span> 正解</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="exitReviewMode('instant')">通常モードへ ✕</button>
+  </div>
+  <div id="instant-review" style="display:none"></div>
   <div id="instant-questions"></div>
 </div>
 
@@ -513,10 +559,12 @@ function checkNorma(part){
     const batchCorrect=state[part].correct-chk.correct;
     const batchTotal=answered-chk.answered;
     normaChk[part]={answered,correct:state[part].correct};
-    setTimeout(()=>showNormaModal(milestone,batchCorrect,batchTotal,state[part].correct,answered),350);
+    setTimeout(()=>showNormaModal(part,milestone,batchCorrect,batchTotal,state[part].correct,answered),350);
   }
 }
-function showNormaModal(milestone,batchCorrect,batchTotal,totalCorrect,totalAnswered){
+let _normaCurrentPart=null;
+function showNormaModal(part,milestone,batchCorrect,batchTotal,totalCorrect,totalAnswered){
+  _normaCurrentPart=part;
   const rate=totalAnswered>0?Math.round(totalCorrect/totalAnswered*100):0;
   document.getElementById('norma-title').textContent=`${milestone*5}問クリア！`;
   document.getElementById('norma-batch-score').textContent=`${batchCorrect}/${batchTotal}`;
@@ -549,6 +597,7 @@ function renderP5(){
   document.getElementById('p5-questions').innerHTML=P5.map((q,i)=>{
     shuf.p5[i]=shuffleOpts(q.opts,q.ans);
     return `<div class="q-card" id="p5-card-${i}">
+      <div class="miss-badge" id="p5-badge-${i}"></div>
       <div class="q-num">Question ${i+1} / ${P5.length}</div>
       <div class="q-text">${q.q.replace(/-------/,'<em>-------</em>')}</div>
       <div class="options" id="p5-opts-${i}">
@@ -568,7 +617,7 @@ function answerP5(qi,chosen){
     else if(j===chosen&&chosen!==c)o.classList.add('wrong');
   });
   document.getElementById(`p5-exp-${qi}`).classList.add('show');
-  if(chosen!==c){mistakes.p5[qi]=(mistakes.p5[qi]||0)+1;}
+  if(chosen!==c){mistakes.p5[qi]=(mistakes.p5[qi]||0)+1;updateMissBadge('p5',qi);}
   else state.p5.correct++;
   updateScore('p5',state.p5.correct,Object.keys(state.p5.answered).length,P5.length);
   updateMissBtn('p5');
@@ -593,6 +642,7 @@ function renderP6(){
     const qs=set.qs.map((q,qi)=>{
       const s=shuf.p6[`${si}-${qi}`];
       return `<div class="p6-q" id="p6-q-${si}-${qi}">
+        <div class="miss-badge" id="p6-badge-${si}-${qi}"></div>
         <div class="p6-qnum">Question ${start+qi}</div>
         <div class="p6-qtext">空欄 (${start+qi}) に最も適切なものを選んでください。</div>
         <div class="options" id="p6-opts-${si}-${qi}">
@@ -620,7 +670,7 @@ function answerP6(si,qi,chosen){
   const sel=document.getElementById(`p6-sel-${si}-${qi}`);
   if(sel){sel.value=chosen;sel.disabled=true;sel.classList.add(chosen===c?'correct-sel':'wrong-sel');}
   document.getElementById(`p6-exp-${si}-${qi}`).classList.add('show');
-  if(chosen!==c){mistakes.p6[key]=(mistakes.p6[key]||0)+1;}
+  if(chosen!==c){mistakes.p6[key]=(mistakes.p6[key]||0)+1;updateMissBadge('p6',key);}
   else state.p6.correct++;
   const tot=P6.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p6',state.p6.correct,Object.keys(state.p6.answered).length,tot);
@@ -641,6 +691,7 @@ function renderP7(){
     const qs=set.qs.map((q,qi)=>{
       const s=shuf.p7[`${si}-${qi}`];
       return `<div class="q-card" id="p7-card-${si}-${qi}" style="margin-bottom:10px">
+        <div class="miss-badge" id="p7-badge-${si}-${qi}"></div>
         <div class="q-num">Set ${si+1} — Q${qi+1}</div>
         <div class="q-text">${q.q}</div>
         <div class="options" id="p7-opts-${si}-${qi}">
@@ -663,7 +714,7 @@ function answerP7(si,qi,chosen){
     else if(j===chosen&&chosen!==c)o.classList.add('wrong');
   });
   document.getElementById(`p7-exp-${si}-${qi}`).classList.add('show');
-  if(chosen!==c){mistakes.p7[key]=(mistakes.p7[key]||0)+1;}
+  if(chosen!==c){mistakes.p7[key]=(mistakes.p7[key]||0)+1;updateMissBadge('p7',key);}
   else state.p7.correct++;
   const tot=P7.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p7',state.p7.correct,Object.keys(state.p7.answered).length,tot);
@@ -677,6 +728,7 @@ function answerP7(si,qi,chosen){
 function renderInstant(){
   document.getElementById('instant-questions').innerHTML=INSTANT.map((q,i)=>`
     <div class="inst-card" id="inst-card-${i}">
+      <div class="miss-badge" id="inst-badge-${i}"></div>
       <div class="q-num">問題 ${i+1} / ${INSTANT.length}</div>
       <div class="inst-jp">${esc(q.jp)}</div>
       <textarea class="inst-input" id="inst-in-${i}" placeholder="英文を入力してください…"></textarea>
@@ -716,6 +768,7 @@ function skipInstant(i){
   resEl.innerHTML=buildAnswerHtml(INSTANT[i],'',false)+'<span class="result-badge badge-skip">スキップ</span>';
   state.instant.answered[i]=0;
   mistakes.instant[i]=(mistakes.instant[i]||0)+1;
+  updateMissBadge('instant',i);
   updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
   updateMissBtn('instant');
   checkNorma('instant');
@@ -740,6 +793,7 @@ function evalInstant(i,isCorrect){
     resEl.className='inst-result show wrong-result';
     resEl.innerHTML=buildAnswerHtml(q,userAns,false)+'<span class="result-badge badge-ng">× 不正解</span>';
     mistakes.instant[i]=(mistakes.instant[i]||0)+1;
+    updateMissBadge('instant',i);
   }
   updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
   updateMissBtn('instant');
@@ -756,6 +810,214 @@ function buildAnswerHtml(q, userAns, result){
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ============================================================
+// MISS BADGE
+// ============================================================
+function updateMissBadge(part,key){
+  const idMap={p5:`p5-badge-${key}`,p6:`p6-badge-${key}`,p7:`p7-badge-${key}`,instant:`inst-badge-${key}`};
+  const el=document.getElementById(idMap[part]);
+  if(!el)return;
+  const cnt=mistakes[part][key]||0;
+  el.textContent=`×${cnt}回`;
+  el.classList.toggle('on',cnt>0);
+}
+
+// ============================================================
+// REVIEW MODE
+// ============================================================
+const review={active:false,part:null,queue:[],answered:{},correct:0,round:1};
+
+function enterReviewFromNorma(){
+  const part=_normaCurrentPart;
+  closeNormaModal();
+  if(part)enterReviewMode(part);
+}
+function enterReviewFromMiss(){
+  const part=_missPart;
+  closeMissPanel();
+  if(part)enterReviewMode(part);
+}
+
+function enterReviewMode(part){
+  const keys=Object.keys(mistakes[part]);
+  if(keys.length===0){alert('まだ間違えた問題がありません。');return;}
+  review.active=true; review.part=part; review.round=1;
+  review.answered={}; review.correct=0;
+  review.queue=buildReviewQueue(part,keys);
+  // hide normal content, show review
+  const contentId={p5:'p5-questions',p6:'p6-sets',p7:'p7-sets',instant:'instant-questions'}[part];
+  document.getElementById(contentId).style.display='none';
+  document.getElementById(`${part}-review`).style.display='block';
+  document.getElementById(`${part}-review-bar`).style.display='flex';
+  document.getElementById(`${part}-round`).textContent='1';
+  document.getElementById(`${part}-review-score`).textContent='0/0';
+  renderReview(part);
+  document.getElementById(part).scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function exitReviewMode(part){
+  review.active=false; review.part=null;
+  const contentId={p5:'p5-questions',p6:'p6-sets',p7:'p7-sets',instant:'instant-questions'}[part];
+  document.getElementById(contentId).style.display='';
+  document.getElementById(`${part}-review`).style.display='none';
+  document.getElementById(`${part}-review-bar`).style.display='none';
+}
+
+function buildReviewQueue(part,keys){
+  // Fisher-Yates shuffle of keys
+  const arr=[...keys];
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr.map(key=>{
+    if(part==='p5'){
+      const i=parseInt(key);
+      return {type:'p5',key,q:P5[i],shuf:shuffleOpts(P5[i].opts,P5[i].ans)};
+    } else if(part==='p6'){
+      const [si,qi]=key.split('-').map(Number);
+      let qn=131; for(let s=0;s<si;s++)qn+=P6[s].qs.length; qn+=qi;
+      return {type:'p6',key,si,qi,qnum:qn,q:P6[si].qs[qi],shuf:shuffleOpts(P6[si].qs[qi].opts,P6[si].qs[qi].ans)};
+    } else if(part==='p7'){
+      const [si,qi]=key.split('-').map(Number);
+      return {type:'p7',key,si,qi,q:P7[si].qs[qi],shuf:shuffleOpts(P7[si].qs[qi].opts,P7[si].qs[qi].ans)};
+    } else {
+      const i=parseInt(key);
+      return {type:'instant',key,q:INSTANT[i]};
+    }
+  });
+}
+
+function renderReview(part){
+  const q=review.queue;
+  let html=q.map((item,i)=>{
+    if(item.type==='instant'){
+      const idx=parseInt(item.key);
+      return `<div class="inst-card" id="rv-card-${i}">
+        <div class="q-num">復習 ${i+1}/${q.length} — 元 問${idx+1}</div>
+        <div class="inst-jp">${esc(item.q.jp)}</div>
+        <textarea class="inst-input" id="rv-in-${i}" placeholder="英文を入力してください…"></textarea>
+        <div class="inst-actions" id="rv-act-${i}">
+          <button class="btn btn-primary btn-sm" onclick="checkRvInstant(${i})">答え合わせ</button>
+          <button class="btn btn-ghost btn-sm" onclick="skipRvInstant(${i})">わからない</button>
+        </div>
+        <div class="inst-result" id="rv-res-${i}"></div>
+      </div>`;
+    }
+    const {opts,ans}=item.shuf;
+    const label=item.type==='p5'?`元 Q${parseInt(item.key)+1}`
+      :item.type==='p6'?`元 Q${item.qnum}`:`Set${item.si+1}-Q${item.qi+1}`;
+    const qText=item.type==='p5'?item.q.q.replace(/-------/,'<em>-------</em>')
+      :item.type==='p6'?`空欄 (${item.qnum}) に入る最も適切なものを選んでください。`
+      :item.q.q;
+    return `<div class="q-card" id="rv-card-${i}">
+      <div class="q-num">復習 ${i+1}/${q.length} — ${label}</div>
+      <div class="q-text">${qText}</div>
+      <div class="options" id="rv-opts-${i}">
+        ${opts.map((o,j)=>`<div class="opt" onclick="answerReview(${i},${j})">(${chr(j)}) ${o}</div>`).join('')}
+      </div>
+      <div class="explanation" id="rv-exp-${i}">💡 ${item.q.exp}</div>
+    </div>`;
+  }).join('');
+  html+=`<div id="${part}-review-complete" class="review-complete" style="display:none">
+    <div style="font-size:1.3rem;font-weight:800;color:var(--accent);margin-bottom:8px">🎊 Round ${review.round} 完了！</div>
+    <div style="font-size:.86rem;color:var(--sub);margin-bottom:20px" id="${part}-rv-result">—</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="nextReviewRound('${part}')">🔁 もう一周する</button>
+      <button class="btn btn-ghost" onclick="exitReviewMode('${part}')">通常モードへ</button>
+    </div>
+  </div>`;
+  document.getElementById(`${part}-review`).innerHTML=html;
+}
+
+function answerReview(i,chosen){
+  if(review.answered[i]!==undefined)return;
+  review.answered[i]=chosen;
+  const item=review.queue[i];
+  const {ans}=item.shuf;
+  document.querySelectorAll(`#rv-opts-${i} .opt`).forEach((o,j)=>{
+    o.classList.add('disabled');
+    if(j===ans)o.classList.add('correct');
+    else if(j===chosen&&chosen!==ans)o.classList.add('wrong');
+  });
+  document.getElementById(`rv-exp-${i}`).classList.add('show');
+  if(chosen===ans){review.correct++;}
+  else{mistakes[item.type][item.key]=(mistakes[item.type][item.key]||0)+1;updateMissBadge(item.type,item.key);updateMissBtn(item.type);}
+  updateRvScore();
+  if(Object.keys(review.answered).length===review.queue.length)setTimeout(()=>showRvComplete(review.part),400);
+}
+
+function checkRvInstant(i){
+  if(review.answered[i]!==undefined)return;
+  const inp=document.getElementById(`rv-in-${i}`); inp.disabled=true;
+  const q=review.queue[i].q;
+  document.getElementById(`rv-act-${i}`).innerHTML=`
+    <div style="font-size:.8rem;color:var(--sub);margin-bottom:6px">自己評価してください：</div>
+    <div class="selfeval">
+      <button class="btn-correct" onclick="evalRvInstant(${i},true)">○ 正解</button>
+      <button class="btn-wrong2" onclick="evalRvInstant(${i},false)">× 不正解</button>
+    </div>`;
+  const res=document.getElementById(`rv-res-${i}`);
+  res.className='inst-result show checking';
+  res.innerHTML=buildAnswerHtml(q,inp.value.trim(),null);
+}
+function skipRvInstant(i){
+  if(review.answered[i]!==undefined)return;
+  document.getElementById(`rv-in-${i}`).disabled=true;
+  document.getElementById(`rv-act-${i}`).innerHTML='';
+  const item=review.queue[i];
+  const res=document.getElementById(`rv-res-${i}`);
+  res.className='inst-result show skip-result';
+  res.innerHTML=buildAnswerHtml(item.q,'',false)+'<span class="result-badge badge-skip">スキップ</span>';
+  review.answered[i]=0;
+  mistakes[item.type][item.key]=(mistakes[item.type][item.key]||0)+1;
+  updateMissBadge(item.type,item.key); updateMissBtn(item.type);
+  updateRvScore();
+  if(Object.keys(review.answered).length===review.queue.length)setTimeout(()=>showRvComplete(review.part),400);
+}
+function evalRvInstant(i,isCorrect){
+  if(review.answered[i]!==undefined)return;
+  review.answered[i]=isCorrect?1:0;
+  const inp=document.getElementById(`rv-in-${i}`);
+  const item=review.queue[i];
+  document.getElementById(`rv-act-${i}`).innerHTML='';
+  const card=document.getElementById(`rv-card-${i}`);
+  const res=document.getElementById(`rv-res-${i}`);
+  if(isCorrect){
+    review.correct++;
+    card.classList.add('state-correct');
+    res.className='inst-result show correct-result';
+    res.innerHTML=buildAnswerHtml(item.q,inp.value.trim(),true)+'<span class="result-badge badge-ok">○ 正解</span>';
+  } else {
+    card.classList.add('state-wrong');
+    res.className='inst-result show wrong-result';
+    res.innerHTML=buildAnswerHtml(item.q,inp.value.trim(),false)+'<span class="result-badge badge-ng">× 不正解</span>';
+    mistakes[item.type][item.key]=(mistakes[item.type][item.key]||0)+1;
+    updateMissBadge(item.type,item.key); updateMissBtn(item.type);
+  }
+  updateRvScore();
+  if(Object.keys(review.answered).length===review.queue.length)setTimeout(()=>showRvComplete(review.part),400);
+}
+
+function updateRvScore(){
+  const answered=Object.keys(review.answered).length;
+  document.getElementById(`${review.part}-review-score`).textContent=`${review.correct}/${answered}`;
+}
+function showRvComplete(part){
+  const total=review.queue.length, correct=review.correct;
+  const pct=total>0?Math.round(correct/total*100):0;
+  const el=document.getElementById(`${part}-review-complete`);
+  document.getElementById(`${part}-rv-result`).textContent=
+    `${correct}/${total}問正解（${pct}%）— ${pct>=80?'素晴らしい！':'もう一周して定着させよう！'}`;
+  el.style.display='block';
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function nextReviewRound(part){
+  review.round++; review.answered={}; review.correct=0;
+  review.queue=buildReviewQueue(part,Object.keys(mistakes[part]));
+  document.getElementById(`${part}-round`).textContent=review.round;
+  document.getElementById(`${part}-review-score`).textContent='0/0';
+  renderReview(part);
+  document.getElementById(part).scrollIntoView({behavior:'smooth',block:'start'});
+}
 
 // ============================================================
 // MISTAKE PANEL (slide from right)
@@ -850,6 +1112,7 @@ function updateScore(part,correct,answered,total){
 
 function resetPart(part){
   if(!confirm('このパートの回答をリセットしますか？'))return;
+  if(review.active&&review.part===part)exitReviewMode(part);
   state[part]={answered:{},correct:0};
   mistakes[part]={};
   norma[part]=0;
