@@ -154,6 +154,11 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .review-complete{background:var(--surface);border-radius:12px;padding:26px 20px;text-align:center;border:1px solid var(--primary-dim);margin-bottom:16px}
 .btn-review{background:#2d1a4e;color:#c084fc;border:1px solid #4a2070;padding:7px 16px;border-radius:7px;cursor:pointer;font-size:.84rem;font-weight:600;transition:all .2s}
 .btn-review:hover{background:#3d2060}
+/* ── One-at-a-time navigation ── */
+.next-area{text-align:center;padding:18px 0 6px}
+.done-card{background:var(--surface);border-radius:12px;padding:28px 20px;text-align:center;border:1px solid var(--green);margin-bottom:16px}
+.done-card h3{font-size:1.2rem;font-weight:800;color:var(--green);margin-bottom:8px}
+.done-card p{font-size:.84rem;color:var(--sub);margin-bottom:18px}
 /* ── Norma Modal ── */
 .norma-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s}
 .norma-overlay.show{opacity:1;pointer-events:auto}
@@ -590,22 +595,38 @@ function shuffleOpts(opts,ans){
   return {opts:a.map(x=>x.o), ans:a.findIndex(x=>x.i===ans)};
 }
 
+// ── Cursor (one-at-a-time) ──
+const cursor={p5:0,p6:0,p7:0,instant:0};
+
 // ============================================================
 // RENDER — Part 5
 // ============================================================
 function renderP5(){
-  document.getElementById('p5-questions').innerHTML=P5.map((q,i)=>{
-    shuf.p5[i]=shuffleOpts(q.opts,q.ans);
-    return `<div class="q-card" id="p5-card-${i}">
-      <div class="miss-badge" id="p5-badge-${i}"></div>
-      <div class="q-num">Question ${i+1} / ${P5.length}</div>
-      <div class="q-text">${q.q.replace(/-------/,'<em>-------</em>')}</div>
-      <div class="options" id="p5-opts-${i}">
-        ${shuf.p5[i].opts.map((o,j)=>`<div class="opt" onclick="answerP5(${i},${j})">(${chr(j)}) ${o}</div>`).join('')}
-      </div>
-      <div class="explanation" id="p5-exp-${i}">💡 ${q.exp}</div>
-    </div>`;
-  }).join('');
+  const i=cursor.p5;
+  if(i>=P5.length){showPartDone('p5');return;}
+  const q=P5[i];
+  if(!shuf.p5[i])shuf.p5[i]=shuffleOpts(q.opts,q.ans);
+  const s=shuf.p5[i];
+  const done=state.p5.answered[i]!==undefined;
+  const chosen=state.p5.answered[i];
+  const c=s.ans;
+  document.getElementById('p5-questions').innerHTML=`<div class="q-card" id="p5-card-${i}">
+    <div class="miss-badge" id="p5-badge-${i}"></div>
+    <div class="q-num">Question ${i+1} / ${P5.length}</div>
+    <div class="q-text">${q.q.replace(/-------/,'<em>-------</em>')}</div>
+    <div class="options" id="p5-opts-${i}">
+      ${s.opts.map((o,j)=>{
+        let cls='opt'+(done?' disabled':'');
+        if(done){if(j===c)cls+=' correct';else if(j===chosen&&chosen!==c)cls+=' wrong';}
+        return `<div class="${cls}"${!done?` onclick="answerP5(${i},${j})"`:''}>(${chr(j)}) ${o}</div>`;
+      }).join('')}
+    </div>
+    <div class="explanation${done?' show':''}" id="p5-exp-${i}">💡 ${q.exp}</div>
+  </div>
+  <div class="next-area" id="p5-next"${done?'':' style="display:none"'}>
+    ${i+1<P5.length?`<button class="btn btn-primary" onclick="nextQ('p5')">次の問題へ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p5')">結果を見る →</button>`}
+  </div>`;
+  if(done)updateMissBadge('p5',i);
 }
 function answerP5(qi,chosen){
   if(state.p5.answered[qi]!==undefined)return;
@@ -622,39 +643,59 @@ function answerP5(qi,chosen){
   updateScore('p5',state.p5.correct,Object.keys(state.p5.answered).length,P5.length);
   updateMissBtn('p5');
   checkNorma('p5');
+  showNextBtn('p5');
 }
 
 // ============================================================
 // RENDER — Part 6
 // ============================================================
 function renderP6(){
-  // Pre-shuffle all P6 questions
-  P6.forEach((set,si)=>set.qs.forEach((q,qi)=>{shuf.p6[`${si}-${qi}`]=shuffleOpts(q.opts,q.ans);}));
-  let qn=131;
-  document.getElementById('p6-sets').innerHTML=P6.map((set,si)=>{
-    const start=qn; qn+=set.qs.length;
-    const pass=set.passage.replace(/\((\d+)\) -------/g,(m,num)=>{
-      const qi=parseInt(num)-start;
-      const s=shuf.p6[`${si}-${qi}`];
-      return `(${num}) <select class="blank-sel" id="p6-sel-${si}-${qi}" onchange="answerP6(${si},${qi},parseInt(this.value))"><option value="-1">— 選択 —</option>`+
-        s.opts.map((o,j)=>`<option value="${j}">${o}</option>`).join('')+`</select>`;
-    }).replace(/\n/g,'<br>');
-    const qs=set.qs.map((q,qi)=>{
-      const s=shuf.p6[`${si}-${qi}`];
-      return `<div class="p6-q" id="p6-q-${si}-${qi}">
-        <div class="miss-badge" id="p6-badge-${si}-${qi}"></div>
-        <div class="p6-qnum">Question ${start+qi}</div>
-        <div class="p6-qtext">空欄 (${start+qi}) に最も適切なものを選んでください。</div>
-        <div class="options" id="p6-opts-${si}-${qi}">
-          ${s.opts.map((o,j)=>`<div class="opt" onclick="answerP6(${si},${qi},${j})">(${chr(j)}) ${o}</div>`).join('')}
-        </div>
-        <div class="explanation" id="p6-exp-${si}-${qi}">💡 ${q.exp}</div>
-      </div>`;
-    }).join('');
-    return `<div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">${set.type}</div>
-      <div class="passage">${pass}</div>
-      <div class="p6-qs">${qs}</div></div>`;
+  const si=cursor.p6;
+  if(si>=P6.length){showPartDone('p6');return;}
+  const set=P6[si];
+  let start=131; for(let s=0;s<si;s++)start+=P6[s].qs.length;
+  set.qs.forEach((_,qi)=>{const k=`${si}-${qi}`;if(!shuf.p6[k])shuf.p6[k]=shuffleOpts(set.qs[qi].opts,set.qs[qi].ans);});
+  const pass=set.passage.replace(/\((\d+)\) -------/g,(m,num)=>{
+    const qi=parseInt(num)-start;
+    const s=shuf.p6[`${si}-${qi}`];
+    const answered=state.p6.answered[`${si}-${qi}`];
+    const pdone=answered!==undefined;
+    const c=s.ans;
+    if(pdone){
+      const cls='blank-sel'+(answered===c?' correct-sel':' wrong-sel');
+      return `(${num}) <select class="${cls}" id="p6-sel-${si}-${qi}" disabled>${s.opts.map((o,j)=>`<option value="${j}"${j===answered?' selected':''}>${o}</option>`).join('')}</select>`;
+    }
+    return `(${num}) <select class="blank-sel" id="p6-sel-${si}-${qi}" onchange="answerP6(${si},${qi},parseInt(this.value))"><option value="-1">— 選択 —</option>`+
+      s.opts.map((o,j)=>`<option value="${j}">${o}</option>`).join('')+`</select>`;
+  }).replace(/\n/g,'<br>');
+  const qs=set.qs.map((q,qi)=>{
+    const key=`${si}-${qi}`;
+    const s=shuf.p6[key];
+    const done=state.p6.answered[key]!==undefined;
+    const chosen=state.p6.answered[key];
+    const c=s.ans;
+    return `<div class="p6-q" id="p6-q-${si}-${qi}">
+      <div class="miss-badge" id="p6-badge-${si}-${qi}"></div>
+      <div class="p6-qnum">Question ${start+qi}</div>
+      <div class="p6-qtext">空欄 (${start+qi}) に最も適切なものを選んでください。</div>
+      <div class="options" id="p6-opts-${si}-${qi}">
+        ${s.opts.map((o,j)=>{
+          let cls='opt'+(done?' disabled':'');
+          if(done){if(j===c)cls+=' correct';else if(j===chosen&&chosen!==c)cls+=' wrong';}
+          return `<div class="${cls}"${!done?` onclick="answerP6(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
+        }).join('')}
+      </div>
+      <div class="explanation${done?' show':''}" id="p6-exp-${si}-${qi}">💡 ${q.exp}</div>
+    </div>`;
   }).join('');
+  const allDone=set.qs.every((_,qi)=>state.p6.answered[`${si}-${qi}`]!==undefined);
+  document.getElementById('p6-sets').innerHTML=`<div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P6.length} — ${set.type}</div>
+    <div class="passage">${pass}</div>
+    <div class="p6-qs">${qs}</div></div>
+  <div class="next-area" id="p6-next"${allDone?'':' style="display:none"'}>
+    ${si+1<P6.length?`<button class="btn btn-primary" onclick="nextQ('p6')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p6')">結果を見る →</button>`}
+  </div>`;
+  set.qs.forEach((_,qi)=>{if(state.p6.answered[`${si}-${qi}`]!==undefined)updateMissBadge('p6',`${si}-${qi}`);});
 }
 function answerP6(si,qi,chosen){
   const key=`${si}-${qi}`;
@@ -676,32 +717,48 @@ function answerP6(si,qi,chosen){
   updateScore('p6',state.p6.correct,Object.keys(state.p6.answered).length,tot);
   updateMissBtn('p6');
   checkNorma('p6');
+  const set=P6[si];
+  const allDone=set.qs.every((_,qi2)=>state.p6.answered[`${si}-${qi2}`]!==undefined);
+  if(allDone)showNextBtn('p6');
 }
 
 // ============================================================
 // RENDER — Part 7
 // ============================================================
 function renderP7(){
-  // Pre-shuffle all P7 questions
-  P7.forEach((set,si)=>set.qs.forEach((q,qi)=>{shuf.p7[`${si}-${qi}`]=shuffleOpts(q.opts,q.ans);}));
-  document.getElementById('p7-sets').innerHTML=P7.map((set,si)=>{
-    const pass=set.double
-      ?`<div class="double-passage"><div class="reading">${set.passageA}</div><div class="reading">${set.passageB}</div></div>`
-      :`<div class="reading">${set.passage}</div>`;
-    const qs=set.qs.map((q,qi)=>{
-      const s=shuf.p7[`${si}-${qi}`];
-      return `<div class="q-card" id="p7-card-${si}-${qi}" style="margin-bottom:10px">
-        <div class="miss-badge" id="p7-badge-${si}-${qi}"></div>
-        <div class="q-num">Set ${si+1} — Q${qi+1}</div>
-        <div class="q-text">${q.q}</div>
-        <div class="options" id="p7-opts-${si}-${qi}">
-          ${s.opts.map((o,j)=>`<div class="opt" onclick="answerP7(${si},${qi},${j})">(${chr(j)}) ${o}</div>`).join('')}
-        </div>
-        <div class="explanation" id="p7-exp-${si}-${qi}">💡 ${q.exp}</div>
-      </div>`;
-    }).join('');
-    return `<div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">${set.type}</div>${pass}${qs}</div>`;
+  const si=cursor.p7;
+  if(si>=P7.length){showPartDone('p7');return;}
+  const set=P7[si];
+  set.qs.forEach((_,qi)=>{const k=`${si}-${qi}`;if(!shuf.p7[k])shuf.p7[k]=shuffleOpts(set.qs[qi].opts,set.qs[qi].ans);});
+  const pass=set.double
+    ?`<div class="double-passage"><div class="reading">${set.passageA}</div><div class="reading">${set.passageB}</div></div>`
+    :`<div class="reading">${set.passage}</div>`;
+  const qs=set.qs.map((q,qi)=>{
+    const key=`${si}-${qi}`;
+    const s=shuf.p7[key];
+    const done=state.p7.answered[key]!==undefined;
+    const chosen=state.p7.answered[key];
+    const c=s.ans;
+    return `<div class="q-card" id="p7-card-${si}-${qi}" style="margin-bottom:10px">
+      <div class="miss-badge" id="p7-badge-${si}-${qi}"></div>
+      <div class="q-num">Set ${si+1} — Q${qi+1}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="p7-opts-${si}-${qi}">
+        ${s.opts.map((o,j)=>{
+          let cls='opt'+(done?' disabled':'');
+          if(done){if(j===c)cls+=' correct';else if(j===chosen&&chosen!==c)cls+=' wrong';}
+          return `<div class="${cls}"${!done?` onclick="answerP7(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
+        }).join('')}
+      </div>
+      <div class="explanation${done?' show':''}" id="p7-exp-${si}-${qi}">💡 ${q.exp}</div>
+    </div>`;
   }).join('');
+  const allDone=set.qs.every((_,qi)=>state.p7.answered[`${si}-${qi}`]!==undefined);
+  document.getElementById('p7-sets').innerHTML=`<div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P7.length} — ${set.type}</div>${pass}${qs}</div>
+  <div class="next-area" id="p7-next"${allDone?'':' style="display:none"'}>
+    ${si+1<P7.length?`<button class="btn btn-primary" onclick="nextQ('p7')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p7')">結果を見る →</button>`}
+  </div>`;
+  set.qs.forEach((_,qi)=>{if(state.p7.answered[`${si}-${qi}`]!==undefined)updateMissBadge('p7',`${si}-${qi}`);});
 }
 function answerP7(si,qi,chosen){
   const key=`${si}-${qi}`;
@@ -720,24 +777,47 @@ function answerP7(si,qi,chosen){
   updateScore('p7',state.p7.correct,Object.keys(state.p7.answered).length,tot);
   updateMissBtn('p7');
   checkNorma('p7');
+  const set=P7[si];
+  const allDone=set.qs.every((_,qi2)=>state.p7.answered[`${si}-${qi2}`]!==undefined);
+  if(allDone)showNextBtn('p7');
 }
 
 // ============================================================
 // RENDER — Instant Translation
 // ============================================================
 function renderInstant(){
-  document.getElementById('instant-questions').innerHTML=INSTANT.map((q,i)=>`
-    <div class="inst-card" id="inst-card-${i}">
+  const i=cursor.instant;
+  if(i>=INSTANT.length){showPartDone('instant');return;}
+  const q=INSTANT[i];
+  const done=state.instant.answered[i]!==undefined;
+  const val=state.instant.answered[i];
+  const isCorrect=val===1;
+  const isSkip=done&&val===0;
+  let cardCls='inst-card';
+  if(done)cardCls+=isCorrect?' state-correct':isSkip?' state-skip':' state-wrong';
+  let resHtml='';
+  if(done){
+    resHtml=buildAnswerHtml(q,'',isCorrect?true:null);
+    resHtml+=isCorrect?'<span class="result-badge badge-ok">○ 正解</span>'
+      :isSkip?'<span class="result-badge badge-skip">スキップ</span>'
+      :'<span class="result-badge badge-ng">× 不正解</span>';
+  }
+  document.getElementById('instant-questions').innerHTML=`
+    <div class="${cardCls}" id="inst-card-${i}">
       <div class="miss-badge" id="inst-badge-${i}"></div>
       <div class="q-num">問題 ${i+1} / ${INSTANT.length}</div>
       <div class="inst-jp">${esc(q.jp)}</div>
-      <textarea class="inst-input" id="inst-in-${i}" placeholder="英文を入力してください…"></textarea>
+      <textarea class="inst-input" id="inst-in-${i}" placeholder="英文を入力してください…"${done?' disabled':''}></textarea>
       <div class="inst-actions" id="inst-act-${i}">
-        <button class="btn btn-primary btn-sm" onclick="checkInstant(${i})">答え合わせ</button>
-        <button class="btn btn-ghost btn-sm" onclick="skipInstant(${i})">わからない</button>
+        ${!done?`<button class="btn btn-primary btn-sm" onclick="checkInstant(${i})">答え合わせ</button>
+        <button class="btn btn-ghost btn-sm" onclick="skipInstant(${i})">わからない</button>`:''}
       </div>
-      <div class="inst-result" id="inst-res-${i}"></div>
-    </div>`).join('');
+      <div class="inst-result${done?' show':''}${done?(isCorrect?' correct-result':isSkip?' skip-result':' wrong-result'):''}" id="inst-res-${i}">${resHtml}</div>
+    </div>
+  <div class="next-area" id="instant-next"${done?'':' style="display:none"'}>
+    ${i+1<INSTANT.length?`<button class="btn btn-primary" onclick="nextQ('instant')">次の問題へ →</button>`:`<button class="btn btn-primary" onclick="nextQ('instant')">結果を見る →</button>`}
+  </div>`;
+  if(done)updateMissBadge('instant',i);
 }
 
 function checkInstant(i){
@@ -746,7 +826,6 @@ function checkInstant(i){
   inp.disabled=true;
   const userAns=inp.value.trim();
   const q=INSTANT[i];
-  // show model answer + self-eval buttons
   const actEl=document.getElementById(`inst-act-${i}`);
   actEl.innerHTML=`
     <div style="font-size:.8rem;color:var(--sub);margin-bottom:6px">自己評価してください：</div>
@@ -756,7 +835,7 @@ function checkInstant(i){
     </div>`;
   const resEl=document.getElementById(`inst-res-${i}`);
   resEl.className='inst-result show checking';
-  resEl.innerHTML=buildAnswerHtml(q, userAns, null);
+  resEl.innerHTML=buildAnswerHtml(q,userAns,null);
 }
 
 function skipInstant(i){
@@ -772,6 +851,7 @@ function skipInstant(i){
   updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
   updateMissBtn('instant');
   checkNorma('instant');
+  showNextBtn('instant');
 }
 
 function evalInstant(i,isCorrect){
@@ -798,18 +878,50 @@ function evalInstant(i,isCorrect){
   updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
   updateMissBtn('instant');
   checkNorma('instant');
+  showNextBtn('instant');
 }
 
-function buildAnswerHtml(q, userAns, result){
+function buildAnswerHtml(q,userAns,result){
   let html='';
-  if(userAns) html+=`<div style="margin-bottom:8px"><span style="font-size:.76rem;color:var(--sub)">あなたの回答：</span><br><span style="color:var(--text)">${esc(userAns)}</span></div>`;
+  if(userAns)html+=`<div style="margin-bottom:8px"><span style="font-size:.76rem;color:var(--sub)">あなたの回答：</span><br><span style="color:var(--text)">${esc(userAns)}</span></div>`;
   html+=`<div class="model-answer"><strong>模範解答：</strong>${esc(q.en)}</div>`;
-  if(q.alt) html+=`<div style="font-size:.78rem;color:var(--sub);margin-top:2px">別解：${esc(q.alt)}</div>`;
+  if(q.alt)html+=`<div style="font-size:.78rem;color:var(--sub);margin-top:2px">別解：${esc(q.alt)}</div>`;
   html+=`<div class="inst-exp">💡 ${q.exp}</div>`;
   return html;
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ============================================================
+// ONE-AT-A-TIME NAVIGATION
+// ============================================================
+function showNextBtn(part){
+  const el=document.getElementById(`${part}-next`);
+  if(el)el.style.display='';
+}
+function nextQ(part){
+  cursor[part]++;
+  if(part==='p5')renderP5();
+  else if(part==='p6')renderP6();
+  else if(part==='p7')renderP7();
+  else renderInstant();
+  document.getElementById(part).scrollIntoView({behavior:'smooth',block:'start'});
+}
+function showPartDone(part){
+  const totals={p5:P5.length,p6:P6.reduce((s,x)=>s+x.qs.length,0),p7:P7.reduce((s,x)=>s+x.qs.length,0),instant:INSTANT.length};
+  const correct=state[part].correct;
+  const answered=Object.keys(state[part].answered).length;
+  const pct=answered>0?Math.round(correct/answered*100):0;
+  const contentId={p5:'p5-questions',p6:'p6-sets',p7:'p7-sets',instant:'instant-questions'}[part];
+  document.getElementById(contentId).innerHTML=`<div class="done-card">
+    <h3>🎉 全問完了！</h3>
+    <p>正解 ${correct} / ${answered} 問（${pct}%）</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="resetPart('${part}')">🔄 もう一度チャレンジ</button>
+      ${Object.keys(mistakes[part]).length>0?`<button class="btn-review" onclick="enterReviewMode('${part}')">🔁 復習モード</button>`:''}
+    </div>
+  </div>`;
+}
 
 // ============================================================
 // MISS BADGE
@@ -826,7 +938,7 @@ function updateMissBadge(part,key){
 // ============================================================
 // REVIEW MODE
 // ============================================================
-const review={active:false,part:null,queue:[],answered:{},correct:0,round:1};
+const review={active:false,part:null,queue:[],answered:{},correct:0,round:1,cursor:0};
 
 function enterReviewFromNorma(){
   const part=_normaCurrentPart;
@@ -843,9 +955,8 @@ function enterReviewMode(part){
   const keys=Object.keys(mistakes[part]);
   if(keys.length===0){alert('まだ間違えた問題がありません。');return;}
   review.active=true; review.part=part; review.round=1;
-  review.answered={}; review.correct=0;
+  review.answered={}; review.correct=0; review.cursor=0;
   review.queue=buildReviewQueue(part,keys);
-  // hide normal content, show review
   const contentId={p5:'p5-questions',p6:'p6-sets',p7:'p7-sets',instant:'instant-questions'}[part];
   document.getElementById(contentId).style.display='none';
   document.getElementById(`${part}-review`).style.display='block';
@@ -862,10 +973,13 @@ function exitReviewMode(part){
   document.getElementById(contentId).style.display='';
   document.getElementById(`${part}-review`).style.display='none';
   document.getElementById(`${part}-review-bar`).style.display='none';
+  if(part==='p5')renderP5();
+  else if(part==='p6')renderP6();
+  else if(part==='p7')renderP7();
+  else renderInstant();
 }
 
 function buildReviewQueue(part,keys){
-  // Fisher-Yates shuffle of keys
   const arr=[...keys];
   for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
   return arr.map(key=>{
@@ -887,37 +1001,41 @@ function buildReviewQueue(part,keys){
 }
 
 function renderReview(part){
-  const q=review.queue;
-  let html=q.map((item,i)=>{
-    if(item.type==='instant'){
-      const idx=parseInt(item.key);
-      return `<div class="inst-card" id="rv-card-${i}">
-        <div class="q-num">復習 ${i+1}/${q.length} — 元 問${idx+1}</div>
-        <div class="inst-jp">${esc(item.q.jp)}</div>
-        <textarea class="inst-input" id="rv-in-${i}" placeholder="英文を入力してください…"></textarea>
-        <div class="inst-actions" id="rv-act-${i}">
-          <button class="btn btn-primary btn-sm" onclick="checkRvInstant(${i})">答え合わせ</button>
-          <button class="btn btn-ghost btn-sm" onclick="skipRvInstant(${i})">わからない</button>
-        </div>
-        <div class="inst-result" id="rv-res-${i}"></div>
-      </div>`;
-    }
+  const i=review.cursor;
+  const item=review.queue[i];
+  if(!item){showRvComplete(part);return;}
+  let html='';
+  if(item.type==='instant'){
+    html=`<div class="inst-card" id="rv-card-${i}">
+      <div class="q-num">復習 ${i+1}/${review.queue.length} — 元 問${parseInt(item.key)+1}</div>
+      <div class="inst-jp">${esc(item.q.jp)}</div>
+      <textarea class="inst-input" id="rv-in-${i}" placeholder="英文を入力してください…"></textarea>
+      <div class="inst-actions" id="rv-act-${i}">
+        <button class="btn btn-primary btn-sm" onclick="checkRvInstant(${i})">答え合わせ</button>
+        <button class="btn btn-ghost btn-sm" onclick="skipRvInstant(${i})">わからない</button>
+      </div>
+      <div class="inst-result" id="rv-res-${i}"></div>
+    </div>`;
+  } else {
     const {opts,ans}=item.shuf;
     const label=item.type==='p5'?`元 Q${parseInt(item.key)+1}`
       :item.type==='p6'?`元 Q${item.qnum}`:`Set${item.si+1}-Q${item.qi+1}`;
     const qText=item.type==='p5'?item.q.q.replace(/-------/,'<em>-------</em>')
       :item.type==='p6'?`空欄 (${item.qnum}) に入る最も適切なものを選んでください。`
       :item.q.q;
-    return `<div class="q-card" id="rv-card-${i}">
-      <div class="q-num">復習 ${i+1}/${q.length} — ${label}</div>
+    html=`<div class="q-card" id="rv-card-${i}">
+      <div class="q-num">復習 ${i+1}/${review.queue.length} — ${label}</div>
       <div class="q-text">${qText}</div>
       <div class="options" id="rv-opts-${i}">
         ${opts.map((o,j)=>`<div class="opt" onclick="answerReview(${i},${j})">(${chr(j)}) ${o}</div>`).join('')}
       </div>
       <div class="explanation" id="rv-exp-${i}">💡 ${item.q.exp}</div>
     </div>`;
-  }).join('');
-  html+=`<div id="${part}-review-complete" class="review-complete" style="display:none">
+  }
+  html+=`<div class="next-area" id="rv-next" style="display:none">
+    ${i+1<review.queue.length?`<button class="btn btn-primary" onclick="nextRvQ('${part}')">次の問題へ →</button>`:`<button class="btn btn-primary" onclick="showRvComplete('${part}')">結果を見る →</button>`}
+  </div>
+  <div id="${part}-review-complete" class="review-complete" style="display:none">
     <div style="font-size:1.3rem;font-weight:800;color:var(--accent);margin-bottom:8px">🎊 Round ${review.round} 完了！</div>
     <div style="font-size:.86rem;color:var(--sub);margin-bottom:20px" id="${part}-rv-result">—</div>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
@@ -926,6 +1044,12 @@ function renderReview(part){
     </div>
   </div>`;
   document.getElementById(`${part}-review`).innerHTML=html;
+}
+
+function nextRvQ(part){
+  review.cursor++;
+  renderReview(part);
+  document.getElementById(part).scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function answerReview(i,chosen){
@@ -942,7 +1066,8 @@ function answerReview(i,chosen){
   if(chosen===ans){review.correct++;}
   else{mistakes[item.type][item.key]=(mistakes[item.type][item.key]||0)+1;updateMissBadge(item.type,item.key);updateMissBtn(item.type);}
   updateRvScore();
-  if(Object.keys(review.answered).length===review.queue.length)setTimeout(()=>showRvComplete(review.part),400);
+  const rvNext=document.getElementById('rv-next');
+  if(rvNext)rvNext.style.display='';
 }
 
 function checkRvInstant(i){
@@ -971,7 +1096,8 @@ function skipRvInstant(i){
   mistakes[item.type][item.key]=(mistakes[item.type][item.key]||0)+1;
   updateMissBadge(item.type,item.key); updateMissBtn(item.type);
   updateRvScore();
-  if(Object.keys(review.answered).length===review.queue.length)setTimeout(()=>showRvComplete(review.part),400);
+  const rvNext=document.getElementById('rv-next');
+  if(rvNext)rvNext.style.display='';
 }
 function evalRvInstant(i,isCorrect){
   if(review.answered[i]!==undefined)return;
@@ -994,7 +1120,8 @@ function evalRvInstant(i,isCorrect){
     updateMissBadge(item.type,item.key); updateMissBtn(item.type);
   }
   updateRvScore();
-  if(Object.keys(review.answered).length===review.queue.length)setTimeout(()=>showRvComplete(review.part),400);
+  const rvNext=document.getElementById('rv-next');
+  if(rvNext)rvNext.style.display='';
 }
 
 function updateRvScore(){
@@ -1005,13 +1132,14 @@ function showRvComplete(part){
   const total=review.queue.length, correct=review.correct;
   const pct=total>0?Math.round(correct/total*100):0;
   const el=document.getElementById(`${part}-review-complete`);
+  if(!el){review.cursor=review.queue.length;renderReview(part);return;}
   document.getElementById(`${part}-rv-result`).textContent=
     `${correct}/${total}問正解（${pct}%）— ${pct>=80?'素晴らしい！':'もう一周して定着させよう！'}`;
   el.style.display='block';
   el.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function nextReviewRound(part){
-  review.round++; review.answered={}; review.correct=0;
+  review.round++; review.answered={}; review.correct=0; review.cursor=0;
   review.queue=buildReviewQueue(part,Object.keys(mistakes[part]));
   document.getElementById(`${part}-round`).textContent=review.round;
   document.getElementById(`${part}-review-score`).textContent='0/0';
@@ -1085,14 +1213,16 @@ function missItem(id,num,text,count){
 
 function jumpTo(id){
   closeMissPanel();
-  const el=document.getElementById(id);
-  if(!el)return;
-  setTimeout(()=>{
-    el.scrollIntoView({behavior:'smooth',block:'center'});
-    const orig=el.style.borderColor;
-    el.style.borderColor='var(--accent)';
-    setTimeout(()=>{el.style.borderColor=orig||'';},1600);
-  },200);
+  let m;
+  if((m=id.match(/^p5-card-(\d+)$/))){
+    cursor.p5=parseInt(m[1]); renderP5();
+  } else if((m=id.match(/^p6-q-(\d+)-\d+$/))){
+    cursor.p6=parseInt(m[1]); renderP6();
+  } else if((m=id.match(/^p7-card-(\d+)-\d+$/))){
+    cursor.p7=parseInt(m[1]); renderP7();
+  } else if((m=id.match(/^inst-card-(\d+)$/))){
+    cursor.instant=parseInt(m[1]); renderInstant();
+  }
 }
 
 function updateMissBtn(part){
@@ -1112,11 +1242,19 @@ function updateScore(part,correct,answered,total){
 
 function resetPart(part){
   if(!confirm('このパートの回答をリセットしますか？'))return;
-  if(review.active&&review.part===part)exitReviewMode(part);
+  if(review.active&&review.part===part){
+    review.active=false; review.part=null;
+    document.getElementById(`${part}-review`).style.display='none';
+    document.getElementById(`${part}-review-bar`).style.display='none';
+  }
   state[part]={answered:{},correct:0};
   mistakes[part]={};
   norma[part]=0;
   normaChk[part]={answered:0,correct:0};
+  cursor[part]=0;
+  if(part==='p5')shuf.p5=[];
+  else if(part==='p6')shuf.p6={};
+  else if(part==='p7')shuf.p7={};
   const totals={p5:P5.length,p6:P6.reduce((s,x)=>s+x.qs.length,0),p7:P7.reduce((s,x)=>s+x.qs.length,0),instant:INSTANT.length};
   if(part==='p5')renderP5();
   else if(part==='p6')renderP6();
