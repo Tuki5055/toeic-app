@@ -159,6 +159,12 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .done-card{background:var(--surface);border-radius:12px;padding:28px 20px;text-align:center;border:1px solid var(--green);margin-bottom:16px}
 .done-card h3{font-size:1.2rem;font-weight:800;color:var(--green);margin-bottom:8px}
 .done-card p{font-size:.84rem;color:var(--sub);margin-bottom:18px}
+/* ── Rich explanation ── */
+.rich-exp{display:flex;flex-direction:column;gap:9px}
+.rich-en{font-size:.88rem;color:var(--accent);font-weight:600;line-height:1.65;padding:8px 12px;background:#1a1800;border-radius:6px;border-left:3px solid var(--accent)}
+.rich-ja{font-size:.82rem;color:var(--sub);line-height:1.55;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.rich-section{font-size:.81rem;line-height:1.65;color:var(--sub)}
+.rich-label{font-weight:700;color:var(--text);margin-bottom:2px;display:block}
 /* ── Norma Modal ── */
 .norma-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;opacity:0;pointer-events:none;transition:opacity .25s}
 .norma-overlay.show{opacity:1;pointer-events:auto}
@@ -539,6 +545,152 @@ const INSTANT=[
 ];
 
 // ============================================================
+// ENHANCED EXPLANATION DATA
+// ============================================================
+const P5_EXP=[
+  {full_ja:"マネージャーは全従業員に、その日の終わりまでにレポートを提出するよう求めた。",tip:"by と until の違いはTOEIC最頻出。by＝期限（完了）、until＝継続（〜まで続ける）。",mem:"submit/complete など完了動詞 → by。stay/wait など継続動詞 → until。"},
+  {full_ja:"新しい規制は会社のすべての部門に大きな影響を与えるだろう。",tip:"動詞を修飾するのは副詞。空欄が動詞を挟む位置（will __ affect）なら副詞を選ぶ。",mem:"significant（形容詞）→ significantly（副詞）。-ly が副詞の目印。"},
+  {full_ja:"金曜日の午後に会議室が利用可能かどうかお知らせください。",tip:"be 動詞の補語は形容詞。available（利用可能）はTOEICで最頻出の形容詞のひとつ。",mem:"available（利用可能）↔ unavailable（利用不可）。'Is the room available?'は定番。"},
+  {full_ja:"プロジェクトは進める前に部門長の承認が必要です。",tip:"冠詞 the の直後は名詞。approve（動詞）→ approval（名詞）の品詞変換を押さえる。",mem:"approve → approval。'get/obtain approval'（承認を得る）はビジネス定番コロケーション。"},
+  {full_ja:"当社は高品質な製品を届けることで信頼できる評判を築いてきた。",tip:"名詞 reputation を修飾するのは形容詞。reliable（信頼できる）はTOEIC頻出形容詞。",mem:"rely（頼る）→ reliable（信頼できる）。'a reliable source/partner'も覚える。"},
+  {full_ja:"すべての技術者は使用前に必ず注意深く機器を点検しなければならない。",tip:"動詞 check を修飾するのは副詞。careful（形容詞）→ carefully（副詞）。",mem:"must + 副詞 + 動詞の語順。'carefully check/review/examine'は頻出コロケーション。"},
+  {full_ja:"管理チームが次の月曜日までにすべての申請書を審査する。",tip:"名詞 team を修飾するのは形容詞。managerial＝management の形容詞形（管理上の）。",mem:"manage→manager→management→managerial。語族まとめて覚えると効率的。"},
+  {full_ja:"当社の価格設定は業界の他の企業と競争力がある。",tip:"be 動詞の補語は形容詞。competitive（競争力のある）はビジネス英語の必須語。",mem:"compete→competitive。'competitive price/salary/market'はTOEIC頻出コロケーション。"},
+  {full_ja:"営業時間後に電話した顧客は翌日すぐに折り返し電話を受けることになる。",tip:"動詞 receive を修飾するのは副詞。prompt（迅速な）→ promptly（迅速に）。",mem:"'respond/reply promptly'（迅速に返答する）はビジネス英語で超頻出。"},
+  {full_ja:"今年の年次会議の参加者数は予想を上回った。",tip:"主語になれるのは名詞のみ。Attendant（参加者）・Attendance（出席数）の違いも確認。",mem:"attend（出席する）→ attendance（出席数）→ attendant（参加者・係員）。"},
+  {full_ja:"取締役会は合併を承認するために全会一致で投票した。",tip:"動詞 voted を修飾するのは副詞。unanimous（全会一致の）→ unanimously（全会一致で）。",mem:"uni-（1つ）が語根。'unanimously agreed/approved'はTOEIC頻出コロケーション。"},
+  {full_ja:"彼女は新製品発売の成功に並外れた貢献をした。",tip:"冠詞 an（母音前）の後は形容詞。exception→exceptional（並外れた/例外的な）。",mem:"exception（例外）→ exceptional（並外れた）。'an exceptional candidate'（優秀な候補者）も頻出。"},
+  {full_ja:"この職にはハイレベルな英語の習熟度が求められる。",tip:"a level of の後は名詞。proficient（形容詞）→ proficiency（名詞）。",mem:"proficient（熟達した）→ proficiency（習熟度）。'English proficiency test'（英語能力試験）。"},
+  {full_ja:"安全マニュアルはすべての新入社員が徹底的に読まなければならない。",tip:"be read（受動態）を修飾するのは副詞。thorough（徹底的な）→ thoroughly（徹底的に）。",mem:"thorough → thoroughly。'thoroughly reviewed/checked'（徹底的に確認された）は文書頻出。"},
+  {full_ja:"新しいスケジュールは以前のものより柔軟だ。",tip:"比較級 more の後は形容詞。flex（曲げる）→ flexible（柔軟な）。",mem:"flexible（柔軟な）↔ inflexible/rigid（硬直した）。'flexible schedule/hours'はビジネス頻出。"},
+  {full_ja:"その会社は50年以上にわたって営業を続けている。",tip:"for + 期間 は継続の現在完了形のサイン。'has been in operation'で継続状態を表す。",mem:"for（期間）・since（起点）→ 現在完了形。'for over 50 years'が現在まで継続中のヒント。"},
+  {full_ja:"予算案は先週木曜日に財務委員会によって承認された。",tip:"last Thursday は過去の時点 → 過去形の受動態 was approved。現在完了は使えない。",mem:"last/yesterday/ago → 過去形（has approved ではなく was approved）。"},
+  {full_ja:"新しい支社は来春にオープンする予定だ。",tip:"next spring は未来 → will be（未来の受動態）。'will be + 過去分詞'の形を確認。",mem:"next/tomorrow/soon → will。'will be opened/launched/completed'は未来受動態の定番形。"},
+  {full_ja:"ディレクターが到着した時には、チームはプレゼンを終えていた。",tip:"By the time S + 過去形 → S + 過去完了形（had + 過去分詞）が呼応する。",mem:"'By the time + 過去形' → 過去完了形。過去のある時点より前の完了を表す。"},
+  {full_ja:"当社の売上数字は過去3四半期にわたって着実に増加している。",tip:"over the past + 期間 は現在完了形のサイン。'have + 過去分詞'を使う。",mem:"over/for + the past/last + 期間 → have/has + 過去分詞（現在完了）。"},
+  {full_ja:"マネージャーが電話した時、IT部門はソフトウェアの問題を解決中だった。",tip:"when節が割り込む進行中の動作 → 過去進行形（was/were + -ing）。",mem:"'when + 過去形'が割り込み → 過去進行形で背景の動作を表す。"},
+  {full_ja:"来週金曜日までには、建設チームが改装を終えているだろう。",tip:"by + 未来の時点 → 未来完了形（will have + 過去分詞）。TOEIC時制の難問。",mem:"by next Friday/by the end of the month → will have + 過去分詞（未来完了形）。"},
+  {full_ja:"その会社は昨会計年度に収益を20%増加させた。",tip:"last fiscal year は過去の時点 → 単純過去形。have increased（現在完了）は不可。",mem:"last/ago/yesterday → 過去形のみ。現在完了と過去形の選択問題はTOEIC頻出。"},
+  {full_ja:"その方針はすべてのスタッフが常に識別バッジを着用することを義務付けている。",tip:"現在の規則・習慣 → 三単現の現在形（requires）。'require A to do'の構文も重要。",mem:"require A to do（Aに〜させる）。policy/rule/regulation + 動詞 → 三単現に注意。"},
+  {full_ja:"CEOは退職する前、この業界で25年間働いていた。",tip:"before he retired（過去の基準点）より前の継続 → 過去完了（had worked）。",mem:"before/when + 過去形の節があれば、それより前の動作は過去完了形（had + 過去分詞）。"},
+  {full_ja:"チェンさんは新しいマーケティングキャンペーンを担当している。",tip:"in charge of（〜を担当して）は慣用表現。前置詞の問題は熟語として丸ごと覚える。",mem:"in charge of = responsible for（担当・責任がある）。どちらも互換可能な頻出表現。"},
+  {full_ja:"弁護士はクライアントの代理として契約書に署名した。",tip:"on behalf of（〜の代わりに）は固定表現。in behalf of（米）と混同しない。",mem:"on behalf of = in place of = as a representative of（代理として）。"},
+  {full_ja:"すべてのレポートは締め切りまでに提出されなければならない。",tip:"by the deadline（締め切りまでに）は完了の期限。until とは意味が異なる。",mem:"by = no later than（遅くとも〜までに）。until（〜まで続ける）とセットで区別。"},
+  {full_ja:"給与に加えて、従業員は充実した福利厚生パッケージを受け取る。",tip:"In addition to（〜に加えて）は定番の接続表現。",mem:"In addition to = Besides = Apart from = On top of（〜に加えて）はすべて同義。"},
+  {full_ja:"基調講演者は年次会議でその調査結果を発表する予定だ。",tip:"会議・イベントの場所には at。in（空間の中）・on（面の上）と使い分ける。",mem:"at a conference/seminar/event（イベントにて）はat固定。'present at a meeting'は定番。"},
+  {full_ja:"研修セッションは午前9時から正午まで予定されています。",tip:"from A until/to B（AからBまで）で時間の範囲を表す。",mem:"from A to/until B（〜から〜まで）。between A and B も時間範囲を示す類似表現。"},
+  {full_ja:"経理部を除くすべてのスタッフにこのメモを転送してください。",tip:"except（〜を除いて）は名詞句を取る前置詞。despite（〜にもかかわらず）と混同しない。",mem:"except（除外）↔ besides（〜に加えて）は反対の意味。'except for'の形もよく使われる。"},
+  {full_ja:"大雨にもかかわらず、屋外イベントは予定通り続行された。",tip:"Despite は名詞句を取る前置詞。Although は接続詞（節が続く）。品詞の区別が重要。",mem:"Despite + 名詞句。Although + S + V（節）。この区別はTOEIC Part5の定番問題。"},
+  {full_ja:"価格は高いが、製品の品質がそのコストを正当化する。",tip:"Although は逆接の接続詞（節が続く）。Despite は前置詞（名詞句）との区別に注意。",mem:"Although/Though/Even though + S + V（節）で逆接。Despite/In spite of + 名詞句。"},
+  {full_ja:"クライアントが緊急で要請しているので、私たちはレポートを仕上げる必要がある。",tip:"because は理由を示す接続詞。because of は前置詞（名詞句）との区別に注意。",mem:"because + S + V（節）↔ because of + 名詞句。'due to'も because of と同義。"},
+  {full_ja:"荷物は時間通りに到着した。しかし、請求書にはいくつかの誤りがあった。",tip:"セミコロン（;）の後に来る接続詞副詞。however（逆接）はTOEIC最頻出の接続詞副詞。",mem:"however/nevertheless（逆接）・therefore/thus（順接）・moreover/furthermore（追加）を区別。"},
+  {full_ja:"売上は何ヶ月も低下しているため、経営陣は再編成を決定した。",tip:"therefore は結果・結論を示す接続詞副詞。セミコロンの後に置いてカンマと一緒に使う。",mem:"therefore = as a result = consequently = thus（したがって）は同義表現。"},
+  {full_ja:"予算が承認されない限り、プロジェクトは前進できない。",tip:"unless（〜でない限り）= if not。条件の否定形として使う。",mem:"unless = if ... not。'unless stated otherwise'（特に断りのない限り）もビジネス頻出。"},
+  {full_ja:"彼女が会議に出席している間、アシスタントはすべてのかかってきた電話に対応した。",tip:"while は同時進行を示す接続詞。although（逆接）との使い分けに注意。",mem:"while（〜している間）= during + 名詞。'while attending'（出席している間）は定番。"},
+  {full_ja:"木曜日までにレポートを完成させるという条件で、金曜日に休暇を取ってよい。",tip:"provided that（〜という条件で）は条件を示す重要な接続詞句。unless と逆の意味。",mem:"provided that = as long as = on condition that（条件付きで）はすべて同義で互換可能。"},
+  {full_ja:"カスタマーサービスラインにお電話いただき、現在のプロモーションについてお問い合わせください。",tip:"inquire about（〜について問い合わせる）。require（必要とする）・acquire（取得する）と混同しない。",mem:"inquire = ask about（問い合わせる）。名詞形 inquiry（問い合わせ）も覚える。"},
+  {full_ja:"そのホテルは宴会や特別イベントで最大500名の宾客を収容できる。",tip:"accommodate は「収容する」以外に「対応する・宿泊させる」の意味もある多義語。",mem:"accommodate requests/needs（要求に対応する）。accommodation（宿泊施設）も関連語。"},
+  {full_ja:"会社は業務に関連する出張費をすべて従業員に払い戻す。",tip:"reimburse A for B（BについてAに払い戻す）。reimbursement（払い戻し）も覚える。",mem:"reimburse = refund = repay expenses（費用を払い戻す）。TOEIC頻出のビジネス動詞。"},
+  {full_ja:"新CEOはより柔軟なテレワークポリシーを実施する計画だ。",tip:"implement（実施する）= carry out/put into practice。政策・計画に使う動詞。",mem:"implement a policy/plan/system（方針・計画・システムを実施する）はTOEIC頻出コロケーション。"},
+  {full_ja:"2つのチームはプロジェクトを時間通りに完了させるために緊密に協力する。",tip:"collaborate（協力する）= cooperate/work together。collaborate with（〜と協力する）の形が基本。",mem:"collaborate with + 人/組織（〜と協力する）。collaboration（協力）も同時に覚える。"},
+  {full_ja:"新しいソフトウェアは部門間のコミュニケーションを促進するよう設計されている。",tip:"facilitate（促進する・容易にする）= promote/enhance/streamline。TOEIC最頻出動詞。",mem:"facilitate = make easier（容易にする）。'facilitate communication/process'は定番コロケーション。"},
+  {full_ja:"研究チームは結果を検証するために一連のテストを実施するよう依頼された。",tip:"carry out（実施する）= conduct/perform。句動詞問題では意味を丸ごと覚える。",mem:"carry out = conduct = perform（実施する）。'carry out research/experiments/tests'が定番。"},
+  {full_ja:"監査人は先四半期に報告された会計上の不正を調査する。",tip:"look into（調査する）= investigate/examine。句動詞の使い分けはTOEIC Part5/6で頻出。",mem:"look into（調査）vs look over（確認）vs look after（世話）vs look up（調べる）。"},
+  {full_ja:"嵐のため、取締役会は来週まで延期された。",tip:"put off（延期する）= postpone/delay/reschedule。受動態 was put off も頻出。",mem:"put off = postpone（延期）。'The meeting was postponed/put off.'は同義。"},
+  {full_ja:"デザインチームは締め切り前に創造的な解決策を思いつく必要がある。",tip:"come up with（思いつく）= devise/develop/produce。4語句の句動詞は覚える価値大。",mem:"come up with an idea/solution/plan（アイデア・解決策・計画を思いつく）は頻出コロケーション。"},
+];
+const P6_EXP={
+  "0-0":{full_ja:"すべてのフルタイム従業員は1年あたり15日間の有給休暇を受ける権利があります。",tip:"be entitled to（〜を受ける権利がある）はTOEIC頻出の受動態表現。",mem:"entitle A to B → be entitled to B（Bを受ける権利がある）。"},
+  "0-1":{full_ja:"未使用の休暇日を繰り越したい従業員は12月15日までに正式なリクエストを提出しなければなりません。",tip:"formally（正式に）と formerly（以前に）はスペルが似た超頻出混同ペア。",mem:"formal（公式）→ formally（正式に）。formerly（以前は）はformer（前の）の副詞形。"},
+  "0-2":{full_ja:"この日以降に提出されたリクエストは考慮されません。",tip:"will not be considered（考慮されない）は受動態。'consider'はTOEIC頻出動詞。",mem:"consider + 名詞/動名詞。be considered（考慮される）の受動態はビジネス文書に頻出。"},
+  "0-3":{full_ja:"休暇申請の承認はあなたの直属の上司の裁量に委ねられています。",tip:"at the discretion of（〜の裁量で）は固定表現。前置詞 at は慣用句として覚える。",mem:"at one's discretion（裁量で）はビジネス・法律文書の定番表現。"},
+  "1-0":{full_ja:"四半期業績レビューは5月3日午前9時に本会議室で行われます。",tip:"take place（開催される）= be held/occur。主語はイベント・会議であることが多い。",mem:"take place = be held（開催される）。'The event takes place'は定番表現。"},
+  "1-1":{full_ja:"すべての部門長は10分のプレゼンテーションを準備することが求められています。",tip:"are required to do（〜することが求められる）はTOEIC頻出の受動態表現。",mem:"be required to = be expected to = be asked to（〜することを求められる）はほぼ同義。"},
+  "1-2":{full_ja:"十分な時間を編集と技術的な確認のために確保できます。",tip:"前置詞 for の後は名詞か動名詞。edit → editing（動名詞/名詞）が正解。",mem:"for + 動名詞(-ing)で目的・用途を表す。'for editing/reviewing/processing'は頻出。"},
+  "1-3":{full_ja:"期限までに資料を提出しないと、プレゼンが延期されることになる可能性があります。",tip:"result in（〜という結果になる）vs result from（〜が原因で起きる）の方向に注意。",mem:"result in（結果として〜になる）↔ result from（〜が原因で起きる）。"},
+  "2-0":{full_ja:"Greenfield Solutionsはシニアマーケティングアナリストのポジションの応募を受け付けています。",tip:"is accepting applications（申し込みを受け付けている）は現在進行形。採用広告の定番表現。",mem:"accept applications（申し込みを受け付ける）は求人広告で必ず登場する表現。"},
+  "2-1":{full_ja:"理想的な候補者はデジタルマーケティングで5年以上の経験と成功キャンペーンの実績を持ちます。",tip:"a proven track record of（〜における実績）はビジネス/採用文書の必須フレーズ。",mem:"track record（実績）。'have a strong track record in'（〜での強い実績がある）も覚える。"},
+  "2-2":{full_ja:"さらに、応募者は強力な分析スキルとデータ可視化ツールの習熟度が必要です。",tip:"Additionally（さらに）は条件・情報を追加する接続詞副詞。Moreover/Furthermore と同義。",mem:"Additionally = Moreover = Furthermore（さらに）↔ However（しかし）は逆接。"},
+  "2-3":{full_ja:"主な責務には戦略の策定、SNSの管理、市場トレンドの分析が含まれます。",tip:"and で並列された動名詞（developing, managing, analyzing）の並列構造に注意。",mem:"並列構造では品詞を統一する。'developing, managing, and analyzing'はすべて動名詞。"},
+  "3-0":{full_ja:"改装期間中、特定のエリアは一時的にしかアクセスできなくなります。",tip:"形容詞 accessible を修飾するのは副詞 temporarily（一時的に）。",mem:"temporary（一時的な）→ temporarily（一時的に）。'temporarily closed/unavailable'は頻出。"},
+  "3-1":{full_ja:"3・4階の従業員は1階の仮設ワークスペースに移動させられます。",tip:"will be relocated to（〜に移動させられる）は未来の受動態。",mem:"relocate to（〜に移転する）。'be relocated'は人や企業の移転に使う頻出表現。"},
+  "3-2":{full_ja:"改装は6週間以内に完了すると予定されています。",tip:"is expected to（〜すると予想・予定される）はTOEIC最頻出の表現のひとつ。",mem:"be expected to / be scheduled to / be planned to（〜の予定）はすべてTOEIC頻出。"},
+  "3-3":{full_ja:"ご質問やご不明点があれば、担当のコーディネーターにお問い合わせください。",tip:"direct A to B（AをBに向ける・案内する）。please direct が命令形で使われる。",mem:"direct = refer = send（向ける・案内する）。'direct your questions to'は定番表現。"},
+  "4-0":{full_ja:"新しいロイヤルティリワードプログラム、BrightRewardsのローンチを発表できることを嬉しく思います。",tip:"be thrilled to do の to は不定詞 → 動詞原形。be pleased/excited/delighted to do も同形。",mem:"thrilled/pleased/delighted/happy to do（〜できて嬉しい）はビジネスレターの書き出し定番。"},
+  "4-1":{full_ja:"500ポイントを貯めると、それを500円クーポンと交換できます。",tip:"have accumulated（現在完了形）で「ポイントが蓄積された」完了状態を表す。",mem:"accumulate points（ポイントを積み上げる）はポイント制度の定番表現。"},
+  "4-2":{full_ja:"獲得できるクーポン数に上限はありません。",tip:"there is no limit on（〜に制限はない）は名詞 limit を使う名詞構文。",mem:"limit on/to（〜の上限・制限）。'no limit on the number of'（数に上限なし）は頻出。"},
+  "4-3":{full_ja:"1回の取引で10,000円以上お買い上げの会員は自動的にゴールドティアにアップグレードされます。",tip:"will be upgraded to（〜にアップグレードされる）は未来の受動態。",mem:"upgrade to（〜にアップグレードする）。'be upgraded to a higher tier/level'は定番。"},
+  "5-0":{full_ja:"ご不便をおかけしたことを心よりお詫び申し上げます。",tip:"any inconvenience（いかなるご不便も）は不可算名詞として使う。",mem:"apologize for any inconvenience（ご不便をお詫びする）はビジネスレターの定番表現。"},
+  "5-1":{full_ja:"お客様の交換品のリクエストが承認されましたことをお知らせします。",tip:"has been approved（承認された）は現在完了の受動態。顧客対応文書で超頻出。",mem:"has been approved/confirmed/processed（承認・確認・処理された）は定型表現。"},
+  "5-2":{full_ja:"欠陥品を同封の送料無料ラベルを使って当社倉庫に返送していただきますようお願いします。",tip:"ask that S + 動詞原形（仮定法現在）。that節内は助動詞なしの原形動詞を使う。",mem:"ask/request/require/recommend that S + 動詞原形（仮定法現在）はTOEICで出題される。"},
+  "5-3":{full_ja:"ご質問があれば、0120-555-1234のカスタマーサポートチームにお気軽にご連絡ください。",tip:"do not hesitate to do（〜することをためらわないでください）の後は動詞原形。",mem:"do not hesitate to contact us（ご遠慮なくご連絡ください）はビジネス文書の締めの定番。"},
+  "6-0":{full_ja:"すべての従業員は6月30日までに年次コンプライアンス研修を修了することが求められています。",tip:"are required to（〜することが求められる）は義務を示す重要表現。",mem:"be required to = must = be obligated to（〜しなければならない）。公文書・規則で頻出。"},
+  "6-1":{full_ja:"この期限内に研修を修了しない従業員は懲戒処分を受ける可能性があります。",tip:"関係詞節 who fail to（〜しない）で先行詞 Employees を修飾。",mem:"employees who fail to do（〜しない従業員）。関係詞節で人物を限定する頻出構文。"},
+  "6-2":{full_ja:"「Annual Compliance 2026」コースに登録するには、会社の学習管理システムにログインしてください。",tip:"and で並列した命令形（log in and enroll）では動詞原形のみを使う。",mem:"enroll in（〜に登録する）= register for = sign up for。'enroll in a course'は頻出。"},
+  "6-3":{full_ja:"登録後は、ご都合のよい時に30日以内にすべてのモジュールを完了できます。",tip:"at your convenience（ご都合のよいときに）は名詞 convenience を使う慣用表現。",mem:"at your convenience = whenever it suits you（都合のよいときに）はビジネスの丁寧表現。"},
+};
+const P7_EXP={
+  "0-0":{tip:"メールの目的問題は件名（Subject）や第1段落冒頭に注目。'This is to inform/remind/announce'などを探す。",mem:"目的問題は選択肢を先に読み、本文でキーワードを探すスキャニングが有効。"},
+  "0-1":{tip:"行動指示問題は'please + 動詞'または'ensure/make sure + that節'を探す。",mem:"'please ensure they are addressed'（対処するようにしてください）が指示の核心部分。"},
+  "0-2":{tip:"連絡先問題は本文の'contact/reach/call + 人/部署'の周辺とメール/電話番号に注目。",mem:"連絡先・担当者問題は文書の末尾近くに答えが来ることが多い。"},
+  "1-0":{tip:"what is indicated/true問題は本文事実をそのまま言い換えた選択肢を選ぶ。誇張・未記載は不正解。",mem:"paraphrase（言い換え）を意識する。'up to 800'と'10-50'→ 大小両対応が根拠。"},
+  "1-1":{tip:"条件・要件問題は'must/need to/required/in order to'の周辺と'provided/if'節に注目。",mem:"特典・割引の条件は文書後半（Special rates/Discount部分）に記載されることが多い。"},
+  "1-2":{tip:"資格問題（who may receive）は'eligible/qualify/available to/for'周辺を探す。",mem:"割引・特典の対象者は'Nonprofit/member/registered'などの限定語の後に明記される。"},
+  "2-0":{tip:"NOT問題は各選択肢を本文と丁寧に照合する。明記されていない情報は正解にならない。",mem:"'Hot water will be unavailable between 9 A.M. and 1 P.M.'が正解の根拠。時間帯に注意。"},
+  "2-1":{tip:"how to問題は手順・方法が書かれた部分（'please contact/visit'）を探す。",mem:"'at least two days in advance'（少なくとも2日前に）という条件の確認も重要。"},
+  "2-2":{tip:"what is stated問題は選択肢の情報を本文で確認する。言い換えに注意。",mem:"'Cold water service will not be affected'が根拠。'not affected'='remains unchanged'。"},
+  "3-0":{tip:"会社・製品の説明問題は冒頭段落に集中。第1文・第2文が答えになることが多い。",mem:"'designs biodegradable packaging from agricultural waste'が根拠。paraphraseに注意。"},
+  "3-1":{tip:"理由・原因問題はダイレクトクォート（引用文）の前後か、'because/due to'周辺に注目。",mem:"CEO発言の前後に'increasing demand'という根拠がある。引用文は答えに直結することが多い。"},
+  "3-2":{tip:"使途・計画問題は'plan to/intend to/aim to/will use A to do'を探す。",mem:"'plans to use to expand manufacturing capacity and enter three new international markets'が根拠。"},
+  "4-0":{tip:"数字・期間の問題は本文の数値を正確に読む。間違えやすい数字（30日・90日）が複数登場する。",mem:"Standard Returns（通常返品）= 30日。Defective Items（欠陥品）= 90日。混同しない。"},
+  "4-1":{tip:"手順問題は'before/prior to'という条件の前の動作と指示文（'please + 動詞'）に注目。",mem:"'contact customer support before returning any defective item'が根拠。beforeに注目。"},
+  "4-2":{tip:"not eligible問題は'cannot/may not/are not eligible'周辺とNon-returnable Itemsセクションを確認。",mem:"'Software licenses…cannot be returned or exchanged under any circumstances'が根拠。"},
+  "5-0":{tip:"ダブルパッセージはまずEメールを読み、必要に応じてスケジュール・表と照合する。",mem:"'confirm your enrollment in Module 2'がEメールの直接の根拠。"},
+  "5-1":{tip:"deadline問題は'by/no later than/before'の後の日付に注目。",mem:"'All reading must be completed by September 19'が根拠。日付の混同に注意。"},
+  "5-2":{tip:"what to bring問題は指示文（'please bring/kindly bring'）の直後を確認。",mem:"'bring a printed confirmation email and a valid employee ID'が根拠文。andで2つ。"},
+  "5-3":{tip:"ダブルパッセージでは両方の文書を照合する問題が出る。スケジュール表を丁寧に読む。",mem:"表の'Team Dynamics'の行の'Location'列を確認 → Room B。"},
+  "6-0":{tip:"数字問題は本文中の具体的な数値を正確に確認する。複数の数字が出る場合は特に注意。",mem:"記事の'an upgrade of all 220 guest rooms'が根拠。400（conference center）と混同しない。"},
+  "6-1":{tip:"stated goal問題は企業の目標・方針リスト（'three priorities'など）が記載された部分を探す。",mem:"'three priorities: modernizing…, improving energy efficiency, and expanding'のリストを確認。"},
+  "6-2":{tip:"what did X praise問題はレビューの肯定表現（'impressed by/outstanding/excellent'）に注目。",mem:"'rooms are sleek and modern, conference facilities were outstanding'が称賛部分の根拠。"},
+  "6-3":{tip:"complaint問題はレビューの'however/but/my only complaint'の後に問題点が記載される。",mem:"'My only complaint is that…I had to wait nearly 45 minutes for a table'が根拠。"},
+};
+
+// ── Rich explanation builders ──
+function buildRichExpP5(q,ex){
+  const fullEn=q.q.replace(/-------/,q.opts[q.ans]);
+  return `<div class="rich-exp">
+    <div class="rich-en">${esc(fullEn)}</div>
+    <div class="rich-ja">${esc(ex.full_ja)}</div>
+    <div class="rich-section"><span class="rich-label">📌 文法ポイント</span>${esc(q.exp)}</div>
+    <div class="rich-section"><span class="rich-label">⭐ 重要ポイント</span>${esc(ex.tip)}</div>
+    <div class="rich-section"><span class="rich-label">💡 覚え方のコツ</span>${esc(ex.mem)}</div>
+  </div>`;
+}
+function buildRichExpP6(q,ex){
+  return `<div class="rich-exp">
+    <div class="rich-en">正解：${esc(q.opts[q.ans])}</div>
+    <div class="rich-ja">${esc(ex.full_ja)}</div>
+    <div class="rich-section"><span class="rich-label">📌 文法ポイント</span>${esc(q.exp)}</div>
+    <div class="rich-section"><span class="rich-label">⭐ 重要ポイント</span>${esc(ex.tip)}</div>
+    <div class="rich-section"><span class="rich-label">💡 覚え方のコツ</span>${esc(ex.mem)}</div>
+  </div>`;
+}
+function buildRichExpP7(q,ex){
+  return `<div class="rich-exp">
+    <div class="rich-en">正解：${esc(q.opts[q.ans])}</div>
+    <div class="rich-section"><span class="rich-label">📌 文法ポイント</span>${esc(q.exp)}</div>
+    <div class="rich-section"><span class="rich-label">⭐ 重要ポイント</span>${esc(ex.tip)}</div>
+    <div class="rich-section"><span class="rich-label">💡 覚え方のコツ</span>${esc(ex.mem)}</div>
+  </div>`;
+}
+function getRichExpHtml(item){
+  if(item.type==='p5'){const ex=P5_EXP[parseInt(item.key)];return ex?buildRichExpP5(item.q,ex):'💡 '+item.q.exp;}
+  if(item.type==='p6'){const ex=P6_EXP[item.key];return ex?buildRichExpP6(item.q,ex):'💡 '+item.q.exp;}
+  if(item.type==='p7'){const ex=P7_EXP[item.key];return ex?buildRichExpP7(item.q,ex):'💡 '+item.q.exp;}
+  return '💡 '+item.q.exp;
+}
+
+// ============================================================
 // STATE
 // ============================================================
 const state={
@@ -621,7 +773,7 @@ function renderP5(){
         return `<div class="${cls}"${!done?` onclick="answerP5(${i},${j})"`:''}>(${chr(j)}) ${o}</div>`;
       }).join('')}
     </div>
-    <div class="explanation${done?' show':''}" id="p5-exp-${i}">💡 ${q.exp}</div>
+    <div class="explanation${done?' show':''}" id="p5-exp-${i}">${P5_EXP[i]?buildRichExpP5(q,P5_EXP[i]):'💡 '+q.exp}</div>
   </div>
   <div class="next-area" id="p5-next"${done?'':' style="display:none"'}>
     ${i+1<P5.length?`<button class="btn btn-primary" onclick="nextQ('p5')">次の問題へ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p5')">結果を見る →</button>`}
@@ -685,7 +837,7 @@ function renderP6(){
           return `<div class="${cls}"${!done?` onclick="answerP6(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
         }).join('')}
       </div>
-      <div class="explanation${done?' show':''}" id="p6-exp-${si}-${qi}">💡 ${q.exp}</div>
+      <div class="explanation${done?' show':''}" id="p6-exp-${si}-${qi}">${P6_EXP[key]?buildRichExpP6(q,P6_EXP[key]):'💡 '+q.exp}</div>
     </div>`;
   }).join('');
   const allDone=set.qs.every((_,qi)=>state.p6.answered[`${si}-${qi}`]!==undefined);
@@ -750,7 +902,7 @@ function renderP7(){
           return `<div class="${cls}"${!done?` onclick="answerP7(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
         }).join('')}
       </div>
-      <div class="explanation${done?' show':''}" id="p7-exp-${si}-${qi}">💡 ${q.exp}</div>
+      <div class="explanation${done?' show':''}" id="p7-exp-${si}-${qi}">${P7_EXP[key]?buildRichExpP7(q,P7_EXP[key]):'💡 '+q.exp}</div>
     </div>`;
   }).join('');
   const allDone=set.qs.every((_,qi)=>state.p7.answered[`${si}-${qi}`]!==undefined);
@@ -1029,7 +1181,7 @@ function renderReview(part){
       <div class="options" id="rv-opts-${i}">
         ${opts.map((o,j)=>`<div class="opt" onclick="answerReview(${i},${j})">(${chr(j)}) ${o}</div>`).join('')}
       </div>
-      <div class="explanation" id="rv-exp-${i}">💡 ${item.q.exp}</div>
+      <div class="explanation" id="rv-exp-${i}">${getRichExpHtml(item)}</div>
     </div>`;
   }
   html+=`<div class="next-area" id="rv-next" style="display:none">
