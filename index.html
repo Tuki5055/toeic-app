@@ -83,6 +83,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .opt.correct{border-color:var(--green)!important;background:var(--green-bg)!important;color:var(--green)!important;font-weight:600}
 .opt.wrong{border-color:var(--red)!important;background:var(--red-bg)!important;color:var(--red)!important}
 .opt.disabled{cursor:default}
+.opt.selected{border-color:var(--primary)!important;background:rgba(123,143,247,.18)!important;color:var(--primary)!important}
 /* ── Explanation ── */
 .explanation{margin-top:11px;padding:10px 13px;background:#141828;border-left:3px solid var(--primary-dim);border-radius:0 6px 6px 0;font-size:.81rem;color:var(--sub);line-height:1.6;display:none}
 .explanation.show{display:block}
@@ -843,6 +844,7 @@ function renderP6(){
         ${s.opts.map((o,j)=>{
           let cls='opt'+(answered?' disabled':'');
           if(revealed){if(j===c)cls+=' correct';else if(j===chosen&&chosen!==c)cls+=' wrong';}
+          else if(answered&&j===chosen)cls+=' selected';
           return `<div class="${cls}"${!answered?` onclick="answerP6(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
         }).join('')}
       </div>
@@ -864,7 +866,9 @@ function answerP6(si,qi,chosen){
   if(state.p6.answered[key]!==undefined)return;
   if(chosen===-1)return;
   state.p6.answered[key]=chosen;
-  document.querySelectorAll(`#p6-opts-${si}-${qi} .opt`).forEach(o=>{o.classList.add('disabled');});
+  const p6Opts=document.querySelectorAll(`#p6-opts-${si}-${qi} .opt`);
+  p6Opts.forEach(o=>o.classList.add('disabled'));
+  if(p6Opts[chosen])p6Opts[chosen].classList.add('selected');
   const sel=document.getElementById(`p6-sel-${si}-${qi}`);
   if(sel){sel.value=chosen;sel.disabled=true;sel.classList.add('answered-sel');}
   const set=P6[si];
@@ -882,6 +886,7 @@ function revealP6(si){
     const chosen=state.p6.answered[key];
     const c=shuf.p6[key].ans;
     document.querySelectorAll(`#p6-opts-${si}-${qi} .opt`).forEach((o,j)=>{
+      o.classList.remove('selected');
       if(j===c)o.classList.add('correct');
       else if(j===chosen&&chosen!==c)o.classList.add('wrong');
     });
@@ -928,6 +933,7 @@ function renderP7(){
         ${s.opts.map((o,j)=>{
           let cls='opt'+(answered?' disabled':'');
           if(revealed){if(j===c)cls+=' correct';else if(j===chosen&&chosen!==c)cls+=' wrong';}
+          else if(answered&&j===chosen)cls+=' selected';
           return `<div class="${cls}"${!answered?` onclick="answerP7(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
         }).join('')}
       </div>
@@ -947,7 +953,9 @@ function answerP7(si,qi,chosen){
   const key=`${si}-${qi}`;
   if(state.p7.answered[key]!==undefined)return;
   state.p7.answered[key]=chosen;
-  document.querySelectorAll(`#p7-opts-${si}-${qi} .opt`).forEach(o=>{o.classList.add('disabled');});
+  const p7Opts=document.querySelectorAll(`#p7-opts-${si}-${qi} .opt`);
+  p7Opts.forEach(o=>o.classList.add('disabled'));
+  if(p7Opts[chosen])p7Opts[chosen].classList.add('selected');
   const set=P7[si];
   const allDone=set.qs.every((_,qi2)=>state.p7.answered[`${si}-${qi2}`]!==undefined);
   if(allDone){
@@ -963,6 +971,7 @@ function revealP7(si){
     const chosen=state.p7.answered[key];
     const c=shuf.p7[key].ans;
     document.querySelectorAll(`#p7-opts-${si}-${qi} .opt`).forEach((o,j)=>{
+      o.classList.remove('selected');
       if(j===c)o.classList.add('correct');
       else if(j===chosen&&chosen!==c)o.classList.add('wrong');
     });
