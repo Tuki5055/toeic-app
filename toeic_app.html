@@ -118,6 +118,13 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .reading th{background:var(--surface2);font-weight:600;color:var(--primary)}
 .double-passage{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 @media(max-width:640px){.double-passage{grid-template-columns:1fr}}
+/* ── Part 6/7 sticky passage layout ── */
+.p67-sticky-top{position:sticky;top:0;z-index:20;background:var(--bg);padding-bottom:4px}
+.p67-sticky-top .set-card{margin-bottom:0;border-radius:10px 10px 0 0;border-bottom:none}
+.p67-sticky-top .passage{max-height:40vh;overflow-y:auto;margin-bottom:0}
+.p67-sticky-top .reading{max-height:40vh;overflow-y:auto;margin-bottom:0}
+.p67-sticky-top .double-passage{max-height:40vh;overflow-y:auto;margin-bottom:0}
+.p67-questions-area{background:var(--surface);border:1px solid var(--border);border-radius:0 0 10px 10px;padding:16px 20px 20px;margin-bottom:12px}
 /* ── Instant Translation ── */
 .inst-card{position:relative;background:var(--surface);border-radius:10px;padding:20px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s}
 .inst-card.state-correct{border-color:var(--green)}
@@ -841,9 +848,9 @@ function renderP6(){
     </div>`;
   }).join('');
   const allDone=set.qs.every((_,qi)=>state.p6.answered[`${si}-${qi}`]!==undefined);
-  document.getElementById('p6-sets').innerHTML=`<div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P6.length} — ${set.type}</div>
-    <div class="passage">${pass}</div>
-    <div class="p6-qs">${qs}</div></div>
+  document.getElementById('p6-sets').innerHTML=`<div class="p67-sticky-top"><div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P6.length} — ${set.type}</div>
+    <div class="passage">${pass}</div></div></div>
+  <div class="p67-questions-area"><div class="p6-qs">${qs}</div></div>
   <div class="next-area" id="p6-next"${allDone?'':' style="display:none"'}>
     ${si+1<P6.length?`<button class="btn btn-primary" onclick="nextQ('p6')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p6')">結果を見る →</button>`}
   </div>`;
@@ -906,7 +913,8 @@ function renderP7(){
     </div>`;
   }).join('');
   const allDone=set.qs.every((_,qi)=>state.p7.answered[`${si}-${qi}`]!==undefined);
-  document.getElementById('p7-sets').innerHTML=`<div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P7.length} — ${set.type}</div>${pass}${qs}</div>
+  document.getElementById('p7-sets').innerHTML=`<div class="p67-sticky-top"><div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P7.length} — ${set.type}</div>${pass}</div></div>
+  <div class="p67-questions-area">${qs}</div>
   <div class="next-area" id="p7-next"${allDone?'':' style="display:none"'}>
     ${si+1<P7.length?`<button class="btn btn-primary" onclick="nextQ('p7')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p7')">結果を見る →</button>`}
   </div>`;
