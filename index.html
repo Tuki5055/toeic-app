@@ -102,6 +102,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .blank-sel option{background:#1a1d27;color:var(--text)}
 .blank-sel.correct-sel{color:var(--green)!important;border-bottom-color:var(--green)!important}
 .blank-sel.wrong-sel{color:var(--red)!important;border-bottom-color:var(--red)!important}
+.blank-sel.answered-sel{color:var(--sub)!important;border-bottom-color:var(--sub)!important}
 .p6-qs{margin-top:4px}
 .p6-q{position:relative;margin-bottom:14px;padding-top:11px;border-top:1px solid var(--border)}
 .p6-q:first-child{border-top:none;padding-top:0}
@@ -702,8 +703,8 @@ function getRichExpHtml(item){
 // ============================================================
 const state={
   p5:{answered:{},correct:0},
-  p6:{answered:{},correct:0},
-  p7:{answered:{},correct:0},
+  p6:{answered:{},correct:0,revealed:{}},
+  p7:{answered:{},correct:0,revealed:{}},
   instant:{answered:{},correct:0},
 };
 const mistakes={p5:{},p6:{},p7:{},instant:{}};
@@ -814,6 +815,7 @@ function renderP6(){
   const set=P6[si];
   let start=131; for(let s=0;s<si;s++)start+=P6[s].qs.length;
   set.qs.forEach((_,qi)=>{const k=`${si}-${qi}`;if(!shuf.p6[k])shuf.p6[k]=shuffleOpts(set.qs[qi].opts,set.qs[qi].ans);});
+  const revealed=state.p6.revealed[si]===true;
   const pass=set.passage.replace(/\((\d+)\) -------/g,(m,num)=>{
     const qi=parseInt(num)-start;
     const s=shuf.p6[`${si}-${qi}`];
@@ -821,7 +823,7 @@ function renderP6(){
     const pdone=answered!==undefined;
     const c=s.ans;
     if(pdone){
-      const cls='blank-sel'+(answered===c?' correct-sel':' wrong-sel');
+      const cls='blank-sel'+(revealed?(answered===c?' correct-sel':' wrong-sel'):' answered-sel');
       return `(${num}) <select class="${cls}" id="p6-sel-${si}-${qi}" disabled>${s.opts.map((o,j)=>`<option value="${j}"${j===answered?' selected':''}>${o}</option>`).join('')}</select>`;
     }
     return `(${num}) <select class="blank-sel" id="p6-sel-${si}-${qi}" onchange="answerP6(${si},${qi},parseInt(this.value))"><option value="-1">— 選択 —</option>`+
@@ -830,7 +832,7 @@ function renderP6(){
   const qs=set.qs.map((q,qi)=>{
     const key=`${si}-${qi}`;
     const s=shuf.p6[key];
-    const done=state.p6.answered[key]!==undefined;
+    const answered=state.p6.answered[key]!==undefined;
     const chosen=state.p6.answered[key];
     const c=s.ans;
     return `<div class="p6-q" id="p6-q-${si}-${qi}">
@@ -839,46 +841,65 @@ function renderP6(){
       <div class="p6-qtext">空欄 (${start+qi}) に最も適切なものを選んでください。</div>
       <div class="options" id="p6-opts-${si}-${qi}">
         ${s.opts.map((o,j)=>{
-          let cls='opt'+(done?' disabled':'');
-          if(done){if(j===c)cls+=' correct';else if(j===chosen&&chosen!==c)cls+=' wrong';}
-          return `<div class="${cls}"${!done?` onclick="answerP6(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
+          let cls='opt'+(answered?' disabled':'');
+          if(revealed){if(j===c)cls+=' correct';else if(j===chosen&&chosen!==c)cls+=' wrong';}
+          return `<div class="${cls}"${!answered?` onclick="answerP6(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
         }).join('')}
       </div>
-      <div class="explanation${done?' show':''}" id="p6-exp-${si}-${qi}">${P6_EXP[key]?buildRichExpP6(q,P6_EXP[key]):'💡 '+q.exp}</div>
+      <div class="explanation${revealed?' show':''}" id="p6-exp-${si}-${qi}">${P6_EXP[key]?buildRichExpP6(q,P6_EXP[key]):'💡 '+q.exp}</div>
     </div>`;
   }).join('');
-  const allDone=set.qs.every((_,qi)=>state.p6.answered[`${si}-${qi}`]!==undefined);
+  const allSelected=set.qs.every((_,qi)=>state.p6.answered[`${si}-${qi}`]!==undefined);
+  let nextContent='';
+  if(revealed)nextContent=si+1<P6.length?`<button class="btn btn-primary" onclick="nextQ('p6')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p6')">結果を見る →</button>`;
+  else if(allSelected)nextContent=`<button class="btn btn-primary" onclick="revealP6(${si})">回答を見る →</button>`;
   document.getElementById('p6-sets').innerHTML=`<div class="p67-sticky-top"><div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P6.length} — ${set.type}</div>
     <div class="passage">${pass}</div></div></div>
   <div class="p67-questions-area"><div class="p6-qs">${qs}</div></div>
-  <div class="next-area" id="p6-next"${allDone?'':' style="display:none"'}>
-    ${si+1<P6.length?`<button class="btn btn-primary" onclick="nextQ('p6')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p6')">結果を見る →</button>`}
-  </div>`;
-  set.qs.forEach((_,qi)=>{if(state.p6.answered[`${si}-${qi}`]!==undefined)updateMissBadge('p6',`${si}-${qi}`);});
+  <div class="next-area" id="p6-next"${nextContent?'':' style="display:none"'}>${nextContent}</div>`;
+  set.qs.forEach((_,qi)=>{if(revealed)updateMissBadge('p6',`${si}-${qi}`);});
 }
 function answerP6(si,qi,chosen){
   const key=`${si}-${qi}`;
   if(state.p6.answered[key]!==undefined)return;
   if(chosen===-1)return;
   state.p6.answered[key]=chosen;
-  const c=shuf.p6[key].ans;
-  document.querySelectorAll(`#p6-opts-${si}-${qi} .opt`).forEach((o,j)=>{
-    o.classList.add('disabled');
-    if(j===c)o.classList.add('correct');
-    else if(j===chosen&&chosen!==c)o.classList.add('wrong');
-  });
+  document.querySelectorAll(`#p6-opts-${si}-${qi} .opt`).forEach(o=>{o.classList.add('disabled');});
   const sel=document.getElementById(`p6-sel-${si}-${qi}`);
-  if(sel){sel.value=chosen;sel.disabled=true;sel.classList.add(chosen===c?'correct-sel':'wrong-sel');}
-  document.getElementById(`p6-exp-${si}-${qi}`).classList.add('show');
-  if(chosen!==c){mistakes.p6[key]=(mistakes.p6[key]||0)+1;updateMissBadge('p6',key);}
-  else state.p6.correct++;
+  if(sel){sel.value=chosen;sel.disabled=true;sel.classList.add('answered-sel');}
+  const set=P6[si];
+  const allDone=set.qs.every((_,qi2)=>state.p6.answered[`${si}-${qi2}`]!==undefined);
+  if(allDone){
+    const nextEl=document.getElementById('p6-next');
+    if(nextEl){nextEl.innerHTML=`<button class="btn btn-primary" onclick="revealP6(${si})">回答を見る →</button>`;nextEl.style.display='';}
+  }
+}
+function revealP6(si){
+  state.p6.revealed[si]=true;
+  const set=P6[si];
+  set.qs.forEach((q,qi)=>{
+    const key=`${si}-${qi}`;
+    const chosen=state.p6.answered[key];
+    const c=shuf.p6[key].ans;
+    document.querySelectorAll(`#p6-opts-${si}-${qi} .opt`).forEach((o,j)=>{
+      if(j===c)o.classList.add('correct');
+      else if(j===chosen&&chosen!==c)o.classList.add('wrong');
+    });
+    const sel=document.getElementById(`p6-sel-${si}-${qi}`);
+    if(sel){sel.classList.remove('answered-sel');sel.classList.add(chosen===c?'correct-sel':'wrong-sel');}
+    document.getElementById(`p6-exp-${si}-${qi}`).classList.add('show');
+    if(chosen!==c){mistakes.p6[key]=(mistakes.p6[key]||0)+1;updateMissBadge('p6',key);}
+    else state.p6.correct++;
+  });
   const tot=P6.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p6',state.p6.correct,Object.keys(state.p6.answered).length,tot);
   updateMissBtn('p6');
   checkNorma('p6');
-  const set=P6[si];
-  const allDone=set.qs.every((_,qi2)=>state.p6.answered[`${si}-${qi2}`]!==undefined);
-  if(allDone)showNextBtn('p6');
+  const nextEl=document.getElementById('p6-next');
+  if(nextEl){
+    nextEl.innerHTML=si+1<P6.length?`<button class="btn btn-primary" onclick="nextQ('p6')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p6')">結果を見る →</button>`;
+    nextEl.style.display='';
+  }
 }
 
 // ============================================================
@@ -889,13 +910,14 @@ function renderP7(){
   if(si>=P7.length){showPartDone('p7');return;}
   const set=P7[si];
   set.qs.forEach((_,qi)=>{const k=`${si}-${qi}`;if(!shuf.p7[k])shuf.p7[k]=shuffleOpts(set.qs[qi].opts,set.qs[qi].ans);});
+  const revealed=state.p7.revealed[si]===true;
   const pass=set.double
     ?`<div class="double-passage"><div class="reading">${set.passageA}</div><div class="reading">${set.passageB}</div></div>`
     :`<div class="reading">${set.passage}</div>`;
   const qs=set.qs.map((q,qi)=>{
     const key=`${si}-${qi}`;
     const s=shuf.p7[key];
-    const done=state.p7.answered[key]!==undefined;
+    const answered=state.p7.answered[key]!==undefined;
     const chosen=state.p7.answered[key];
     const c=s.ans;
     return `<div class="q-card" id="p7-card-${si}-${qi}" style="margin-bottom:10px">
@@ -904,42 +926,59 @@ function renderP7(){
       <div class="q-text">${q.q}</div>
       <div class="options" id="p7-opts-${si}-${qi}">
         ${s.opts.map((o,j)=>{
-          let cls='opt'+(done?' disabled':'');
-          if(done){if(j===c)cls+=' correct';else if(j===chosen&&chosen!==c)cls+=' wrong';}
-          return `<div class="${cls}"${!done?` onclick="answerP7(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
+          let cls='opt'+(answered?' disabled':'');
+          if(revealed){if(j===c)cls+=' correct';else if(j===chosen&&chosen!==c)cls+=' wrong';}
+          return `<div class="${cls}"${!answered?` onclick="answerP7(${si},${qi},${j})"`:''}>(${chr(j)}) ${o}</div>`;
         }).join('')}
       </div>
-      <div class="explanation${done?' show':''}" id="p7-exp-${si}-${qi}">${P7_EXP[key]?buildRichExpP7(q,P7_EXP[key]):'💡 '+q.exp}</div>
+      <div class="explanation${revealed?' show':''}" id="p7-exp-${si}-${qi}">${P7_EXP[key]?buildRichExpP7(q,P7_EXP[key]):'💡 '+q.exp}</div>
     </div>`;
   }).join('');
-  const allDone=set.qs.every((_,qi)=>state.p7.answered[`${si}-${qi}`]!==undefined);
+  const allSelected=set.qs.every((_,qi)=>state.p7.answered[`${si}-${qi}`]!==undefined);
+  let nextContent='';
+  if(revealed)nextContent=si+1<P7.length?`<button class="btn btn-primary" onclick="nextQ('p7')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p7')">結果を見る →</button>`;
+  else if(allSelected)nextContent=`<button class="btn btn-primary" onclick="revealP7(${si})">回答を見る →</button>`;
   document.getElementById('p7-sets').innerHTML=`<div class="p67-sticky-top"><div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P7.length} — ${set.type}</div>${pass}</div></div>
   <div class="p67-questions-area">${qs}</div>
-  <div class="next-area" id="p7-next"${allDone?'':' style="display:none"'}>
-    ${si+1<P7.length?`<button class="btn btn-primary" onclick="nextQ('p7')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p7')">結果を見る →</button>`}
-  </div>`;
-  set.qs.forEach((_,qi)=>{if(state.p7.answered[`${si}-${qi}`]!==undefined)updateMissBadge('p7',`${si}-${qi}`);});
+  <div class="next-area" id="p7-next"${nextContent?'':' style="display:none"'}>${nextContent}</div>`;
+  set.qs.forEach((_,qi)=>{if(revealed)updateMissBadge('p7',`${si}-${qi}`);});
 }
 function answerP7(si,qi,chosen){
   const key=`${si}-${qi}`;
   if(state.p7.answered[key]!==undefined)return;
   state.p7.answered[key]=chosen;
-  const c=shuf.p7[key].ans;
-  document.querySelectorAll(`#p7-opts-${si}-${qi} .opt`).forEach((o,j)=>{
-    o.classList.add('disabled');
-    if(j===c)o.classList.add('correct');
-    else if(j===chosen&&chosen!==c)o.classList.add('wrong');
+  document.querySelectorAll(`#p7-opts-${si}-${qi} .opt`).forEach(o=>{o.classList.add('disabled');});
+  const set=P7[si];
+  const allDone=set.qs.every((_,qi2)=>state.p7.answered[`${si}-${qi2}`]!==undefined);
+  if(allDone){
+    const nextEl=document.getElementById('p7-next');
+    if(nextEl){nextEl.innerHTML=`<button class="btn btn-primary" onclick="revealP7(${si})">回答を見る →</button>`;nextEl.style.display='';}
+  }
+}
+function revealP7(si){
+  state.p7.revealed[si]=true;
+  const set=P7[si];
+  set.qs.forEach((q,qi)=>{
+    const key=`${si}-${qi}`;
+    const chosen=state.p7.answered[key];
+    const c=shuf.p7[key].ans;
+    document.querySelectorAll(`#p7-opts-${si}-${qi} .opt`).forEach((o,j)=>{
+      if(j===c)o.classList.add('correct');
+      else if(j===chosen&&chosen!==c)o.classList.add('wrong');
+    });
+    document.getElementById(`p7-exp-${si}-${qi}`).classList.add('show');
+    if(chosen!==c){mistakes.p7[key]=(mistakes.p7[key]||0)+1;updateMissBadge('p7',key);}
+    else state.p7.correct++;
   });
-  document.getElementById(`p7-exp-${si}-${qi}`).classList.add('show');
-  if(chosen!==c){mistakes.p7[key]=(mistakes.p7[key]||0)+1;updateMissBadge('p7',key);}
-  else state.p7.correct++;
   const tot=P7.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p7',state.p7.correct,Object.keys(state.p7.answered).length,tot);
   updateMissBtn('p7');
   checkNorma('p7');
-  const set=P7[si];
-  const allDone=set.qs.every((_,qi2)=>state.p7.answered[`${si}-${qi2}`]!==undefined);
-  if(allDone)showNextBtn('p7');
+  const nextEl=document.getElementById('p7-next');
+  if(nextEl){
+    nextEl.innerHTML=si+1<P7.length?`<button class="btn btn-primary" onclick="nextQ('p7')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p7')">結果を見る →</button>`;
+    nextEl.style.display='';
+  }
 }
 
 // ============================================================
@@ -1407,7 +1446,7 @@ function resetPart(part){
     document.getElementById(`${part}-review`).style.display='none';
     document.getElementById(`${part}-review-bar`).style.display='none';
   }
-  state[part]={answered:{},correct:0};
+  state[part]={answered:{},correct:0,revealed:{}};
   mistakes[part]={};
   norma[part]=0;
   normaChk[part]={answered:0,correct:0};
