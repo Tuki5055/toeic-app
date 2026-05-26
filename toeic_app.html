@@ -215,6 +215,12 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .sbtn-ghost:hover{color:var(--text);border-color:var(--sub)}
 .sbtn-red{background:#2b0d0d;color:var(--red);border-color:#5a2020}
 .sbtn-red:hover{background:#3a1010}
+/* ── Settings status ── */
+.status-grid{display:flex;flex-direction:column;gap:0}
+.status-row{display:flex;justify-content:space-between;align-items:center;font-size:.82rem;padding:7px 0;border-bottom:1px solid var(--border)}
+.status-row:last-child{border-bottom:none}
+.status-label{color:var(--sub)}
+.status-val{color:var(--text);font-weight:600}
 </style>
 </head>
 <body>
@@ -366,6 +372,10 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 <!-- SETTINGS -->
 <div id="settings" class="part-section">
   <div class="part-intro"><h2>⚙ 設定・バックアップ</h2><p>学習データのエクスポート・インポート・リセットができます。</p></div>
+  <div class="scard">
+    <h3>保存状況</h3>
+    <div id="settings-status" class="status-grid"><div style="color:var(--sub);font-size:.82rem">読み込み中…</div></div>
+  </div>
   <div class="scard">
     <h3>バックアップ</h3>
     <p>学習データ（進捗・ミス・日別履歴）をJSONファイルに保存・復元できます。</p>
@@ -871,6 +881,7 @@ function answerP5(qi,chosen){
   updateMissBtn('p5');
   checkNorma('p5');
   recordDaily(chosen===c);
+  recordQuestionHistory('p5',qi,chosen===c);
   saveState();
   showNextBtn('p5');
 }
@@ -964,6 +975,7 @@ function revealP6(si){
     if(chosen!==c){mistakes.p6[key]=(mistakes.p6[key]||0)+1;updateMissBadge('p6',key);}
     else state.p6.correct++;
     recordDaily(chosen===c);
+    recordQuestionHistory('p6',key,chosen===c);
   });
   const tot=P6.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p6',state.p6.correct,Object.keys(state.p6.answered).length,tot);
@@ -1049,6 +1061,7 @@ function revealP7(si){
     if(chosen!==c){mistakes.p7[key]=(mistakes.p7[key]||0)+1;updateMissBadge('p7',key);}
     else state.p7.correct++;
     recordDaily(chosen===c);
+    recordQuestionHistory('p7',key,chosen===c);
   });
   const tot=P7.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p7',state.p7.correct,Object.keys(state.p7.answered).length,tot);
@@ -1132,6 +1145,7 @@ function skipInstant(i){
   updateMissBtn('instant');
   checkNorma('instant');
   recordDaily(false);
+  recordQuestionHistory('instant',i,false);
   saveState();
   showNextBtn('instant');
 }
@@ -1161,6 +1175,7 @@ function evalInstant(i,isCorrect){
   updateMissBtn('instant');
   checkNorma('instant');
   recordDaily(isCorrect);
+  recordQuestionHistory('instant',i,isCorrect);
   saveState();
   showNextBtn('instant');
 }
@@ -1560,18 +1575,34 @@ function showPart(part,el){
   document.getElementById(part).classList.add('active');
   el.classList.add('active');
   if(part==='history')renderHistory();
+  if(part==='settings')renderSettingsStatus();
 }
 function chr(j){return String.fromCharCode(65+j);}
 
 // ============================================================
-// LOCALSTORAGE — セッション継続 & 日別履歴
+// LOCALSTORAGE — セッション継続 & 日別履歴 & 問題別履歴
 // ============================================================
 const LS_STATE='toeic-state';
 const LS_DAILY='toeic-daily';
+const LS_QHIST='toeic-question-history';
+const SAVE_VERSION=1;
+
+// ローカルタイムゾーン基準の日付キー (YYYY-MM-DD)
+function getLocalDateKey(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
 
 function saveState(){
   try{
-    localStorage.setItem(LS_STATE,JSON.stringify({state,mistakes,cursor,norma,normaChk}));
+    localStorage.setItem(LS_STATE,JSON.stringify({
+      version:SAVE_VERSION,
+      savedAt:new Date().toISOString(),
+      state,mistakes,cursor,norma,normaChk
+    }));
   }catch(e){}
 }
 
@@ -1580,6 +1611,7 @@ function loadState(){
     const raw=localStorage.getItem(LS_STATE);
     if(!raw)return;
     const d=JSON.parse(raw);
+    // version なし（旧形式）も互換読み込み
     if(d.state){
       ['p5','p6','p7','instant'].forEach(p=>{
         if(d.state[p])Object.assign(state[p],d.state[p]);
@@ -1598,7 +1630,7 @@ function loadState(){
 
 function recordDaily(correct){
   try{
-    const today=new Date().toISOString().slice(0,10);
+    const today=getLocalDateKey();
     const raw=localStorage.getItem(LS_DAILY);
     const hist=raw?JSON.parse(raw):{};
     if(!hist[today])hist[today]={answered:0,correct:0,wrong:0};
@@ -1611,7 +1643,7 @@ function recordDaily(correct){
 
 function updateDailyUI(){
   try{
-    const today=new Date().toISOString().slice(0,10);
+    const today=getLocalDateKey();
     const raw=localStorage.getItem(LS_DAILY);
     const hist=raw?JSON.parse(raw):{};
     const r=hist[today]||{answered:0,correct:0,wrong:0};
@@ -1621,6 +1653,19 @@ function updateDailyUI(){
     if(g('d-cor'))g('d-cor').textContent=r.correct;
     if(g('d-wrg'))g('d-wrg').textContent=r.wrong;
     if(g('d-rt'))g('d-rt').textContent=rate!==null?rate+'%':'—';
+  }catch(e){}
+}
+
+function recordQuestionHistory(part,questionId,correct){
+  try{
+    const key=`${part}-${questionId}`;
+    const raw=localStorage.getItem(LS_QHIST);
+    const hist=raw?JSON.parse(raw):{};
+    if(!hist[key])hist[key]={part,attempts:0,correct:0,wrong:0,lastAnsweredAt:''};
+    hist[key].attempts++;
+    if(correct)hist[key].correct++;else hist[key].wrong++;
+    hist[key].lastAnsweredAt=new Date().toISOString();
+    localStorage.setItem(LS_QHIST,JSON.stringify(hist));
   }catch(e){}
 }
 
@@ -1651,17 +1696,39 @@ function renderHistory(){
   }catch(e){}
 }
 
+function renderSettingsStatus(){
+  try{
+    const el=document.getElementById('settings-status');
+    if(!el)return;
+    const rawState=localStorage.getItem(LS_STATE);
+    const stateData=rawState?JSON.parse(rawState):null;
+    const savedAt=stateData&&stateData.savedAt
+      ?new Date(stateData.savedAt).toLocaleString('ja-JP'):'—';
+    const stateVer=stateData&&stateData.version?`v${stateData.version}`:'旧形式（互換）';
+    const rawDaily=localStorage.getItem(LS_DAILY);
+    const dailyCount=rawDaily?Object.keys(JSON.parse(rawDaily)).length:0;
+    const rawQhist=localStorage.getItem(LS_QHIST);
+    const qhistCount=rawQhist?Object.keys(JSON.parse(rawQhist)).length:0;
+    el.innerHTML=
+      `<div class="status-row"><span class="status-label">データ形式</span><span class="status-val">${stateVer}</span></div>`
+      +`<div class="status-row"><span class="status-label">最終保存日時</span><span class="status-val">${savedAt}</span></div>`
+      +`<div class="status-row"><span class="status-label">日別履歴</span><span class="status-val">${dailyCount} 日分</span></div>`
+      +`<div class="status-row"><span class="status-label">問題別履歴</span><span class="status-val">${qhistCount} 問分</span></div>`;
+  }catch(e){}
+}
+
 function exportData(){
   try{
     const data={
       [LS_STATE]:JSON.parse(localStorage.getItem(LS_STATE)||'null'),
-      [LS_DAILY]:JSON.parse(localStorage.getItem(LS_DAILY)||'null')
+      [LS_DAILY]:JSON.parse(localStorage.getItem(LS_DAILY)||'null'),
+      [LS_QHIST]:JSON.parse(localStorage.getItem(LS_QHIST)||'null')
     };
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url;
-    a.download='toeic-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    a.download='toeic-backup-'+getLocalDateKey()+'.json';
     a.click();
     URL.revokeObjectURL(url);
   }catch(e){alert('エクスポートに失敗しました。');}
@@ -1681,6 +1748,7 @@ function importData(){
         if(!confirm('現在のデータを上書きしてインポートしますか？'))return;
         if(data[LS_STATE])localStorage.setItem(LS_STATE,JSON.stringify(data[LS_STATE]));
         if(data[LS_DAILY])localStorage.setItem(LS_DAILY,JSON.stringify(data[LS_DAILY]));
+        if(data[LS_QHIST])localStorage.setItem(LS_QHIST,JSON.stringify(data[LS_QHIST]));
         alert('インポートしました。ページを再読み込みします。');
         location.reload();
       }catch(e){
@@ -1696,6 +1764,7 @@ function resetAllData(){
   if(!confirm('すべての学習データをリセットしますか？この操作は元に戻せません。'))return;
   localStorage.removeItem(LS_STATE);
   localStorage.removeItem(LS_DAILY);
+  localStorage.removeItem(LS_QHIST);
   location.reload();
 }
 
