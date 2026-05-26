@@ -1895,22 +1895,29 @@ function startWeakReview(part,keys){
 }
 
 function goToUnanswered(part,firstKey){
+  if(!firstKey||firstKey==='null'||firstKey==='undefined')return;
   activateTab(part);
   if(part==='p5'){
-    // set cursor to position of this question in current shuffle
-    if(shuf.p5.length===0){shuf.p5=[...Array(P5.length).keys()];for(let i=P5.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuf.p5[i],shuf.p5[j]]=[shuf.p5[j],shuf.p5[i]];}}
     const qi=parseInt(firstKey);
+    if(isNaN(qi)||qi<0||qi>=P5.length)return;
+    if(shuf.p5.length===0){shuf.p5=[...Array(P5.length).keys()];for(let i=P5.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuf.p5[i],shuf.p5[j]]=[shuf.p5[j],shuf.p5[i]];}}
     const pos=shuf.p5.indexOf(qi);
-    cursor.p5=pos>=0?pos:cursor.p5;
+    if(pos>=0)cursor.p5=pos;
     renderP5();
   } else if(part==='p6'){
-    cursor.p6=parseInt(firstKey.split('-')[0]);
+    const si=parseInt(firstKey.split('-')[0]);
+    if(isNaN(si)||si<0||si>=P6.length)return;
+    cursor.p6=si;
     renderP6();
   } else if(part==='p7'){
-    cursor.p7=parseInt(firstKey.split('-')[0]);
+    const si=parseInt(firstKey.split('-')[0]);
+    if(isNaN(si)||si<0||si>=P7.length)return;
+    cursor.p7=si;
     renderP7();
   } else if(part==='instant'){
-    cursor.instant=parseInt(firstKey);
+    const idx=parseInt(firstKey);
+    if(isNaN(idx)||idx<0||idx>=INSTANT.length)return;
+    cursor.instant=idx;
     renderInstant();
   }
   document.getElementById(part).scrollIntoView({behavior:'smooth',block:'start'});
