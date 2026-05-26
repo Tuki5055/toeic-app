@@ -187,6 +187,34 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .norma-stat-val{font-size:1.4rem;font-weight:800;color:var(--primary)}
 .norma-stat-label{font-size:.72rem;color:var(--sub);margin-top:3px}
 .norma-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+/* ── Daily bar ── */
+.daily-bar{background:#0c0f1c;border-bottom:1px solid var(--border);padding:9px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:.82rem}
+.daily-bar .dl{color:var(--sub);font-weight:700;font-size:.75rem;letter-spacing:.4px;white-space:nowrap}
+.daily-bar .di{display:flex;align-items:center;gap:3px;white-space:nowrap}
+.daily-bar .dn{font-weight:700;font-size:.88rem}
+.daily-bar .dok .dn{color:var(--green)}
+.daily-bar .dng .dn{color:var(--red)}
+.daily-bar .drt .dn{color:var(--primary)}
+.daily-bar .ds{color:var(--border);font-size:.9rem}
+/* ── History table ── */
+.hist-wrap{background:var(--surface);border-radius:10px;border:1px solid var(--border);overflow:hidden;margin-top:4px}
+.hist-table{width:100%;border-collapse:collapse;font-size:.84rem}
+.hist-table thead th{padding:9px 14px;text-align:left;color:var(--sub);font-size:.74rem;font-weight:600;border-bottom:1px solid var(--border);letter-spacing:.5px;background:var(--surface2)}
+.hist-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text)}
+.hist-table tbody tr:last-child td{border-bottom:none}
+.hist-table tbody tr:hover td{background:var(--surface2)}
+/* ── Settings cards ── */
+.scard{background:var(--surface);border-radius:10px;padding:20px;margin-bottom:14px;border:1px solid var(--border)}
+.scard h3{font-size:.88rem;font-weight:700;color:var(--primary);margin-bottom:6px}
+.scard p{font-size:.8rem;color:var(--sub);margin-bottom:14px;line-height:1.55}
+.scard .sbtn-row{display:flex;gap:10px;flex-wrap:wrap}
+.sbtn{padding:8px 18px;border-radius:7px;border:1px solid;cursor:pointer;font-size:.83rem;font-weight:600;transition:all .2s}
+.sbtn-blue{background:var(--primary-dim);color:white;border-color:var(--primary-dim)}
+.sbtn-blue:hover{background:var(--primary)}
+.sbtn-ghost{background:transparent;color:var(--sub);border-color:var(--border)}
+.sbtn-ghost:hover{color:var(--text);border-color:var(--sub)}
+.sbtn-red{background:#2b0d0d;color:var(--red);border-color:#5a2020}
+.sbtn-red:hover{background:#3a1010}
 </style>
 </head>
 <body>
@@ -194,11 +222,23 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   <h1>TOEIC 練習アプリ</h1>
   <p>Part 5 / Part 6 / Part 7 / 瞬間英作文</p>
 </header>
+<div class="daily-bar" id="daily-bar">
+  <span class="dl">今日の学習</span>
+  <span class="di"><span class="dn" id="d-ans">0</span>問</span>
+  <span class="ds">/</span>
+  <span class="di dok">正解&nbsp;<span class="dn" id="d-cor">0</span></span>
+  <span class="ds">/</span>
+  <span class="di dng">ミス&nbsp;<span class="dn" id="d-wrg">0</span></span>
+  <span class="ds">/</span>
+  <span class="di drt">正答率&nbsp;<span class="dn" id="d-rt">—</span></span>
+</div>
 <div class="tabs">
   <div class="tab active" onclick="showPart('p5',this)">Part 5 <small>(50問)</small></div>
   <div class="tab" onclick="showPart('p6',this)">Part 6 <small>(7セット)</small></div>
   <div class="tab" onclick="showPart('p7',this)">Part 7 <small>(7セット)</small></div>
   <div class="tab" onclick="showPart('instant',this)">瞬間英作文 <small>(50問)</small></div>
+  <div class="tab" onclick="showPart('history',this)">📊 履歴</div>
+  <div class="tab" onclick="showPart('settings',this)">⚙ 設定</div>
 </div>
 <!-- Norma modal -->
 <div class="norma-overlay" id="norma-overlay" onclick="closeNormaModal()"></div>
@@ -315,6 +355,32 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   </div>
   <div id="instant-review" style="display:none"></div>
   <div id="instant-questions"></div>
+</div>
+
+<!-- HISTORY -->
+<div id="history" class="part-section">
+  <div class="part-intro"><h2>📊 学習履歴（直近7日）</h2><p>日ごとの回答数・正解数・ミス数・正答率を表示します。</p></div>
+  <div id="history-content"></div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="part-section">
+  <div class="part-intro"><h2>⚙ 設定・バックアップ</h2><p>学習データのエクスポート・インポート・リセットができます。</p></div>
+  <div class="scard">
+    <h3>バックアップ</h3>
+    <p>学習データ（進捗・ミス・日別履歴）をJSONファイルに保存・復元できます。</p>
+    <div class="sbtn-row">
+      <button class="sbtn sbtn-blue" onclick="exportData()">⬇ エクスポート</button>
+      <button class="sbtn sbtn-ghost" onclick="importData()">⬆ インポート</button>
+    </div>
+  </div>
+  <div class="scard">
+    <h3>データリセット</h3>
+    <p>すべての学習データ（進捗・ミス・日別履歴）を削除します。この操作は元に戻せません。</p>
+    <div class="sbtn-row">
+      <button class="sbtn sbtn-red" onclick="resetAllData()">🗑 すべてリセット</button>
+    </div>
+  </div>
 </div>
 
 </div><!-- .content -->
@@ -804,6 +870,8 @@ function answerP5(qi,chosen){
   updateScore('p5',state.p5.correct,Object.keys(state.p5.answered).length,P5.length);
   updateMissBtn('p5');
   checkNorma('p5');
+  recordDaily(chosen===c);
+  saveState();
   showNextBtn('p5');
 }
 
@@ -895,11 +963,13 @@ function revealP6(si){
     document.getElementById(`p6-exp-${si}-${qi}`).classList.add('show');
     if(chosen!==c){mistakes.p6[key]=(mistakes.p6[key]||0)+1;updateMissBadge('p6',key);}
     else state.p6.correct++;
+    recordDaily(chosen===c);
   });
   const tot=P6.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p6',state.p6.correct,Object.keys(state.p6.answered).length,tot);
   updateMissBtn('p6');
   checkNorma('p6');
+  saveState();
   const nextEl=document.getElementById('p6-next');
   if(nextEl){
     nextEl.innerHTML=si+1<P6.length?`<button class="btn btn-primary" onclick="nextQ('p6')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p6')">結果を見る →</button>`;
@@ -978,11 +1048,13 @@ function revealP7(si){
     document.getElementById(`p7-exp-${si}-${qi}`).classList.add('show');
     if(chosen!==c){mistakes.p7[key]=(mistakes.p7[key]||0)+1;updateMissBadge('p7',key);}
     else state.p7.correct++;
+    recordDaily(chosen===c);
   });
   const tot=P7.reduce((s,x)=>s+x.qs.length,0);
   updateScore('p7',state.p7.correct,Object.keys(state.p7.answered).length,tot);
   updateMissBtn('p7');
   checkNorma('p7');
+  saveState();
   const nextEl=document.getElementById('p7-next');
   if(nextEl){
     nextEl.innerHTML=si+1<P7.length?`<button class="btn btn-primary" onclick="nextQ('p7')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p7')">結果を見る →</button>`;
@@ -1059,6 +1131,8 @@ function skipInstant(i){
   updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
   updateMissBtn('instant');
   checkNorma('instant');
+  recordDaily(false);
+  saveState();
   showNextBtn('instant');
 }
 
@@ -1086,6 +1160,8 @@ function evalInstant(i,isCorrect){
   updateScore('instant',state.instant.correct,Object.keys(state.instant.answered).length,INSTANT.length);
   updateMissBtn('instant');
   checkNorma('instant');
+  recordDaily(isCorrect);
+  saveState();
   showNextBtn('instant');
 }
 
@@ -1472,6 +1548,7 @@ function resetPart(part){
   document.getElementById(`${part}-misscount`).textContent='0';
   document.getElementById(`${part}-missbtn`).classList.remove('has-miss');
   closeMissPanel();
+  saveState();
 }
 
 // ============================================================
@@ -1482,11 +1559,150 @@ function showPart(part,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(part).classList.add('active');
   el.classList.add('active');
+  if(part==='history')renderHistory();
 }
 function chr(j){return String.fromCharCode(65+j);}
 
+// ============================================================
+// LOCALSTORAGE — セッション継続 & 日別履歴
+// ============================================================
+const LS_STATE='toeic-state';
+const LS_DAILY='toeic-daily';
+
+function saveState(){
+  try{
+    localStorage.setItem(LS_STATE,JSON.stringify({state,mistakes,cursor,norma,normaChk}));
+  }catch(e){}
+}
+
+function loadState(){
+  try{
+    const raw=localStorage.getItem(LS_STATE);
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    if(d.state){
+      ['p5','p6','p7','instant'].forEach(p=>{
+        if(d.state[p])Object.assign(state[p],d.state[p]);
+      });
+    }
+    if(d.mistakes){
+      ['p5','p6','p7','instant'].forEach(p=>{
+        if(d.mistakes[p])Object.assign(mistakes[p],d.mistakes[p]);
+      });
+    }
+    if(d.cursor)Object.assign(cursor,d.cursor);
+    if(d.norma)Object.assign(norma,d.norma);
+    if(d.normaChk)Object.assign(normaChk,d.normaChk);
+  }catch(e){}
+}
+
+function recordDaily(correct){
+  try{
+    const today=new Date().toISOString().slice(0,10);
+    const raw=localStorage.getItem(LS_DAILY);
+    const hist=raw?JSON.parse(raw):{};
+    if(!hist[today])hist[today]={answered:0,correct:0,wrong:0};
+    hist[today].answered++;
+    if(correct)hist[today].correct++;else hist[today].wrong++;
+    localStorage.setItem(LS_DAILY,JSON.stringify(hist));
+    updateDailyUI();
+  }catch(e){}
+}
+
+function updateDailyUI(){
+  try{
+    const today=new Date().toISOString().slice(0,10);
+    const raw=localStorage.getItem(LS_DAILY);
+    const hist=raw?JSON.parse(raw):{};
+    const r=hist[today]||{answered:0,correct:0,wrong:0};
+    const rate=r.answered>0?Math.round(r.correct/r.answered*100):null;
+    const g=id=>document.getElementById(id);
+    if(g('d-ans'))g('d-ans').textContent=r.answered;
+    if(g('d-cor'))g('d-cor').textContent=r.correct;
+    if(g('d-wrg'))g('d-wrg').textContent=r.wrong;
+    if(g('d-rt'))g('d-rt').textContent=rate!==null?rate+'%':'—';
+  }catch(e){}
+}
+
+function renderHistory(){
+  try{
+    const raw=localStorage.getItem(LS_DAILY);
+    const hist=raw?JSON.parse(raw):{};
+    const keys=Object.keys(hist).sort((a,b)=>b.localeCompare(a)).slice(0,7);
+    const el=document.getElementById('history-content');
+    if(!el)return;
+    if(keys.length===0){
+      el.innerHTML='<p style="color:var(--sub);font-size:.85rem;text-align:center;padding:32px">まだ学習履歴がありません。</p>';
+      return;
+    }
+    el.innerHTML='<div class="hist-wrap"><table class="hist-table"><thead><tr>'
+      +'<th>日付</th><th>回答</th><th>正解</th><th>ミス</th><th>正答率</th>'
+      +'</tr></thead><tbody>'
+      +keys.map(k=>{
+        const r=hist[k];
+        const rate=r.answered>0?Math.round(r.correct/r.answered*100):null;
+        const rc=rate===null?'var(--sub)':rate>=80?'var(--green)':rate>=60?'var(--primary)':'var(--red)';
+        return `<tr><td>${k}</td><td>${r.answered}</td>`
+          +`<td style="color:var(--green)">${r.correct}</td>`
+          +`<td style="color:var(--red)">${r.wrong}</td>`
+          +`<td style="color:${rc};font-weight:700">${rate!==null?rate+'%':'—'}</td></tr>`;
+      }).join('')
+      +'</tbody></table></div>';
+  }catch(e){}
+}
+
+function exportData(){
+  try{
+    const data={
+      [LS_STATE]:JSON.parse(localStorage.getItem(LS_STATE)||'null'),
+      [LS_DAILY]:JSON.parse(localStorage.getItem(LS_DAILY)||'null')
+    };
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='toeic-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }catch(e){alert('エクスポートに失敗しました。');}
+}
+
+function importData(){
+  const input=document.createElement('input');
+  input.type='file';
+  input.accept='application/json,.json';
+  input.onchange=e=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        if(!confirm('現在のデータを上書きしてインポートしますか？'))return;
+        if(data[LS_STATE])localStorage.setItem(LS_STATE,JSON.stringify(data[LS_STATE]));
+        if(data[LS_DAILY])localStorage.setItem(LS_DAILY,JSON.stringify(data[LS_DAILY]));
+        alert('インポートしました。ページを再読み込みします。');
+        location.reload();
+      }catch(e){
+        alert('インポートに失敗しました。ファイルを確認してください。');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function resetAllData(){
+  if(!confirm('すべての学習データをリセットしますか？この操作は元に戻せません。'))return;
+  localStorage.removeItem(LS_STATE);
+  localStorage.removeItem(LS_DAILY);
+  location.reload();
+}
+
 // INIT
+loadState();
 renderP5();renderP6();renderP7();renderInstant();
+updateDailyUI();
 </script>
 </body>
 </html>
