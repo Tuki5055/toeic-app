@@ -221,6 +221,25 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .status-row:last-child{border-bottom:none}
 .status-label{color:var(--sub)}
 .status-val{color:var(--text);font-weight:600}
+/* ── Phase 4: question history / weak / unanswered ── */
+.hist-section{margin-bottom:24px}
+.hist-section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.hist-section-hd h3{font-size:.9rem;font-weight:700;color:var(--primary);margin:0}
+.qhist-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.qhist-table thead th{padding:7px 10px;text-align:left;color:var(--sub);font-size:.72rem;font-weight:600;border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap}
+.qhist-table tbody td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text)}
+.qhist-table tbody tr:last-child td{border-bottom:none}
+.qhist-table tbody tr:hover td{background:var(--surface2)}
+.part-group{margin-bottom:14px}
+.part-group-hd{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);margin-bottom:8px}
+.part-group-label{font-size:.82rem;font-weight:700;color:var(--primary)}
+.weak-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);margin-bottom:5px;flex-wrap:wrap}
+.weak-item-id{font-size:.75rem;color:var(--sub);min-width:96px;flex-shrink:0}
+.weak-item-stat{font-size:.78rem;color:var(--text);flex:1}
+.weak-item-rate{font-size:.78rem;font-weight:700;white-space:nowrap}
+.unans-part{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;margin-bottom:8px;gap:12px}
+.unans-part-label{font-size:.84rem;color:var(--text);font-weight:600}
+.unans-part-count{font-size:.76rem;color:var(--sub);margin-top:2px}
 </style>
 </head>
 <body>
@@ -365,8 +384,11 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 
 <!-- HISTORY -->
 <div id="history" class="part-section">
-  <div class="part-intro"><h2>📊 学習履歴（直近7日）</h2><p>日ごとの回答数・正解数・ミス数・正答率を表示します。</p></div>
-  <div id="history-content"></div>
+  <div class="part-intro"><h2>📊 学習履歴</h2><p>日別の学習記録・問題別の成績・苦手問題・未回答問題を確認できます。</p></div>
+  <div id="history-daily"></div>
+  <div id="history-qhist"></div>
+  <div id="history-weak"></div>
+  <div id="history-unanswered"></div>
 </div>
 
 <!-- SETTINGS -->
@@ -1669,31 +1691,229 @@ function recordQuestionHistory(part,questionId,correct){
   }catch(e){}
 }
 
-function renderHistory(){
+// ============================================================
+// PHASE 4 — Question history analysis & weak/unanswered UI
+// ============================================================
+
+function getAllQuestionIds(){
+  const ids=[];
+  for(let i=0;i<P5.length;i++)ids.push(`p5-${i}`);
+  P6.forEach((set,si)=>set.qs.forEach((_,qi)=>ids.push(`p6-${si}-${qi}`)));
+  P7.forEach((set,si)=>set.qs.forEach((_,qi)=>ids.push(`p7-${si}-${qi}`)));
+  for(let i=0;i<INSTANT.length;i++)ids.push(`instant-${i}`);
+  return ids;
+}
+
+function getWeakQuestions(hist){
+  return Object.entries(hist).filter(([,r])=>
+    r.wrong>=2||(r.attempts>=2&&r.correct/r.attempts<0.6));
+}
+
+function getUnansweredIds(hist){
+  return getAllQuestionIds().filter(id=>!hist[id]);
+}
+
+function qidLabel(id){
+  const m5=id.match(/^p5-(\d+)$/);
+  if(m5)return `Part5 Q${parseInt(m5[1])+1}`;
+  const m6=id.match(/^p6-(\d+)-(\d+)$/);
+  if(m6){
+    const si=parseInt(m6[1]),qi=parseInt(m6[2]);
+    let qn=131;for(let s=0;s<si;s++)qn+=P6[s].qs.length;qn+=qi;
+    return `Part6 Q${qn}`;
+  }
+  const m7=id.match(/^p7-(\d+)-(\d+)$/);
+  if(m7)return `Part7 Set${parseInt(m7[1])+1}-Q${parseInt(m7[2])+1}`;
+  const mi=id.match(/^instant-(\d+)$/);
+  if(mi)return `瞬間英作文 #${parseInt(mi[1])+1}`;
+  return id;
+}
+
+function partFromId(id){
+  if(id.startsWith('p5-'))return 'p5';
+  if(id.startsWith('p6-'))return 'p6';
+  if(id.startsWith('p7-'))return 'p7';
+  if(id.startsWith('instant-'))return 'instant';
+  return null;
+}
+
+function reviewKeyFromId(id){
+  const m5=id.match(/^p5-(\d+)$/);if(m5)return m5[1];
+  const m6=id.match(/^p6-(\d+)-(\d+)$/);if(m6)return `${m6[1]}-${m6[2]}`;
+  const m7=id.match(/^p7-(\d+)-(\d+)$/);if(m7)return `${m7[1]}-${m7[2]}`;
+  const mi=id.match(/^instant-(\d+)$/);if(mi)return mi[1];
+  return null;
+}
+
+function activateTab(part){
+  document.querySelectorAll('.part-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.remove('active');
+    if((t.getAttribute('onclick')||'').includes(`'${part}'`))t.classList.add('active');
+  });
+  document.getElementById(part).classList.add('active');
+}
+
+function renderHistoryDaily(){
   try{
     const raw=localStorage.getItem(LS_DAILY);
     const hist=raw?JSON.parse(raw):{};
     const keys=Object.keys(hist).sort((a,b)=>b.localeCompare(a)).slice(0,7);
-    const el=document.getElementById('history-content');
+    const el=document.getElementById('history-daily');
     if(!el)return;
+    let html='<div class="hist-section"><div class="hist-section-hd"><h3>📅 日別履歴（直近7日）</h3></div>';
     if(keys.length===0){
-      el.innerHTML='<p style="color:var(--sub);font-size:.85rem;text-align:center;padding:32px">まだ学習履歴がありません。</p>';
-      return;
+      html+='<p style="color:var(--sub);font-size:.85rem;padding:12px 0">まだ学習履歴がありません。</p>';
+    } else {
+      html+='<div class="hist-wrap"><table class="hist-table"><thead><tr>'
+        +'<th>日付</th><th>回答</th><th>正解</th><th>ミス</th><th>正答率</th>'
+        +'</tr></thead><tbody>'
+        +keys.map(k=>{
+          const r=hist[k];
+          const rate=r.answered>0?Math.round(r.correct/r.answered*100):null;
+          const rc=rate===null?'var(--sub)':rate>=80?'var(--green)':rate>=60?'var(--primary)':'var(--red)';
+          return `<tr><td>${k}</td><td>${r.answered}</td>`
+            +`<td style="color:var(--green)">${r.correct}</td>`
+            +`<td style="color:var(--red)">${r.wrong}</td>`
+            +`<td style="color:${rc};font-weight:700">${rate!==null?rate+'%':'—'}</td></tr>`;
+        }).join('')
+        +'</tbody></table></div>';
     }
-    el.innerHTML='<div class="hist-wrap"><table class="hist-table"><thead><tr>'
-      +'<th>日付</th><th>回答</th><th>正解</th><th>ミス</th><th>正答率</th>'
-      +'</tr></thead><tbody>'
-      +keys.map(k=>{
-        const r=hist[k];
-        const rate=r.answered>0?Math.round(r.correct/r.answered*100):null;
-        const rc=rate===null?'var(--sub)':rate>=80?'var(--green)':rate>=60?'var(--primary)':'var(--red)';
-        return `<tr><td>${k}</td><td>${r.answered}</td>`
-          +`<td style="color:var(--green)">${r.correct}</td>`
-          +`<td style="color:var(--red)">${r.wrong}</td>`
-          +`<td style="color:${rc};font-weight:700">${rate!==null?rate+'%':'—'}</td></tr>`;
-      }).join('')
-      +'</tbody></table></div>';
+    el.innerHTML=html+'</div>';
   }catch(e){}
+}
+
+function renderQuestionHistory(hist){
+  const el=document.getElementById('history-qhist');
+  if(!el)return;
+  const entries=Object.entries(hist).sort((a,b)=>a[0].localeCompare(b[0]));
+  if(entries.length===0){
+    el.innerHTML='<div class="hist-section"><div class="hist-section-hd"><h3>📋 問題別履歴</h3></div>'
+      +'<p style="color:var(--sub);font-size:.85rem;padding:12px 0">まだ回答した問題がありません。</p></div>';
+    return;
+  }
+  const rows=entries.map(([id,r])=>{
+    const rate=r.attempts>0?Math.round(r.correct/r.attempts*100):0;
+    const rc=rate>=80?'var(--green)':rate>=60?'var(--primary)':'var(--red)';
+    const lastAt=r.lastAnsweredAt?new Date(r.lastAnsweredAt).toLocaleDateString('ja-JP'):'—';
+    return `<tr><td>${qidLabel(id)}</td><td>${r.attempts}</td>`
+      +`<td style="color:var(--green)">${r.correct}</td>`
+      +`<td style="color:var(--red)">${r.wrong}</td>`
+      +`<td style="color:${rc};font-weight:700">${rate}%</td>`
+      +`<td style="color:var(--sub);font-size:.75rem">${lastAt}</td></tr>`;
+  }).join('');
+  el.innerHTML='<div class="hist-section">'
+    +`<div class="hist-section-hd"><h3>📋 問題別履歴</h3><span style="color:var(--sub);font-size:.78rem">${entries.length}問</span></div>`
+    +'<div class="hist-wrap"><table class="qhist-table"><thead><tr>'
+    +'<th>問題</th><th>回答</th><th>正解</th><th>ミス</th><th>正答率</th><th>最終回答</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+}
+
+function renderWeakQuestions(hist){
+  const el=document.getElementById('history-weak');
+  if(!el)return;
+  const weak=getWeakQuestions(hist);
+  if(weak.length===0){
+    el.innerHTML='<div class="hist-section"><div class="hist-section-hd"><h3>⚠️ 苦手問題</h3></div>'
+      +'<p style="color:var(--sub);font-size:.85rem;padding:12px 0">苦手問題はありません。よく頑張りました！</p></div>';
+    return;
+  }
+  const byPart={p5:[],p6:[],p7:[],instant:[]};
+  weak.forEach(([id,r])=>{const p=partFromId(id);if(p&&byPart[p])byPart[p].push([id,r]);});
+  const partNames={p5:'Part 5',p6:'Part 6',p7:'Part 7',instant:'瞬間英作文'};
+  let html='<div class="hist-section">'
+    +`<div class="hist-section-hd"><h3>⚠️ 苦手問題</h3><span style="color:var(--sub);font-size:.78rem">${weak.length}問（ミス2回以上 または 正答率60%未満）</span></div>`;
+  ['p5','p6','p7','instant'].forEach(part=>{
+    const items=byPart[part];
+    if(items.length===0)return;
+    const keys=items.map(([id])=>reviewKeyFromId(id));
+    html+=`<div class="part-group"><div class="part-group-hd"><span class="part-group-label">${partNames[part]}（${items.length}問）</span>`
+      +`<button class="sbtn sbtn-blue" style="padding:5px 14px;font-size:.78rem" onclick="startWeakReview('${part}',${JSON.stringify(keys)})">🔁 復習する</button></div>`;
+    items.forEach(([id,r])=>{
+      const rate=r.attempts>0?Math.round(r.correct/r.attempts*100):0;
+      const rc=rate>=60?'var(--primary)':'var(--red)';
+      html+=`<div class="weak-item"><span class="weak-item-id">${qidLabel(id)}</span>`
+        +`<span class="weak-item-stat">${r.attempts}回中${r.correct}正解・ミス${r.wrong}回</span>`
+        +`<span class="weak-item-rate" style="color:${rc}">${rate}%</span></div>`;
+    });
+    html+='</div>';
+  });
+  el.innerHTML=html+'</div>';
+}
+
+function renderUnansweredQuestions(hist){
+  const el=document.getElementById('history-unanswered');
+  if(!el)return;
+  const ids=getUnansweredIds(hist);
+  const total=getAllQuestionIds().length;
+  if(ids.length===0){
+    el.innerHTML='<div class="hist-section"><div class="hist-section-hd"><h3>✅ 未回答問題</h3></div>'
+      +'<p style="color:var(--sub);font-size:.85rem;padding:12px 0">全問回答済みです！🎉</p></div>';
+    return;
+  }
+  const byPart={p5:[],p6:[],p7:[],instant:[]};
+  ids.forEach(id=>{const p=partFromId(id);if(p&&byPart[p])byPart[p].push(id);});
+  const partNames={p5:'Part 5',p6:'Part 6',p7:'Part 7',instant:'瞬間英作文'};
+  let html='<div class="hist-section">'
+    +`<div class="hist-section-hd"><h3>✅ 未回答問題</h3><span style="color:var(--sub);font-size:.78rem">${ids.length}/${total}問未回答</span></div>`;
+  ['p5','p6','p7','instant'].forEach(part=>{
+    const items=byPart[part];
+    if(items.length===0)return;
+    const firstKey=reviewKeyFromId(items[0]);
+    html+=`<div class="unans-part"><div><div class="unans-part-label">${partNames[part]}</div>`
+      +`<div class="unans-part-count">${items.length}問未回答</div></div>`
+      +`<button class="sbtn sbtn-ghost" style="padding:5px 14px;font-size:.78rem" onclick="goToUnanswered('${part}','${firstKey}')">▶ 解く</button></div>`;
+  });
+  el.innerHTML=html+'</div>';
+}
+
+function renderHistory(){
+  try{
+    const raw=localStorage.getItem(LS_QHIST);
+    const hist=raw?JSON.parse(raw):{};
+    renderHistoryDaily();
+    renderQuestionHistory(hist);
+    renderWeakQuestions(hist);
+    renderUnansweredQuestions(hist);
+  }catch(e){}
+}
+
+function startWeakReview(part,keys){
+  if(!keys||keys.length===0){alert('このパートに苦手問題がありません。');return;}
+  activateTab(part);
+  review.active=true;review.part=part;review.round=1;
+  review.answered={};review.correct=0;review.cursor=0;
+  review.queue=buildReviewQueue(part,keys);
+  const contentId={p5:'p5-questions',p6:'p6-sets',p7:'p7-sets',instant:'instant-questions'}[part];
+  document.getElementById(contentId).style.display='none';
+  document.getElementById(`${part}-review`).style.display='block';
+  document.getElementById(`${part}-review-bar`).style.display='flex';
+  document.getElementById(`${part}-round`).textContent='1';
+  document.getElementById(`${part}-review-score`).textContent='0/0';
+  renderReview(part);
+  document.getElementById(part).scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function goToUnanswered(part,firstKey){
+  activateTab(part);
+  if(part==='p5'){
+    // set cursor to position of this question in current shuffle
+    if(shuf.p5.length===0){shuf.p5=[...Array(P5.length).keys()];for(let i=P5.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuf.p5[i],shuf.p5[j]]=[shuf.p5[j],shuf.p5[i]];}}
+    const qi=parseInt(firstKey);
+    const pos=shuf.p5.indexOf(qi);
+    cursor.p5=pos>=0?pos:cursor.p5;
+    renderP5();
+  } else if(part==='p6'){
+    cursor.p6=parseInt(firstKey.split('-')[0]);
+    renderP6();
+  } else if(part==='p7'){
+    cursor.p7=parseInt(firstKey.split('-')[0]);
+    renderP7();
+  } else if(part==='instant'){
+    cursor.instant=parseInt(firstKey);
+    renderInstant();
+  }
+  document.getElementById(part).scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function renderSettingsStatus(){
