@@ -24,16 +24,19 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 /* ── Header ── */
-header{background:linear-gradient(135deg,#0d1133,#1a1d40);padding:16px 24px;border-bottom:1px solid var(--border)}
+header{background:linear-gradient(135deg,#0d1133,#1a1d40);border-bottom:1px solid var(--border)}
+.header-inner{max-width:1180px;margin:0 auto;padding:14px 16px}
 header h1{font-size:1.25rem;letter-spacing:.5px;color:white}
 header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 /* ── Tabs ── */
-.tabs{display:flex;background:#10131e;border-bottom:1px solid var(--border);overflow-x:auto}
-.tab{padding:12px 22px;color:var(--sub);cursor:pointer;font-size:.85rem;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s}
-.tab:hover{color:var(--text);background:rgba(255,255,255,.04)}
-.tab.active{color:white;border-bottom-color:var(--accent);background:rgba(123,143,247,.08)}
+.tabs-bar{background:#10131e;border-bottom:1px solid var(--border)}
+.tabs-inner{max-width:1180px;margin:0 auto;padding:0 16px;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs-inner::-webkit-scrollbar{display:none}
+.tab{padding:12px 20px;color:var(--sub);cursor:pointer;font-size:.85rem;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;flex-shrink:0;user-select:none}
+.tab:hover{color:var(--text);background:rgba(255,255,255,.05)}
+.tab.active{color:white;border-bottom-color:var(--accent);background:rgba(123,143,247,.15);font-weight:600}
 /* ── Layout ── */
-.content{max-width:880px;margin:22px auto;padding:0 16px 56px}
+.content{max-width:1180px;margin:22px auto;padding:0 16px 56px}
 .part-section{display:none}
 .part-section.active{display:block}
 /* ── Part intro ── */
@@ -188,7 +191,8 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .norma-stat-label{font-size:.72rem;color:var(--sub);margin-top:3px}
 .norma-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 /* ── Daily bar ── */
-.daily-bar{background:#0c0f1c;border-bottom:1px solid var(--border);padding:9px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:.82rem}
+.daily-bar{background:#0c0f1c;border-bottom:1px solid var(--border)}
+.daily-bar-inner{max-width:1180px;margin:0 auto;padding:9px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:.82rem}
 .daily-bar .dl{color:var(--sub);font-weight:700;font-size:.75rem;letter-spacing:.4px;white-space:nowrap}
 .daily-bar .di{display:flex;align-items:center;gap:3px;white-space:nowrap}
 .daily-bar .dn{font-weight:700;font-size:.88rem}
@@ -264,8 +268,9 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .cloud-msg.err{background:var(--red-bg);color:var(--red);border:1px solid #5a2020}
 .cloud-msg.busy{background:var(--surface2);color:var(--sub);border:1px solid var(--border)}
 /* ── Today's recommendations ── */
-.rec-outer{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:none}
+.rec-outer{background:var(--surface);border-bottom:1px solid var(--border);display:none}
 .rec-outer.visible{display:block}
+.rec-inner{max-width:1180px;margin:0 auto;padding:10px 16px}
 .rec-label{font-size:.72rem;color:var(--sub);font-weight:700;letter-spacing:.5px;margin-bottom:8px}
 .rec-items{display:flex;gap:8px;flex-wrap:wrap}
 .rec-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;flex:1;min-width:180px;display:flex;flex-direction:column;gap:5px}
@@ -278,34 +283,60 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .grad-item-id{font-size:.76rem;color:var(--sub);min-width:96px;flex-shrink:0}
 .grad-item-streak{font-size:.78rem;color:var(--green);font-weight:700;flex:1}
 .grad-item-date{font-size:.74rem;color:var(--sub)}
+/* ── Responsive ── */
+@media(max-width:768px){
+  .header-inner{padding:12px 12px}
+  .daily-bar-inner{padding:8px 12px;gap:10px}
+  .tabs-inner{padding:0 4px}
+  .tab{padding:11px 14px;font-size:.82rem}
+  .rec-inner{padding:8px 12px}
+  .content{padding:0 12px 48px}
+  .rec-items{flex-direction:column}
+  .hist-wrap{overflow-x:auto}
+  .qhist-table{min-width:520px}
+  .hist-table{min-width:360px}
+  .double-passage{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .tab{padding:10px 12px;font-size:.8rem}
+  .score-box{gap:8px}
+}
 </style>
 </head>
 <body>
 <header>
-  <h1>TOEIC 練習アプリ</h1>
-  <p>Part 5 / Part 6 / Part 7 / 瞬間英作文</p>
+  <div class="header-inner">
+    <h1>TOEIC 練習アプリ</h1>
+    <p>Part 5 / Part 6 / Part 7 / 瞬間英作文</p>
+  </div>
 </header>
 <div class="daily-bar" id="daily-bar">
-  <span class="dl">今日の学習</span>
-  <span class="di"><span class="dn" id="d-ans">0</span>問</span>
-  <span class="ds">/</span>
-  <span class="di dok">正解&nbsp;<span class="dn" id="d-cor">0</span></span>
-  <span class="ds">/</span>
-  <span class="di dng">ミス&nbsp;<span class="dn" id="d-wrg">0</span></span>
-  <span class="ds">/</span>
-  <span class="di drt">正答率&nbsp;<span class="dn" id="d-rt">—</span></span>
+  <div class="daily-bar-inner">
+    <span class="dl">今日の学習</span>
+    <span class="di"><span class="dn" id="d-ans">0</span>問</span>
+    <span class="ds">/</span>
+    <span class="di dok">正解&nbsp;<span class="dn" id="d-cor">0</span></span>
+    <span class="ds">/</span>
+    <span class="di dng">ミス&nbsp;<span class="dn" id="d-wrg">0</span></span>
+    <span class="ds">/</span>
+    <span class="di drt">正答率&nbsp;<span class="dn" id="d-rt">—</span></span>
+  </div>
 </div>
 <div class="rec-outer" id="rec-outer">
-  <div class="rec-label">⭐ 今日のおすすめ学習</div>
-  <div class="rec-items" id="rec-items"></div>
+  <div class="rec-inner">
+    <div class="rec-label">⭐ 今日のおすすめ学習</div>
+    <div class="rec-items" id="rec-items"></div>
+  </div>
 </div>
-<div class="tabs">
-  <div class="tab active" onclick="showPart('p5',this)">Part 5 <small>(50問)</small></div>
-  <div class="tab" onclick="showPart('p6',this)">Part 6 <small>(7セット)</small></div>
-  <div class="tab" onclick="showPart('p7',this)">Part 7 <small>(7セット)</small></div>
-  <div class="tab" onclick="showPart('instant',this)">瞬間英作文 <small>(50問)</small></div>
-  <div class="tab" onclick="showPart('history',this)">📊 履歴</div>
-  <div class="tab" onclick="showPart('settings',this)">⚙ 設定</div>
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <div class="tab active" onclick="showPart('p5',this)">Part 5 <small>(50問)</small></div>
+    <div class="tab" onclick="showPart('p6',this)">Part 6 <small>(7セット)</small></div>
+    <div class="tab" onclick="showPart('p7',this)">Part 7 <small>(7セット)</small></div>
+    <div class="tab" onclick="showPart('instant',this)">瞬間英作文 <small>(50問)</small></div>
+    <div class="tab" onclick="showPart('history',this)">📊 履歴</div>
+    <div class="tab" onclick="showPart('settings',this)">⚙ 設定</div>
+  </div>
 </div>
 <!-- Norma modal -->
 <div class="norma-overlay" id="norma-overlay" onclick="closeNormaModal()"></div>
