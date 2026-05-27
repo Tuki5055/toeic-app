@@ -240,6 +240,29 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .unans-part{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;margin-bottom:8px;gap:12px}
 .unans-part-label{font-size:.84rem;color:var(--text);font-weight:600}
 .unans-part-count{font-size:.76rem;color:var(--sub);margin-top:2px}
+/* ── Cloud backup ── */
+.cloud-field{margin-bottom:12px}
+.cloud-field label{display:block;font-size:.75rem;color:var(--sub);margin-bottom:4px;font-weight:600;letter-spacing:.4px}
+.cloud-input{width:100%;background:#13161f;border:1.5px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-size:.84rem;outline:none;transition:border-color .2s;font-family:inherit}
+.cloud-input:focus{border-color:var(--primary-dim)}
+.cloud-toggle{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.cloud-toggle-label{font-size:.85rem;color:var(--text)}
+.toggle-switch{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--surface2);border-radius:11px;border:1px solid var(--border);cursor:pointer;transition:background .2s}
+.toggle-switch input:checked+.toggle-slider{background:var(--primary-dim);border-color:var(--primary)}
+.toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:2px;top:2px;background:var(--sub);border-radius:50%;transition:transform .2s,background .2s}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(18px);background:white}
+.cloud-status{margin-bottom:12px;display:flex;flex-direction:column;gap:0}
+.cloud-status-row{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;padding:5px 0;border-bottom:1px solid var(--border)}
+.cloud-status-row:last-child{border-bottom:none}
+.cloud-status-label{color:var(--sub)}
+.cloud-status-val{color:var(--text);font-size:.78rem}
+.cloud-msg{font-size:.78rem;padding:7px 10px;border-radius:6px;margin-top:10px;display:none}
+.cloud-msg.show{display:block}
+.cloud-msg.ok{background:var(--green-bg);color:var(--green);border:1px solid #2a5a3a}
+.cloud-msg.err{background:var(--red-bg);color:var(--red);border:1px solid #5a2020}
+.cloud-msg.busy{background:var(--surface2);color:var(--sub);border:1px solid var(--border)}
 </style>
 </head>
 <body>
@@ -399,7 +422,36 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
     <div id="settings-status" class="status-grid"><div style="color:var(--sub);font-size:.82rem">読み込み中…</div></div>
   </div>
   <div class="scard">
-    <h3>バックアップ</h3>
+    <h3>☁ クラウドバックアップ</h3>
+    <p>Google Apps Script を使って端末間でデータを同期できます。GAS WebアプリURLとパスコードを設定してください。</p>
+    <div class="cloud-toggle">
+      <label class="toggle-switch">
+        <input type="checkbox" id="cloud-enabled" onchange="saveCloudSettings()">
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="cloud-toggle-label">自動バックアップ（5分間隔）</span>
+    </div>
+    <div class="cloud-field">
+      <label>端末名</label>
+      <input type="text" id="cloud-device" class="cloud-input" placeholder="例: Mac mini / iPad" oninput="saveCloudSettings()">
+    </div>
+    <div class="cloud-field">
+      <label>Google Apps Script WebアプリURL</label>
+      <input type="url" id="cloud-url" class="cloud-input" placeholder="https://script.google.com/macros/s/…/exec" oninput="saveCloudSettings()">
+    </div>
+    <div class="cloud-field">
+      <label>パスコード（トークン）</label>
+      <input type="password" id="cloud-token" class="cloud-input" placeholder="GASスクリプト内で設定したトークン" oninput="saveCloudSettings()">
+    </div>
+    <div id="cloud-status" class="cloud-status"></div>
+    <div class="sbtn-row">
+      <button class="sbtn sbtn-blue" onclick="backupToCloud()">☁ 今すぐバックアップ</button>
+      <button class="sbtn sbtn-ghost" onclick="restoreFromCloud()">⬇ クラウドから復元</button>
+    </div>
+    <div id="cloud-msg" class="cloud-msg"></div>
+  </div>
+  <div class="scard">
+    <h3>ローカルバックアップ</h3>
     <p>学習データ（進捗・ミス・日別履歴）をJSONファイルに保存・復元できます。</p>
     <div class="sbtn-row">
       <button class="sbtn sbtn-blue" onclick="exportData()">⬇ エクスポート</button>
@@ -1597,7 +1649,7 @@ function showPart(part,el){
   document.getElementById(part).classList.add('active');
   el.classList.add('active');
   if(part==='history')renderHistory();
-  if(part==='settings')renderSettingsStatus();
+  if(part==='settings'){renderSettingsStatus();renderCloudSettings();}
 }
 function chr(j){return String.fromCharCode(65+j);}
 
@@ -1626,6 +1678,7 @@ function saveState(){
       state,mistakes,cursor,norma,normaChk
     }));
   }catch(e){}
+  maybeAutoBackup();
 }
 
 function loadState(){
@@ -1993,6 +2046,155 @@ function resetAllData(){
   localStorage.removeItem(LS_DAILY);
   localStorage.removeItem(LS_QHIST);
   location.reload();
+}
+
+// ============================================================
+// CLOUD BACKUP — Google Apps Script 連携
+// ============================================================
+const LS_CLOUD='toeic-cloud-settings';
+let _cloudBusy=false;
+let _autoBackupTimer=null;
+
+function loadCloudSettings(){
+  try{
+    const raw=localStorage.getItem(LS_CLOUD);
+    if(raw)return Object.assign({enabled:false,deviceName:'',endpointUrl:'',token:'',lastBackupAt:'',lastRestoreAt:''},JSON.parse(raw));
+  }catch(e){}
+  return{enabled:false,deviceName:'',endpointUrl:'',token:'',lastBackupAt:'',lastRestoreAt:''};
+}
+
+function saveCloudSettings(){
+  try{
+    const existing=loadCloudSettings();
+    const cfg={
+      enabled:document.getElementById('cloud-enabled').checked,
+      deviceName:document.getElementById('cloud-device').value.trim(),
+      endpointUrl:document.getElementById('cloud-url').value.trim(),
+      token:document.getElementById('cloud-token').value.trim(),
+      lastBackupAt:existing.lastBackupAt||'',
+      lastRestoreAt:existing.lastRestoreAt||''
+    };
+    localStorage.setItem(LS_CLOUD,JSON.stringify(cfg));
+    updateCloudStatusUI();
+  }catch(e){}
+}
+
+function getBackupPayload(){
+  const cfg=loadCloudSettings();
+  return{
+    app:'toeic-app',
+    version:1,
+    deviceName:cfg.deviceName||'unknown',
+    savedAt:new Date().toISOString(),
+    data:{
+      [LS_STATE]:JSON.parse(localStorage.getItem(LS_STATE)||'null'),
+      [LS_DAILY]:JSON.parse(localStorage.getItem(LS_DAILY)||'null'),
+      [LS_QHIST]:JSON.parse(localStorage.getItem(LS_QHIST)||'null')
+    }
+  };
+}
+
+function showCloudMsg(text,type){
+  const el=document.getElementById('cloud-msg');
+  if(!el)return;
+  el.textContent=text;
+  el.className=`cloud-msg show ${type}`;
+}
+
+async function backupToCloud(){
+  const cfg=loadCloudSettings();
+  if(!cfg.endpointUrl){showCloudMsg('WebアプリURLを入力してください。','err');return;}
+  if(!cfg.token){showCloudMsg('パスコードを入力してください。','err');return;}
+  if(_cloudBusy)return;
+  _cloudBusy=true;
+  showCloudMsg('バックアップ中…','busy');
+  try{
+    const payload=getBackupPayload();
+    const res=await fetch(cfg.endpointUrl,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'}, // GAS では text/plain で受信
+      body:JSON.stringify({token:cfg.token,...payload})
+    });
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const json=await res.json().catch(()=>({}));
+    if(json.ok===false)throw new Error(json.error||'GASエラー');
+    // 成功: lastBackupAt を更新して保存
+    const updated=loadCloudSettings();
+    updated.lastBackupAt=new Date().toISOString();
+    localStorage.setItem(LS_CLOUD,JSON.stringify(updated));
+    updateCloudStatusUI();
+    showCloudMsg('バックアップ完了しました。','ok');
+  }catch(e){
+    showCloudMsg(`バックアップに失敗しました: ${e.message}`,'err');
+  }finally{
+    _cloudBusy=false;
+  }
+}
+
+async function restoreFromCloud(){
+  const cfg=loadCloudSettings();
+  if(!cfg.endpointUrl){showCloudMsg('WebアプリURLを入力してください。','err');return;}
+  if(!cfg.token){showCloudMsg('パスコードを入力してください。','err');return;}
+  if(_cloudBusy)return;
+  if(!confirm('クラウドから最新データを復元しますか？\n現在のローカルデータは上書きされます。'))return;
+  _cloudBusy=true;
+  showCloudMsg('復元中…','busy');
+  try{
+    const url=`${cfg.endpointUrl}?token=${encodeURIComponent(cfg.token)}&action=restore`;
+    const res=await fetch(url);
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    if(!data||!data.data)throw new Error('レスポンスの形式が不正です');
+    if(data.data[LS_STATE])localStorage.setItem(LS_STATE,JSON.stringify(data.data[LS_STATE]));
+    if(data.data[LS_DAILY])localStorage.setItem(LS_DAILY,JSON.stringify(data.data[LS_DAILY]));
+    if(data.data[LS_QHIST])localStorage.setItem(LS_QHIST,JSON.stringify(data.data[LS_QHIST]));
+    const updated=loadCloudSettings();
+    updated.lastRestoreAt=new Date().toISOString();
+    localStorage.setItem(LS_CLOUD,JSON.stringify(updated));
+    alert('復元しました。ページを再読み込みします。');
+    location.reload();
+  }catch(e){
+    showCloudMsg(`復元に失敗しました: ${e.message}`,'err');
+    _cloudBusy=false;
+  }
+}
+
+function maybeAutoBackup(){
+  try{
+    const cfg=loadCloudSettings();
+    if(!cfg.enabled||!cfg.endpointUrl||!cfg.token)return;
+    const lastAt=cfg.lastBackupAt?new Date(cfg.lastBackupAt).getTime():0;
+    if(Date.now()-lastAt<5*60*1000)return; // 5分未満はスキップ
+    clearTimeout(_autoBackupTimer);
+    _autoBackupTimer=setTimeout(()=>backupToCloud(),2000); // 2秒デバウンス
+  }catch(e){}
+}
+
+function updateCloudStatusUI(){
+  const el=document.getElementById('cloud-status');
+  if(!el)return;
+  const cfg=loadCloudSettings();
+  const lastBackup=cfg.lastBackupAt?new Date(cfg.lastBackupAt).toLocaleString('ja-JP'):'—';
+  const lastRestore=cfg.lastRestoreAt?new Date(cfg.lastRestoreAt).toLocaleString('ja-JP'):'—';
+  el.innerHTML=
+    `<div class="cloud-status-row"><span class="cloud-status-label">最終バックアップ</span><span class="cloud-status-val">${lastBackup}</span></div>`
+    +`<div class="cloud-status-row"><span class="cloud-status-label">最終復元</span><span class="cloud-status-val">${lastRestore}</span></div>`;
+}
+
+function renderCloudSettings(){
+  const cfg=loadCloudSettings();
+  const en=document.getElementById('cloud-enabled');
+  const dev=document.getElementById('cloud-device');
+  const url=document.getElementById('cloud-url');
+  const tok=document.getElementById('cloud-token');
+  if(en)en.checked=!!cfg.enabled;
+  if(dev)dev.value=cfg.deviceName||'';
+  if(url)url.value=cfg.endpointUrl||'';
+  if(tok)tok.value=cfg.token||'';
+  // メッセージをリセット
+  const msg=document.getElementById('cloud-msg');
+  if(msg){msg.className='cloud-msg';msg.textContent='';}
+  updateCloudStatusUI();
 }
 
 // INIT
