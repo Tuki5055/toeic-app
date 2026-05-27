@@ -24,10 +24,10 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 /* ── Header ── */
-header{background:linear-gradient(135deg,#172033,#1e2d4a);border-bottom:1px solid #2d3f5e}
+header{background:#ffffff;border-bottom:1px solid var(--border)}
 .header-inner{max-width:1180px;margin:0 auto;padding:14px 16px}
-header h1{font-size:1.25rem;letter-spacing:.5px;color:white}
-header p{font-size:.78rem;color:#94a3b8;margin-top:3px}
+header h1{font-size:1.25rem;letter-spacing:.5px;color:#1f2937}
+header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 /* ── Tabs ── */
 .tabs-bar{background:#ffffff;border-bottom:1px solid var(--border)}
 .tabs-inner{max-width:1180px;margin:0 auto;padding:0 16px;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -267,17 +267,27 @@ header p{font-size:.78rem;color:#94a3b8;margin-top:3px}
 .cloud-msg.ok{background:var(--green-bg);color:var(--green);border:1px solid #86efac}
 .cloud-msg.err{background:var(--red-bg);color:var(--red);border:1px solid #fca5a5}
 .cloud-msg.busy{background:var(--surface2);color:var(--sub);border:1px solid var(--border)}
-/* ── Today's recommendations ── */
-.rec-outer{background:var(--surface2);border-bottom:1px solid var(--border);display:none}
-.rec-outer.visible{display:block}
-.rec-inner{max-width:1180px;margin:0 auto;padding:10px 16px}
-.rec-label{font-size:.72rem;color:var(--sub);font-weight:700;letter-spacing:.5px;margin-bottom:8px}
-.rec-items{display:flex;gap:8px;flex-wrap:wrap}
-.rec-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;flex:1;min-width:180px;display:flex;flex-direction:column;gap:5px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.rec-item-title{font-size:.83rem;font-weight:700;color:var(--text)}
-.rec-item-reason{font-size:.74rem;color:var(--sub);line-height:1.4}
-.rec-item-btn{display:inline-flex;align-items:center;padding:5px 12px;border-radius:5px;border:none;background:var(--primary-dim);color:white;cursor:pointer;font-size:.76rem;font-weight:600;margin-top:2px;width:fit-content;transition:background .2s}
-.rec-item-btn:hover{background:var(--primary)}
+/* ── Daily Ten ── */
+.daily-ten-wrap{background:var(--surface2);border-bottom:1px solid var(--border)}
+.daily-ten-inner{max-width:1180px;margin:0 auto;padding:10px 16px}
+.daily-ten-card{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.daily-ten-prog{display:flex;flex-direction:column;align-items:center;min-width:68px;flex-shrink:0}
+.daily-ten-num{font-size:1.5rem;font-weight:800;color:var(--primary);line-height:1}
+.daily-ten-prog-label{font-size:.68rem;color:var(--sub);margin-top:3px;white-space:nowrap}
+.daily-ten-divider{width:1px;height:36px;background:var(--border);flex-shrink:0}
+.daily-ten-body{flex:1;min-width:100px}
+.daily-ten-title{font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.daily-ten-breakdown{font-size:.75rem;color:var(--sub);line-height:1.5}
+.daily-ten-pbar{height:4px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden}
+.daily-ten-pfill{height:100%;background:linear-gradient(90deg,var(--primary-dim),var(--primary));border-radius:2px;transition:width .4s}
+.daily-ten-btn{flex-shrink:0;white-space:nowrap;background:var(--primary-dim);color:white;border:none;border-radius:7px;padding:9px 18px;cursor:pointer;font-size:.83rem;font-weight:700;transition:background .2s}
+.daily-ten-btn:hover{background:var(--primary)}
+.daily-ten-btn.all-done{background:var(--green);cursor:default}
+@media(max-width:600px){
+  .daily-ten-divider{display:none}
+  .daily-ten-card{gap:10px}
+  .daily-ten-btn{width:100%}
+}
 /* ── Graduated section ── */
 .grad-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:7px;background:var(--green-bg);border:1px solid #86efac;margin-bottom:5px;flex-wrap:wrap}
 .grad-item-id{font-size:.76rem;color:var(--sub);min-width:96px;flex-shrink:0}
@@ -289,9 +299,8 @@ header p{font-size:.78rem;color:#94a3b8;margin-top:3px}
   .daily-bar-inner{padding:8px 12px;gap:10px}
   .tabs-inner{padding:0 4px}
   .tab{padding:11px 14px;font-size:.82rem}
-  .rec-inner{padding:8px 12px}
+  .daily-ten-inner{padding:8px 12px}
   .content{padding:0 12px 48px}
-  .rec-items{flex-direction:column}
   .qhist-table{min-width:520px}
   .hist-table{min-width:360px}
   .double-passage{grid-template-columns:1fr}
@@ -321,10 +330,9 @@ header p{font-size:.78rem;color:#94a3b8;margin-top:3px}
     <span class="di drt">正答率&nbsp;<span class="dn" id="d-rt">—</span></span>
   </div>
 </div>
-<div class="rec-outer" id="rec-outer">
-  <div class="rec-inner">
-    <div class="rec-label">⭐ 今日のおすすめ学習</div>
-    <div class="rec-items" id="rec-items"></div>
+<div class="daily-ten-wrap" id="daily-ten-wrap">
+  <div class="daily-ten-inner">
+    <div id="daily-ten-area"></div>
   </div>
 </div>
 <div class="tabs-bar">
@@ -1710,6 +1718,7 @@ function chr(j){return String.fromCharCode(65+j);}
 const LS_STATE='toeic-state';
 const LS_DAILY='toeic-daily';
 const LS_QHIST='toeic-question-history';
+const LS_DAILY_PLAN='toeic-daily-plan';
 const SAVE_VERSION=1;
 
 // ローカルタイムゾーン基準の日付キー (YYYY-MM-DD)
@@ -1806,7 +1815,7 @@ function updateDailyUI(){
     if(g('d-wrg'))g('d-wrg').textContent=r.wrong;
     if(g('d-rt'))g('d-rt').textContent=rate!==null?rate+'%':'—';
   }catch(e){}
-  renderTodayRecommendations();
+  renderDailyTen();
 }
 
 function recordQuestionHistory(part,questionId,correct){
@@ -1850,6 +1859,8 @@ function recordQuestionHistory(part,questionId,correct){
     }
     r.lastAnsweredAt=new Date().toISOString();
     localStorage.setItem(LS_QHIST,JSON.stringify(hist));
+    // Phase 10: 今日の10問進捗に反映
+    try{markDailyPlanCompleted(`${part}-${questionId}`);}catch(_){}
   }catch(e){}
 }
 
@@ -2567,11 +2578,135 @@ function openHistoryTab(){
   if(tab)showPart('history',tab);
 }
 
+// ============================================================
+// PHASE 10 (UI改善) — 今日の10問
+// ============================================================
+
+function buildDailyTenQuestions(){
+  const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+  const ids=[];
+  const seen=new Set();
+  function add(id){if(!seen.has(id)){seen.add(id);ids.push(id);}}
+  // 優先1: 忘却曲線復習期限（最大5問）
+  getDueReviewQuestions(hist).slice(0,5).forEach(([id])=>add(id));
+  // 優先2: 苦手問題（最大3問、残り枠に収まる範囲）
+  if(ids.length<10)getWeakQuestions(hist).slice(0,Math.min(3,10-ids.length)).forEach(([id])=>add(id));
+  // 優先3: 未回答問題
+  if(ids.length<10)getUnansweredIds(hist).slice(0,10-ids.length).forEach(id=>add(id));
+  // 優先4: 通常復習（答えたことがある・未卒業・最終回答が古い順）
+  if(ids.length<10){
+    Object.entries(hist)
+      .filter(([id,r])=>!r.graduatedAt&&!seen.has(id))
+      .sort((a,b)=>(a[1].lastAnsweredAt||'').localeCompare(b[1].lastAnsweredAt||''))
+      .slice(0,10-ids.length)
+      .forEach(([id])=>add(id));
+  }
+  return ids.slice(0,10);
+}
+
+function loadOrCreateDailyPlan(){
+  const today=getLocalDateKey();
+  try{
+    const raw=localStorage.getItem(LS_DAILY_PLAN);
+    if(raw){
+      const plan=JSON.parse(raw);
+      if(plan.date===today)return plan;
+    }
+  }catch(e){}
+  const plan={date:today,questionIds:buildDailyTenQuestions(),completedIds:[],createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+  localStorage.setItem(LS_DAILY_PLAN,JSON.stringify(plan));
+  return plan;
+}
+
+function markDailyPlanCompleted(questionId){
+  try{
+    const raw=localStorage.getItem(LS_DAILY_PLAN);
+    if(!raw)return;
+    const plan=JSON.parse(raw);
+    if(plan.date!==getLocalDateKey())return;
+    if(!plan.questionIds.includes(questionId))return;
+    if(plan.completedIds.includes(questionId))return;
+    plan.completedIds.push(questionId);
+    plan.updatedAt=new Date().toISOString();
+    localStorage.setItem(LS_DAILY_PLAN,JSON.stringify(plan));
+    renderDailyTen();
+  }catch(e){}
+}
+
+function renderDailyTen(){
+  const el=document.getElementById('daily-ten-area');
+  if(!el)return;
+  try{
+    const plan=loadOrCreateDailyPlan();
+    const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+    const total=plan.questionIds.length;
+    const done=plan.completedIds.length;
+    const remaining=total-done;
+    const allDone=total>0&&remaining===0;
+    const pct=total>0?Math.round(done/total*100):0;
+
+    // 内訳を計算
+    const dueSet=new Set(getDueReviewQuestions(hist).map(([id])=>id));
+    const weakSet=new Set(getWeakQuestions(hist).map(([id])=>id));
+    const answeredSet=new Set(Object.keys(hist));
+    let dueC=0,weakC=0,unanswC=0,regularC=0;
+    plan.questionIds.forEach(id=>{
+      if(dueSet.has(id))dueC++;
+      else if(weakSet.has(id))weakC++;
+      else if(!answeredSet.has(id))unanswC++;
+      else regularC++;
+    });
+    const parts=[];
+    if(dueC>0)parts.push(`復習 ${dueC}問`);
+    if(weakC>0)parts.push(`苦手 ${weakC}問`);
+    if(unanswC>0)parts.push(`未回答 ${unanswC}問`);
+    if(regularC>0)parts.push(`通常 ${regularC}問`);
+
+    const btnLabel=allDone?'✅ 今日は完了！':done===0?'今日の10問を始める':'今日の10問を続ける';
+    const btnClass=allDone?'daily-ten-btn all-done':'daily-ten-btn';
+    const btnAttr=allDone?'':'onclick="startDailyTen()"';
+
+    el.innerHTML=`<div class="daily-ten-card">`
+      +`<div class="daily-ten-prog">`
+      +`<div class="daily-ten-num">${done}<span style="font-size:.8rem;font-weight:500;color:var(--sub)"> / ${total}</span></div>`
+      +`<div class="daily-ten-prog-label">今日の進捗</div>`
+      +`<div class="daily-ten-pbar" style="width:68px"><div class="daily-ten-pfill" style="width:${pct}%"></div></div>`
+      +`</div>`
+      +`<div class="daily-ten-divider"></div>`
+      +`<div class="daily-ten-body">`
+      +`<div class="daily-ten-title">今日の10問${remaining>0&&done>0?`（残り${remaining}問）`:allDone?' — 完了！':''}</div>`
+      +(parts.length?`<div class="daily-ten-breakdown">${parts.join(' ／ ')}</div>`:'')
+      +`</div>`
+      +`<button class="${btnClass}" ${btnAttr}>${btnLabel}</button>`
+      +`</div>`;
+  }catch(e){el.innerHTML='';}
+}
+
+function startDailyTen(){
+  try{
+    const plan=loadOrCreateDailyPlan();
+    const remaining=plan.questionIds.filter(id=>!plan.completedIds.includes(id));
+    if(remaining.length===0){alert('今日の10問は完了しました！');return;}
+    for(const id of remaining){
+      const part=partFromId(id);
+      const key=reviewKeyFromId(id);
+      if(!part||!key)continue;
+      // 範囲チェック
+      if(part==='p5'){const qi=parseInt(key);if(isNaN(qi)||qi<0||qi>=P5.length)continue;}
+      else if(part==='p6'){const si=parseInt(key.split('-')[0]);if(isNaN(si)||si<0||si>=P6.length)continue;}
+      else if(part==='p7'){const si=parseInt(key.split('-')[0]);if(isNaN(si)||si<0||si>=P7.length)continue;}
+      else if(part==='instant'){const idx=parseInt(key);if(isNaN(idx)||idx<0||idx>=INSTANT.length)continue;}
+      goToUnanswered(part,key);
+      return;
+    }
+    alert('移動できる問題が見つかりませんでした。');
+  }catch(e){}
+}
+
 // INIT
 loadState();
 renderP5();renderP6();renderP7();renderInstant();
 updateDailyUI();
-renderTodayRecommendations();
 </script>
 </body>
 </html>
