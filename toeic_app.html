@@ -2131,6 +2131,26 @@ async function backupToCloud(){
   }
 }
 
+// データから比較用の統計を計算するヘルパー
+function calcRestoreStats(stateRaw, dailyRaw, qhistRaw){
+  const stateData = stateRaw ? JSON.parse(stateRaw) : null;
+  const daily     = dailyRaw ? JSON.parse(dailyRaw) : {};
+  const qhist     = qhistRaw ? JSON.parse(qhistRaw) : {};
+
+  const savedAt    = stateData && stateData.savedAt ? new Date(stateData.savedAt) : null;
+  const dailyDays  = Object.keys(daily).length;
+  const qhistCount = Object.keys(qhist).length;
+
+  const today = getLocalDateKey();
+  const todayRec = daily[today] || {answered:0};
+  const todayAnswered = todayRec.answered || 0;
+
+  let totalAnswered = 0;
+  Object.values(daily).forEach(r => { totalAnswered += r.answered || 0; });
+
+  return { savedAt, dailyDays, qhistCount, todayAnswered, totalAnswered };
+}
+
 async function restoreFromCloud(){
   const cfg=loadCloudSettings();
   if(!cfg.endpointUrl){showCloudMsg('WebアプリURLを入力してください。','err');return;}
@@ -2145,29 +2165,53 @@ async function restoreFromCloud(){
     const data=await res.json();
     if(!data||!data.data)throw new Error('レスポンスの形式が不正です');
 
-    // 日時比較
-    const localRaw=localStorage.getItem(LS_STATE);
-    const localState=localRaw?JSON.parse(localRaw):null;
-    const localSavedAt=localState&&localState.savedAt?new Date(localState.savedAt):null;
-    const cloudSavedAt=data.savedAt?new Date(data.savedAt):null;
-    const cloudDevice=data.deviceName||'不明';
+    // 端末側の統計
+    const local=calcRestoreStats(
+      localStorage.getItem(LS_STATE),
+      localStorage.getItem(LS_DAILY),
+      localStorage.getItem(LS_QHIST)
+    );
 
-    const fmt=d=>d?d.toLocaleString('ja-JP'):'—';
-    const isCloudOlder=localSavedAt&&cloudSavedAt&&cloudSavedAt<localSavedAt;
+    // クラウド側の統計（バックアップ payload の data キーから）
+    const cd=data.data;
+    const cloud=calcRestoreStats(
+      cd[LS_STATE] ? JSON.stringify(cd[LS_STATE]) : null,
+      cd[LS_DAILY] ? JSON.stringify(cd[LS_DAILY]) : null,
+      cd[LS_QHIST] ? JSON.stringify(cd[LS_QHIST]) : null
+    );
+    const cloudDevice = data.deviceName || '不明';
 
-    let msg='【クラウドから復元】\n\n';
-    msg+=`端末側の最終保存:  ${fmt(localSavedAt)}\n`;
-    msg+=`クラウド側の保存:  ${fmt(cloudSavedAt)}\n`;
-    msg+=`クラウド側の端末:  ${cloudDevice}\n\n`;
-    if(isCloudOlder)msg+='⚠ クラウドデータの方が古い可能性があります。\n\n';
-    msg+='現在のローカルデータは上書きされます。復元しますか？';
+    const fmt  = d => d ? d.toLocaleString('ja-JP') : '—';
+    const pad  = s => String(s).padStart(4);
+    const isCloudOlder   = local.savedAt && cloud.savedAt && cloud.savedAt < local.savedAt;
+    const isCloudLessQ   = cloud.qhistCount < local.qhistCount;
+
+    let msg = '【クラウドから復元 — データ比較】\n';
+    msg += '─'.repeat(36) + '\n';
+    msg += `                  端末側      クラウド側\n`;
+    msg += `保存日時:  ${fmt(local.savedAt)}\n`;
+    msg += `           ${fmt(cloud.savedAt)}\n`;
+    msg += `保存端末:  （この端末）         ${cloudDevice}\n`;
+    msg += `─`.repeat(36) + '\n';
+    msg += `日別履歴:  ${pad(local.dailyDays)} 日分  →  ${pad(cloud.dailyDays)} 日分\n`;
+    msg += `問題別履歴:${pad(local.qhistCount)} 問分  →  ${pad(cloud.qhistCount)} 問分\n`;
+    msg += `今日の回答:${pad(local.todayAnswered)} 問     →  ${pad(cloud.todayAnswered)} 問\n`;
+    msg += `総回答回数:${pad(local.totalAnswered)} 回     →  ${pad(cloud.totalAnswered)} 回\n`;
+    msg += '─'.repeat(36) + '\n';
+
+    const warnings=[];
+    if(isCloudOlder) warnings.push('⚠ クラウドデータの方が古い可能性があります');
+    if(isCloudLessQ) warnings.push('⚠ クラウド側の問題別履歴が端末より少ないです');
+    if(warnings.length) msg += warnings.join('\n') + '\n' + '─'.repeat(36) + '\n';
+
+    msg += '\n現在のローカルデータは上書きされます。復元しますか？';
 
     if(!confirm(msg)){_cloudBusy=false;showCloudMsg('復元をキャンセルしました。','busy');return;}
 
     showCloudMsg('復元中…','busy');
-    if(data.data[LS_STATE])localStorage.setItem(LS_STATE,JSON.stringify(data.data[LS_STATE]));
-    if(data.data[LS_DAILY])localStorage.setItem(LS_DAILY,JSON.stringify(data.data[LS_DAILY]));
-    if(data.data[LS_QHIST])localStorage.setItem(LS_QHIST,JSON.stringify(data.data[LS_QHIST]));
+    if(cd[LS_STATE])localStorage.setItem(LS_STATE,JSON.stringify(cd[LS_STATE]));
+    if(cd[LS_DAILY])localStorage.setItem(LS_DAILY,JSON.stringify(cd[LS_DAILY]));
+    if(cd[LS_QHIST])localStorage.setItem(LS_QHIST,JSON.stringify(cd[LS_QHIST]));
     const updated=loadCloudSettings();
     updated.lastRestoreAt=new Date().toISOString();
     localStorage.setItem(LS_CLOUD,JSON.stringify(updated));
