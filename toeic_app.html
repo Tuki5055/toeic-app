@@ -456,7 +456,8 @@ header p{font-size:.78rem;color:#94a3b8;margin-top:3px}
 
 <!-- HISTORY -->
 <div id="history" class="part-section">
-  <div class="part-intro"><h2>📊 学習履歴</h2><p>日別の学習記録・問題別の成績・苦手問題・未回答問題を確認できます。</p></div>
+  <div class="part-intro"><h2>📊 学習履歴</h2><p>日別の学習記録・問題別の成績・忘却曲線復習・苦手問題・未回答問題を確認できます。</p></div>
+  <div id="history-due-review"></div>
   <div id="history-daily"></div>
   <div id="history-qhist"></div>
   <div id="history-weak"></div>
@@ -1720,6 +1721,32 @@ function getLocalDateKey(){
   return `${y}-${m}-${day}`;
 }
 
+// ── Phase 10: 忘却曲線ベース復習スケジュール ──────────────────
+// reviewLevel → 次の復習までの日数
+function getReviewIntervalDays(level){
+  const intervals=[1,1,3,7,14,30,60];
+  return intervals[Math.min(level,intervals.length-1)];
+}
+
+// YYYY-MM-DD に days 日加算して返す
+function addDaysLocal(dateKey,days){
+  const[y,m,d]=dateKey.split('-').map(Number);
+  const dt=new Date(y,m-1,d+days);
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+}
+
+// 今日以前に復習期日を迎えているか
+function isReviewDue(r){
+  if(!r.nextReviewAt)return false;
+  if(r.graduatedAt)return false;
+  return r.nextReviewAt<=getLocalDateKey();
+}
+
+// 今日の復習対象エントリ一覧 [[id,r],...]
+function getDueReviewQuestions(hist){
+  return Object.entries(hist).filter(([,r])=>isReviewDue(r));
+}
+
 function saveState(){
   try{
     localStorage.setItem(LS_STATE,JSON.stringify({
@@ -1789,22 +1816,37 @@ function recordQuestionHistory(part,questionId,correct){
     const hist=raw?JSON.parse(raw):{};
     if(!hist[key])hist[key]={part,attempts:0,correct:0,wrong:0,lastAnsweredAt:'',currentStreak:0,maxStreak:0,inReview:false,graduatedAt:null};
     const r=hist[key];
-    // 既存エントリへの新フィールド補完
+    // 既存フィールド補完（streak等）
     if(r.currentStreak===undefined)r.currentStreak=0;
     if(r.maxStreak===undefined)r.maxStreak=0;
     if(r.inReview===undefined)r.inReview=false;
     if(!('graduatedAt' in r))r.graduatedAt=null;
+    // Phase 10: 忘却曲線フィールド補完
+    if(r.reviewLevel===undefined)r.reviewLevel=0;
+    if(!('nextReviewAt' in r))r.nextReviewAt=null;
+    if(!('lastReviewedAt' in r))r.lastReviewedAt=null;
     r.attempts++;
+    const today=getLocalDateKey();
     if(correct){
       r.correct++;
       r.currentStreak++;
       if(r.currentStreak>r.maxStreak)r.maxStreak=r.currentStreak;
-      if(r.currentStreak>=10){r.inReview=false;r.graduatedAt=new Date().toISOString();}
+      r.reviewLevel=Math.min((r.reviewLevel||0)+1,6);
+      r.nextReviewAt=addDaysLocal(today,getReviewIntervalDays(r.reviewLevel));
+      r.lastReviewedAt=new Date().toISOString();
+      if(r.currentStreak>=10){
+        r.inReview=false;
+        r.graduatedAt=new Date().toISOString();
+        r.nextReviewAt=null; // 卒業済みは復習対象外
+      }
     }else{
       r.wrong++;
       r.currentStreak=0;
       r.inReview=true;
       r.graduatedAt=null;
+      r.reviewLevel=0;
+      r.nextReviewAt=today; // 即日復習対象に
+      r.lastReviewedAt=new Date().toISOString();
     }
     r.lastAnsweredAt=new Date().toISOString();
     localStorage.setItem(LS_QHIST,JSON.stringify(hist));
@@ -2025,10 +2067,49 @@ function renderGraduatedQuestions(hist){
     +rows+'</div>';
 }
 
+function renderDueReviewQuestions(hist){
+  const el=document.getElementById('history-due-review');
+  if(!el)return;
+  const due=getDueReviewQuestions(hist);
+  const partNames={p5:'Part 5',p6:'Part 6',p7:'Part 7',instant:'瞬間英作文'};
+  if(due.length===0){
+    el.innerHTML='<div class="hist-section"><div class="hist-section-hd"><h3>📅 今日の復習対象</h3></div>'
+      +'<p style="color:var(--sub);font-size:.85rem;padding:12px 0">今日の復習対象はありません。よく頑張っています！</p></div>';
+    return;
+  }
+  const byPart={p5:[],p6:[],p7:[],instant:[]};
+  due.forEach(([id,r])=>{const p=partFromId(id);if(p&&byPart[p])byPart[p].push([id,r]);});
+  let html='<div class="hist-section">'
+    +`<div class="hist-section-hd"><h3>📅 今日の復習対象</h3><span style="color:var(--primary);font-size:.78rem">${due.length}問が期限を迎えています</span></div>`;
+  ['p5','p6','p7','instant'].forEach(part=>{
+    const items=byPart[part];
+    if(items.length===0)return;
+    const keys=items.map(([id])=>reviewKeyFromId(id));
+    html+=`<div class="part-group"><div class="part-group-hd"><span class="part-group-label">${partNames[part]}（${items.length}問）</span>`
+      +`<button class="sbtn sbtn-blue" style="padding:5px 14px;font-size:.78rem" onclick="startWeakReview('${part}',${JSON.stringify(keys)})">📅 復習する</button></div>`;
+    items.forEach(([id,r])=>{
+      const rate=r.attempts>0?Math.round(r.correct/r.attempts*100):0;
+      const rc=rate>=80?'var(--green)':rate>=60?'var(--primary)':'var(--red)';
+      const streak=r.currentStreak||0;
+      const lv=r.reviewLevel||0;
+      html+=`<div class="weak-item">`
+        +`<span class="weak-item-id">${qidLabel(id)}</span>`
+        +`<span class="weak-item-stat">ミス${r.wrong}回｜正答率${rate}%</span>`
+        +`<span class="weak-item-rate" style="color:${rc}">連続${streak}回</span>`
+        +`<span style="font-size:.74rem;color:var(--primary);white-space:nowrap">Lv.${lv}</span>`
+        +`<span style="font-size:.74rem;color:var(--sub);white-space:nowrap">期日:${r.nextReviewAt||'—'}</span>`
+        +`</div>`;
+    });
+    html+='</div>';
+  });
+  el.innerHTML=html+'</div>';
+}
+
 function renderHistory(){
   try{
     const raw=localStorage.getItem(LS_QHIST);
     const hist=raw?JSON.parse(raw):{};
+    renderDueReviewQuestions(hist);
     renderHistoryDaily();
     renderQuestionHistory(hist);
     renderWeakQuestions(hist);
@@ -2377,11 +2458,22 @@ function buildTodayRecommendations(){
     const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
     const today=getLocalDateKey();
     const todayRec=daily[today]||{answered:0,correct:0,wrong:0};
+    const due=getDueReviewQuestions(hist);
     const weak=getWeakQuestions(hist);
     const unanswered=getUnansweredIds(hist);
     const recs=[];
 
-    if(weak.length>0){
+    // 優先1: 忘却曲線復習期限
+    if(due.length>0){
+      recs.push({
+        title:'今日の復習をする',
+        reason:`復習期限を迎えた問題が ${due.length} 問あります`,
+        btnLabel:'復習を始める',
+        action:'startRecommendedDueReview()'
+      });
+    }
+    // 優先2: 苦手問題
+    if(recs.length<3&&weak.length>0){
       recs.push({
         title:'苦手問題を復習',
         reason:`苦手問題が ${weak.length} 問あります`,
@@ -2389,7 +2481,8 @@ function buildTodayRecommendations(){
         action:'startRecommendedWeakReview()'
       });
     }
-    if(unanswered.length>0){
+    // 優先3: 未回答問題
+    if(recs.length<3&&unanswered.length>0){
       recs.push({
         title:'未回答問題を解く',
         reason:`未回答問題が ${unanswered.length} 問あります`,
@@ -2397,24 +2490,14 @@ function buildTodayRecommendations(){
         action:'startRecommendedUnanswered()'
       });
     }
-    if(todayRec.answered<5){
+    // 優先4: 今日の回答が5問未満
+    if(recs.length<3&&todayRec.answered<5){
       recs.push({
         title:'まず5問解く',
         reason:`今日の回答数がまだ ${todayRec.answered} 問です`,
         btnLabel:'Part5から始める',
         action:'startQuickFive()'
       });
-    }
-    if(recs.length<3&&todayRec.answered>=5){
-      const rate=todayRec.answered>0?todayRec.correct/todayRec.answered:null;
-      if(rate!==null&&rate<0.6){
-        recs.push({
-          title:'正答率が低い問題を復習',
-          reason:`今日の正答率が ${Math.round(rate*100)}% と低めです`,
-          btnLabel:'履歴を確認する',
-          action:'openHistoryTab()'
-        });
-      }
     }
     return recs.slice(0,3);
   }catch(e){return[];}
@@ -2435,6 +2518,18 @@ function renderTodayRecommendations(){
       +`<button class="rec-item-btn" onclick="${r.action}">${r.btnLabel}</button>`
       +`</div>`
     ).join('');
+  }catch(e){}
+}
+
+function startRecommendedDueReview(){
+  try{
+    const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+    const due=getDueReviewQuestions(hist);
+    if(due.length===0){alert('今日の復習対象はありません。');return;}
+    const byPart={p5:[],p6:[],p7:[],instant:[]};
+    due.forEach(([id])=>{const p=partFromId(id);if(p&&byPart[p])byPart[p].push(reviewKeyFromId(id));});
+    const part=['p5','p6','p7','instant'].reduce((a,b)=>byPart[a].length>=byPart[b].length?a:b);
+    startWeakReview(part,byPart[part].slice(0,10));
   }catch(e){}
 }
 
