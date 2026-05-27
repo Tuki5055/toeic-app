@@ -263,6 +263,21 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .cloud-msg.ok{background:var(--green-bg);color:var(--green);border:1px solid #2a5a3a}
 .cloud-msg.err{background:var(--red-bg);color:var(--red);border:1px solid #5a2020}
 .cloud-msg.busy{background:var(--surface2);color:var(--sub);border:1px solid var(--border)}
+/* ── Today's recommendations ── */
+.rec-outer{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:none}
+.rec-outer.visible{display:block}
+.rec-label{font-size:.72rem;color:var(--sub);font-weight:700;letter-spacing:.5px;margin-bottom:8px}
+.rec-items{display:flex;gap:8px;flex-wrap:wrap}
+.rec-item{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;flex:1;min-width:180px;display:flex;flex-direction:column;gap:5px}
+.rec-item-title{font-size:.83rem;font-weight:700;color:var(--text)}
+.rec-item-reason{font-size:.74rem;color:var(--sub);line-height:1.4}
+.rec-item-btn{display:inline-flex;align-items:center;padding:5px 12px;border-radius:5px;border:none;background:var(--primary-dim);color:white;cursor:pointer;font-size:.76rem;font-weight:600;margin-top:2px;width:fit-content;transition:background .2s}
+.rec-item-btn:hover{background:var(--primary)}
+/* ── Graduated section ── */
+.grad-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:7px;background:var(--green-bg);border:1px solid #2a5a3a;margin-bottom:5px;flex-wrap:wrap}
+.grad-item-id{font-size:.76rem;color:var(--sub);min-width:96px;flex-shrink:0}
+.grad-item-streak{font-size:.78rem;color:var(--green);font-weight:700;flex:1}
+.grad-item-date{font-size:.74rem;color:var(--sub)}
 </style>
 </head>
 <body>
@@ -279,6 +294,10 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   <span class="di dng">ミス&nbsp;<span class="dn" id="d-wrg">0</span></span>
   <span class="ds">/</span>
   <span class="di drt">正答率&nbsp;<span class="dn" id="d-rt">—</span></span>
+</div>
+<div class="rec-outer" id="rec-outer">
+  <div class="rec-label">⭐ 今日のおすすめ学習</div>
+  <div class="rec-items" id="rec-items"></div>
 </div>
 <div class="tabs">
   <div class="tab active" onclick="showPart('p5',this)">Part 5 <small>(50問)</small></div>
@@ -412,6 +431,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   <div id="history-qhist"></div>
   <div id="history-weak"></div>
   <div id="history-unanswered"></div>
+  <div id="history-graduated"></div>
 </div>
 
 <!-- SETTINGS -->
@@ -1729,6 +1749,7 @@ function updateDailyUI(){
     if(g('d-wrg'))g('d-wrg').textContent=r.wrong;
     if(g('d-rt'))g('d-rt').textContent=rate!==null?rate+'%':'—';
   }catch(e){}
+  renderTodayRecommendations();
 }
 
 function recordQuestionHistory(part,questionId,correct){
@@ -1736,10 +1757,26 @@ function recordQuestionHistory(part,questionId,correct){
     const key=`${part}-${questionId}`;
     const raw=localStorage.getItem(LS_QHIST);
     const hist=raw?JSON.parse(raw):{};
-    if(!hist[key])hist[key]={part,attempts:0,correct:0,wrong:0,lastAnsweredAt:''};
-    hist[key].attempts++;
-    if(correct)hist[key].correct++;else hist[key].wrong++;
-    hist[key].lastAnsweredAt=new Date().toISOString();
+    if(!hist[key])hist[key]={part,attempts:0,correct:0,wrong:0,lastAnsweredAt:'',currentStreak:0,maxStreak:0,inReview:false,graduatedAt:null};
+    const r=hist[key];
+    // 既存エントリへの新フィールド補完
+    if(r.currentStreak===undefined)r.currentStreak=0;
+    if(r.maxStreak===undefined)r.maxStreak=0;
+    if(r.inReview===undefined)r.inReview=false;
+    if(!('graduatedAt' in r))r.graduatedAt=null;
+    r.attempts++;
+    if(correct){
+      r.correct++;
+      r.currentStreak++;
+      if(r.currentStreak>r.maxStreak)r.maxStreak=r.currentStreak;
+      if(r.currentStreak>=10){r.inReview=false;r.graduatedAt=new Date().toISOString();}
+    }else{
+      r.wrong++;
+      r.currentStreak=0;
+      r.inReview=true;
+      r.graduatedAt=null;
+    }
+    r.lastAnsweredAt=new Date().toISOString();
     localStorage.setItem(LS_QHIST,JSON.stringify(hist));
   }catch(e){}
 }
@@ -1758,8 +1795,16 @@ function getAllQuestionIds(){
 }
 
 function getWeakQuestions(hist){
-  return Object.entries(hist).filter(([,r])=>
-    r.wrong>=2||(r.attempts>=2&&r.correct/r.attempts<0.6));
+  return Object.entries(hist).filter(([,r])=>{
+    // 卒業済み（連続10正解 or graduatedAt あり）は除外
+    if((r.currentStreak||0)>=10||r.graduatedAt)return false;
+    // inReview フラグ
+    if(r.inReview)return true;
+    // 旧形式互換：streak なしでも従来条件に合えば含める
+    if(r.wrong>=2)return true;
+    if((r.attempts||0)>=2&&r.correct/r.attempts<0.6)return true;
+    return false;
+  });
 }
 
 function getUnansweredIds(hist){
@@ -1875,7 +1920,7 @@ function renderWeakQuestions(hist){
   weak.forEach(([id,r])=>{const p=partFromId(id);if(p&&byPart[p])byPart[p].push([id,r]);});
   const partNames={p5:'Part 5',p6:'Part 6',p7:'Part 7',instant:'瞬間英作文'};
   let html='<div class="hist-section">'
-    +`<div class="hist-section-hd"><h3>⚠️ 苦手問題</h3><span style="color:var(--sub);font-size:.78rem">${weak.length}問（ミス2回以上 または 正答率60%未満）</span></div>`;
+    +`<div class="hist-section-hd"><h3>⚠️ 苦手問題</h3><span style="color:var(--sub);font-size:.78rem">${weak.length}問（10回連続正解で卒業）</span></div>`;
   ['p5','p6','p7','instant'].forEach(part=>{
     const items=byPart[part];
     if(items.length===0)return;
@@ -1885,9 +1930,14 @@ function renderWeakQuestions(hist){
     items.forEach(([id,r])=>{
       const rate=r.attempts>0?Math.round(r.correct/r.attempts*100):0;
       const rc=rate>=60?'var(--primary)':'var(--red)';
-      html+=`<div class="weak-item"><span class="weak-item-id">${qidLabel(id)}</span>`
-        +`<span class="weak-item-stat">${r.attempts}回中${r.correct}正解・ミス${r.wrong}回</span>`
-        +`<span class="weak-item-rate" style="color:${rc}">${rate}%</span></div>`;
+      const streak=r.currentStreak||0;
+      const left=Math.max(0,10-streak);
+      html+=`<div class="weak-item">`
+        +`<span class="weak-item-id">${qidLabel(id)}</span>`
+        +`<span class="weak-item-stat">ミス${r.wrong}回｜正答率${rate}%</span>`
+        +`<span class="weak-item-rate" style="color:${rc}">連続正解${streak}回</span>`
+        +`<span style="font-size:.74rem;color:var(--accent);white-space:nowrap">卒業まであと${left}回</span>`
+        +`</div>`;
     });
     html+='</div>';
   });
@@ -1920,6 +1970,31 @@ function renderUnansweredQuestions(hist){
   el.innerHTML=html+'</div>';
 }
 
+function renderGraduatedQuestions(hist){
+  const el=document.getElementById('history-graduated');
+  if(!el)return;
+  const grads=Object.entries(hist).filter(([,r])=>(r.currentStreak||0)>=10||r.graduatedAt);
+  if(grads.length===0){
+    el.innerHTML='<div class="hist-section"><div class="hist-section-hd"><h3>🎓 卒業済み問題</h3></div>'
+      +'<p style="color:var(--sub);font-size:.85rem;padding:12px 0">まだ卒業済みの問題はありません。</p></div>';
+    return;
+  }
+  grads.sort((a,b)=>(b[1].graduatedAt||'').localeCompare(a[1].graduatedAt||''));
+  let rows=grads.map(([id,r])=>{
+    const streak=r.currentStreak||0;
+    const gradAt=r.graduatedAt?new Date(r.graduatedAt).toLocaleDateString('ja-JP'):'—';
+    return `<div class="grad-item">`
+      +`<span class="grad-item-id">${qidLabel(id)}</span>`
+      +`<span class="grad-item-streak">🏆 連続正解${streak}回</span>`
+      +`<span class="grad-item-date">卒業日: ${gradAt}</span>`
+      +`</div>`;
+  }).join('');
+  const el2=el;
+  el2.innerHTML='<div class="hist-section">'
+    +`<div class="hist-section-hd"><h3>🎓 卒業済み問題</h3><span style="color:var(--green);font-size:.78rem">${grads.length}問</span></div>`
+    +rows+'</div>';
+}
+
 function renderHistory(){
   try{
     const raw=localStorage.getItem(LS_QHIST);
@@ -1928,6 +2003,7 @@ function renderHistory(){
     renderQuestionHistory(hist);
     renderWeakQuestions(hist);
     renderUnansweredQuestions(hist);
+    renderGraduatedQuestions(hist);
   }catch(e){}
 }
 
@@ -2261,10 +2337,116 @@ function renderCloudSettings(){
   updateCloudStatusUI();
 }
 
+// ============================================================
+// PHASE 7 — 今日のおすすめ学習 & 苦手問題卒業
+// ============================================================
+
+function buildTodayRecommendations(){
+  try{
+    const daily=JSON.parse(localStorage.getItem(LS_DAILY)||'{}');
+    const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+    const today=getLocalDateKey();
+    const todayRec=daily[today]||{answered:0,correct:0,wrong:0};
+    const weak=getWeakQuestions(hist);
+    const unanswered=getUnansweredIds(hist);
+    const recs=[];
+
+    if(weak.length>0){
+      recs.push({
+        title:'苦手問題を復習',
+        reason:`苦手問題が ${weak.length} 問あります`,
+        btnLabel:'苦手復習を始める',
+        action:'startRecommendedWeakReview()'
+      });
+    }
+    if(unanswered.length>0){
+      recs.push({
+        title:'未回答問題を解く',
+        reason:`未回答問題が ${unanswered.length} 問あります`,
+        btnLabel:'未回答から始める',
+        action:'startRecommendedUnanswered()'
+      });
+    }
+    if(todayRec.answered<5){
+      recs.push({
+        title:'まず5問解く',
+        reason:`今日の回答数がまだ ${todayRec.answered} 問です`,
+        btnLabel:'Part5から始める',
+        action:'startQuickFive()'
+      });
+    }
+    if(recs.length<3&&todayRec.answered>=5){
+      const rate=todayRec.answered>0?todayRec.correct/todayRec.answered:null;
+      if(rate!==null&&rate<0.6){
+        recs.push({
+          title:'正答率が低い問題を復習',
+          reason:`今日の正答率が ${Math.round(rate*100)}% と低めです`,
+          btnLabel:'履歴を確認する',
+          action:'openHistoryTab()'
+        });
+      }
+    }
+    return recs.slice(0,3);
+  }catch(e){return[];}
+}
+
+function renderTodayRecommendations(){
+  try{
+    const outer=document.getElementById('rec-outer');
+    const container=document.getElementById('rec-items');
+    if(!outer||!container)return;
+    const recs=buildTodayRecommendations();
+    if(recs.length===0){outer.classList.remove('visible');return;}
+    outer.classList.add('visible');
+    container.innerHTML=recs.map(r=>
+      `<div class="rec-item">`
+      +`<div class="rec-item-title">${r.title}</div>`
+      +`<div class="rec-item-reason">${r.reason}</div>`
+      +`<button class="rec-item-btn" onclick="${r.action}">${r.btnLabel}</button>`
+      +`</div>`
+    ).join('');
+  }catch(e){}
+}
+
+function startRecommendedWeakReview(){
+  try{
+    const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+    const weak=getWeakQuestions(hist);
+    if(weak.length===0){alert('苦手問題はありません。');return;}
+    const byPart={p5:[],p6:[],p7:[],instant:[]};
+    weak.forEach(([id])=>{const p=partFromId(id);if(p&&byPart[p])byPart[p].push(reviewKeyFromId(id));});
+    const part=['p5','p6','p7','instant'].reduce((a,b)=>byPart[a].length>=byPart[b].length?a:b);
+    startWeakReview(part,byPart[part].slice(0,5));
+  }catch(e){}
+}
+
+function startRecommendedUnanswered(){
+  try{
+    const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+    const ids=getUnansweredIds(hist);
+    if(ids.length===0){alert('全問回答済みです。');return;}
+    const byPart={p5:[],p6:[],p7:[],instant:[]};
+    ids.forEach(id=>{const p=partFromId(id);if(p&&byPart[p])byPart[p].push(id);});
+    const part=['p5','p6','p7','instant'].find(p=>byPart[p].length>0)||'p5';
+    goToUnanswered(part,reviewKeyFromId(byPart[part][0]));
+  }catch(e){}
+}
+
+function startQuickFive(){
+  activateTab('p5');
+  document.getElementById('p5').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openHistoryTab(){
+  const tab=document.querySelector('.tab[onclick*="\'history\'"]');
+  if(tab)showPart('history',tab);
+}
+
 // INIT
 loadState();
 renderP5();renderP6();renderP7();renderInstant();
 updateDailyUI();
+renderTodayRecommendations();
 </script>
 </body>
 </html>
