@@ -2136,15 +2136,35 @@ async function restoreFromCloud(){
   if(!cfg.endpointUrl){showCloudMsg('WebアプリURLを入力してください。','err');return;}
   if(!cfg.token){showCloudMsg('パスコードを入力してください。','err');return;}
   if(_cloudBusy)return;
-  if(!confirm('クラウドから最新データを復元しますか？\n現在のローカルデータは上書きされます。'))return;
   _cloudBusy=true;
-  showCloudMsg('復元中…','busy');
+  showCloudMsg('クラウドデータを確認中…','busy');
   try{
     const url=`${cfg.endpointUrl}?token=${encodeURIComponent(cfg.token)}&action=restore`;
     const res=await fetch(url);
     if(!res.ok)throw new Error(`HTTP ${res.status}`);
     const data=await res.json();
     if(!data||!data.data)throw new Error('レスポンスの形式が不正です');
+
+    // 日時比較
+    const localRaw=localStorage.getItem(LS_STATE);
+    const localState=localRaw?JSON.parse(localRaw):null;
+    const localSavedAt=localState&&localState.savedAt?new Date(localState.savedAt):null;
+    const cloudSavedAt=data.savedAt?new Date(data.savedAt):null;
+    const cloudDevice=data.deviceName||'不明';
+
+    const fmt=d=>d?d.toLocaleString('ja-JP'):'—';
+    const isCloudOlder=localSavedAt&&cloudSavedAt&&cloudSavedAt<localSavedAt;
+
+    let msg='【クラウドから復元】\n\n';
+    msg+=`端末側の最終保存:  ${fmt(localSavedAt)}\n`;
+    msg+=`クラウド側の保存:  ${fmt(cloudSavedAt)}\n`;
+    msg+=`クラウド側の端末:  ${cloudDevice}\n\n`;
+    if(isCloudOlder)msg+='⚠ クラウドデータの方が古い可能性があります。\n\n';
+    msg+='現在のローカルデータは上書きされます。復元しますか？';
+
+    if(!confirm(msg)){_cloudBusy=false;showCloudMsg('復元をキャンセルしました。','busy');return;}
+
+    showCloudMsg('復元中…','busy');
     if(data.data[LS_STATE])localStorage.setItem(LS_STATE,JSON.stringify(data.data[LS_STATE]));
     if(data.data[LS_DAILY])localStorage.setItem(LS_DAILY,JSON.stringify(data.data[LS_DAILY]));
     if(data.data[LS_QHIST])localStorage.setItem(LS_QHIST,JSON.stringify(data.data[LS_QHIST]));
