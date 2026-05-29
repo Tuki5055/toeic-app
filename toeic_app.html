@@ -2971,25 +2971,63 @@ function renderDailyTen(){
   }catch(e){el.innerHTML='';}
 }
 
+// 今日の10問専用ナビゲーション: questionId から該当 Part・問題へ直接移動
+function goToQuestionById(id){
+  const part=partFromId(id);
+  if(!part){console.warn('[goToQuestionById] unknown part for id:',id);return false;}
+
+  if(part==='p5'){
+    const m=id.match(/^p5-(\d+)$/);
+    if(!m){console.warn('[goToQuestionById] parse failed:',id);return false;}
+    const qi=parseInt(m[1]);
+    if(isNaN(qi)||qi<0||qi>=P5.length){console.warn('[goToQuestionById] p5 out of range:',qi);return false;}
+    cursor.p5=qi;
+    activateTab('p5');
+    renderP5();
+
+  } else if(part==='p6'){
+    const m=id.match(/^p6-(\d+)-(\d+)$/);
+    if(!m){console.warn('[goToQuestionById] parse failed:',id);return false;}
+    const si=parseInt(m[1]);
+    if(isNaN(si)||si<0||si>=P6.length){console.warn('[goToQuestionById] p6 set out of range:',si);return false;}
+    cursor.p6=si;
+    activateTab('p6');
+    renderP6();
+
+  } else if(part==='p7'){
+    const m=id.match(/^p7-(\d+)-(\d+)$/);
+    if(!m){console.warn('[goToQuestionById] parse failed:',id);return false;}
+    const si=parseInt(m[1]);
+    if(isNaN(si)||si<0||si>=P7.length){console.warn('[goToQuestionById] p7 set out of range:',si);return false;}
+    cursor.p7=si;
+    activateTab('p7');
+    renderP7();
+
+  } else if(part==='instant'){
+    const m=id.match(/^instant-(\d+)$/);
+    if(!m){console.warn('[goToQuestionById] parse failed:',id);return false;}
+    const idx=parseInt(m[1]);
+    if(isNaN(idx)||idx<0||idx>=INSTANT.length){console.warn('[goToQuestionById] instant out of range:',idx);return false;}
+    cursor.instant=idx;
+    activateTab('instant');
+    renderInstant();
+  }
+
+  try{document.getElementById(part).scrollIntoView({behavior:'smooth',block:'start'});}catch(_){}
+  return true;
+}
+
 function startDailyTen(){
   try{
     const plan=loadOrCreateDailyPlan();
     const remaining=plan.questionIds.filter(id=>!plan.completedIds.includes(id));
     if(remaining.length===0){alert('今日の10問は完了しました！');return;}
     for(const id of remaining){
-      const part=partFromId(id);
-      const key=reviewKeyFromId(id);
-      if(!part||!key)continue;
-      // 範囲チェック
-      if(part==='p5'){const qi=parseInt(key);if(isNaN(qi)||qi<0||qi>=P5.length)continue;}
-      else if(part==='p6'){const si=parseInt(key.split('-')[0]);if(isNaN(si)||si<0||si>=P6.length)continue;}
-      else if(part==='p7'){const si=parseInt(key.split('-')[0]);if(isNaN(si)||si<0||si>=P7.length)continue;}
-      else if(part==='instant'){const idx=parseInt(key);if(isNaN(idx)||idx<0||idx>=INSTANT.length)continue;}
-      goToUnanswered(part,key);
-      return;
+      if(goToQuestionById(id))return;
+      console.warn('[startDailyTen] skipped:',id);
     }
     alert('移動できる問題が見つかりませんでした。');
-  }catch(e){}
+  }catch(e){console.error('[startDailyTen] error:',e);}
 }
 
 // INIT
