@@ -309,6 +309,64 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   .tab{padding:10px 12px;font-size:.8rem}
   .score-box{gap:8px}
 }
+/* ── Daily Ten Mode ── */
+.dt-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px}
+.dt-title{font-size:1.05rem;font-weight:700;color:var(--primary)}
+.dt-back-btn{padding:6px 13px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--sub);cursor:pointer;font-size:.78rem;white-space:nowrap;flex-shrink:0}
+.dt-back-btn:hover{border-color:var(--primary);color:var(--primary)}
+.dt-progress{background:var(--surface);border-radius:10px;padding:13px 18px;margin-bottom:16px;border:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.dt-prog-num{font-size:1.2rem;font-weight:800;color:var(--primary);white-space:nowrap}
+.dt-prog-num span{font-size:.8rem;font-weight:500;color:var(--sub)}
+.dt-prog-bar{flex:1;height:7px;background:var(--border);border-radius:4px;overflow:hidden}
+.dt-prog-fill{height:100%;background:linear-gradient(90deg,var(--primary-dim),var(--primary));border-radius:4px;transition:width .4s}
+.dt-part-badge{white-space:nowrap;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:10px;background:var(--surface2);color:var(--primary);border:1px solid var(--border)}
+.dt-card{background:var(--surface);border-radius:12px;padding:22px 24px;box-shadow:0 1px 6px rgba(0,0,0,.07);margin-bottom:14px}
+.dt-passage{background:var(--surface2);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:.83rem;line-height:1.75;border:1px solid var(--border);max-height:260px;overflow-y:auto}
+.dt-passage h3{font-size:.88rem;font-weight:700;margin-bottom:8px;color:var(--primary)}
+.dt-passage table{width:100%;border-collapse:collapse;font-size:.8rem}
+.dt-passage th,.dt-passage td{padding:5px 8px;border:1px solid var(--border);text-align:left}
+.dt-passage th{background:var(--surface2);font-weight:600}
+.dt-stem{font-size:.95rem;line-height:1.65;margin-bottom:18px;font-weight:500}
+.dt-stem em{background:var(--yellow-bg);font-style:normal;padding:1px 4px;border-radius:3px}
+.dt-opts{display:grid;gap:9px}
+.dt-opt{padding:12px 16px;border-radius:8px;border:2px solid var(--border);cursor:pointer;font-size:.87rem;line-height:1.45;transition:border-color .15s,background .15s;background:var(--surface);user-select:none}
+.dt-opt:not(.disabled):hover{border-color:var(--primary-dim);background:rgba(59,91,219,.06)}
+.dt-opt.disabled{cursor:default}
+.dt-opt.correct{border-color:var(--green)!important;background:var(--green-bg)!important;color:var(--green);font-weight:600}
+.dt-opt.wrong{border-color:var(--red)!important;background:var(--red-bg)!important;color:var(--red)}
+.dt-exp{margin-top:16px;padding:14px 16px;background:var(--yellow-bg);border-radius:8px;font-size:.83rem;line-height:1.65;display:none}
+.dt-exp.show{display:block}
+.dt-next-area{margin-top:16px;display:none}
+.dt-next-area.show{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.dt-next-btn{padding:10px 24px;border-radius:8px;background:var(--primary);color:white;border:none;cursor:pointer;font-size:.87rem;font-weight:700}
+.dt-next-btn:hover{background:var(--primary-dim)}
+.dt-instant-jp{font-size:1.05rem;font-weight:600;margin-bottom:14px;line-height:1.55}
+.dt-instant-input{width:100%;border:2px solid var(--border);border-radius:8px;padding:10px 14px;font-size:.9rem;resize:vertical;min-height:70px;background:var(--surface);color:var(--text);font-family:inherit;transition:border-color .15s}
+.dt-instant-input:focus{outline:none;border-color:var(--primary-dim)}
+.dt-instant-btns{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.dt-reveal-btn{padding:9px 18px;border-radius:8px;background:var(--primary);color:white;border:none;cursor:pointer;font-size:.84rem;font-weight:700}
+.dt-reveal-btn:hover{background:var(--primary-dim)}
+.dt-instant-answer{margin-top:12px;display:none}
+.dt-instant-answer.show{display:block}
+.dt-judge-row{margin-top:12px;display:none;gap:9px;flex-wrap:wrap}
+.dt-judge-row.show{display:flex}
+.dt-judge-ok{padding:10px 20px;border-radius:8px;background:var(--green);color:white;border:none;cursor:pointer;font-size:.84rem;font-weight:700}
+.dt-judge-ng{padding:10px 20px;border-radius:8px;background:var(--red);color:white;border:none;cursor:pointer;font-size:.84rem;font-weight:700}
+.dt-result{background:var(--surface);border-radius:12px;padding:28px 24px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.dt-result-title{font-size:1.3rem;font-weight:800;color:var(--primary);text-align:center;margin-bottom:4px}
+.dt-result-sub{text-align:center;font-size:.8rem;color:var(--sub);margin-bottom:22px}
+.dt-result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+@media(max-width:480px){.dt-result-stats{grid-template-columns:1fr 1fr}}
+.dt-stat{background:var(--surface2);border-radius:9px;padding:14px 12px;text-align:center;border:1px solid var(--border)}
+.dt-stat-val{font-size:1.5rem;font-weight:800;color:var(--primary)}
+.dt-stat-label{font-size:.71rem;color:var(--sub);margin-top:3px}
+.dt-stat.ok .dt-stat-val{color:var(--green)}
+.dt-stat.ng .dt-stat-val{color:var(--red)}
+.dt-result-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.dt-result-btn{padding:10px 20px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-size:.84rem;font-weight:600}
+.dt-result-btn:hover{border-color:var(--primary);color:var(--primary)}
+.dt-result-btn.prim{background:var(--primary);color:white;border-color:var(--primary)}
+.dt-result-btn.prim:hover{background:var(--primary-dim)}
 </style>
 </head>
 <body>
@@ -337,6 +395,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 </div>
 <div class="tabs-bar">
   <div class="tabs-inner">
+    <div class="tab" onclick="showPart('daily-ten',this)">今日の10問</div>
     <div class="tab active" onclick="showPart('p5',this)">Part 5 <small>(50問)</small></div>
     <div class="tab" onclick="showPart('p6',this)">Part 6 <small>(7セット)</small></div>
     <div class="tab" onclick="showPart('p7',this)">Part 7 <small>(7セット)</small></div>
@@ -460,6 +519,16 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   </div>
   <div id="instant-review" style="display:none"></div>
   <div id="instant-questions"></div>
+</div>
+
+<!-- DAILY TEN MODE -->
+<div id="daily-ten" class="part-section">
+  <div class="dt-header">
+    <div class="dt-title">今日の10問</div>
+    <button class="dt-back-btn" onclick="exitDailyTenMode()">中断して戻る ✕</button>
+  </div>
+  <div id="dt-progress-area"></div>
+  <div id="dt-question-area"></div>
 </div>
 
 <!-- HISTORY -->
@@ -3017,17 +3086,244 @@ function goToQuestionById(id){
   return true;
 }
 
-function startDailyTen(){
+// ============================================================
+// DAILY TEN MODE — Phase 12
+// ============================================================
+
+let dtState={queue:[],qIndex:0,data:null,planTotal:0,planDone:0,sessionCorrect:0,sessionWrong:0,answered:false,revealed:false};
+
+function getQuestionDataById(id){
+  const m5=id.match(/^p5-(\d+)$/);
+  if(m5){
+    const qi=parseInt(m5[1]);
+    if(qi<0||qi>=P5.length)return null;
+    const q=P5[qi];
+    const s=shuffleOpts(q.opts,q.ans);
+    return {id,part:'p5',label:'Part 5 — 短文穴埋め',type:'mc',
+      stem:q.q.replace(/-------/,'<em>-------</em>'),
+      opts:s.opts,ans:s.ans,
+      exp:P5_EXP[qi]?buildRichExpP5(q,P5_EXP[qi]):'💡 '+esc(q.exp),
+      passage:null,passageLabel:null};
+  }
+  const m6=id.match(/^p6-(\d+)-(\d+)$/);
+  if(m6){
+    const si=parseInt(m6[1]),qi=parseInt(m6[2]);
+    if(si<0||si>=P6.length)return null;
+    const set=P6[si];
+    if(qi<0||qi>=set.qs.length)return null;
+    const q=set.qs[qi];
+    const s=shuffleOpts(q.opts,q.ans);
+    let start=131;for(let k=0;k<si;k++)start+=P6[k].qs.length;
+    const qnum=start+qi;
+    const pHtml=set.passage
+      .replace(new RegExp('\\('+qnum+'\\) -------','g'),'<strong style="color:var(--primary);">('+qnum+') ___</strong>')
+      .replace(/\((\d+)\) -------/g,'<span style="color:var(--sub)">($1) ___</span>')
+      .replace(/\n/g,'<br>');
+    return {id,part:'p6',label:'Part 6 — 長文穴埋め',type:'mc',
+      stem:'空欄 ('+qnum+') に最も適切なものを選んでください。',
+      opts:s.opts,ans:s.ans,
+      exp:'💡 '+esc(q.exp),
+      passage:pHtml,passageLabel:esc(set.type)+' — '+esc(set.title)};
+  }
+  const m7=id.match(/^p7-(\d+)-(\d+)$/);
+  if(m7){
+    const si=parseInt(m7[1]),qi=parseInt(m7[2]);
+    if(si<0||si>=P7.length)return null;
+    const set=P7[si];
+    if(qi<0||qi>=set.qs.length)return null;
+    const q=set.qs[qi];
+    const s=shuffleOpts(q.opts,q.ans);
+    const pHtml=set.double?(set.passageA+'<hr style="margin:10px 0;border-color:var(--border)">'+set.passageB):(set.passage||'');
+    return {id,part:'p7',label:'Part 7 — 読解問題',type:'mc',
+      stem:q.q,
+      opts:s.opts,ans:s.ans,
+      exp:'💡 '+esc(q.exp),
+      passage:pHtml,passageLabel:esc(set.type)+' — '+esc(set.title)};
+  }
+  const mi=id.match(/^instant-(\d+)$/);
+  if(mi){
+    const idx=parseInt(mi[1]);
+    if(idx<0||idx>=INSTANT.length)return null;
+    const q=INSTANT[idx];
+    return {id,part:'instant',label:'瞬間英作文',type:'instant',
+      stem:q.jp,en:q.en,alt:q.alt||'',exp:q.exp,
+      passage:null,passageLabel:null};
+  }
+  return null;
+}
+
+function startDailyTenMode(){
   try{
     const plan=loadOrCreateDailyPlan();
-    const remaining=plan.questionIds.filter(id=>!plan.completedIds.includes(id));
-    if(remaining.length===0){alert('今日の10問は完了しました！');return;}
-    for(const id of remaining){
-      if(goToQuestionById(id))return;
-      console.warn('[startDailyTen] skipped:',id);
+    const queue=plan.questionIds.filter(id=>!plan.completedIds.includes(id));
+    dtState={queue,qIndex:0,data:null,planTotal:plan.questionIds.length,
+      planDone:plan.completedIds.length,sessionCorrect:0,sessionWrong:0,answered:false,revealed:false};
+    activateTab('daily-ten');
+    if(queue.length===0){
+      renderDailyTenProgress();
+      renderDailyTenResult();
+      return;
     }
-    alert('移動できる問題が見つかりませんでした。');
-  }catch(e){console.error('[startDailyTen] error:',e);}
+    dtState.data=getQuestionDataById(queue[0]);
+    renderDailyTenQuestion();
+  }catch(e){console.error('[startDailyTenMode]',e);}
+}
+
+function renderDailyTenProgress(){
+  const el=document.getElementById('dt-progress-area');
+  if(!el)return;
+  try{
+    const plan=loadOrCreateDailyPlan();
+    const done=plan.completedIds.length;
+    const total=plan.questionIds.length;
+    const pct=total>0?Math.round(done/total*100):0;
+    const badge=dtState.data?`<div class="dt-part-badge">${dtState.data.label}</div>`:'';
+    el.innerHTML=`<div class="dt-progress">`
+      +`<div class="dt-prog-num">${done}<span> / ${total}</span></div>`
+      +`<div class="dt-prog-bar"><div class="dt-prog-fill" style="width:${pct}%"></div></div>`
+      +badge+`</div>`;
+  }catch(e){}
+}
+
+function renderDailyTenQuestion(){
+  renderDailyTenProgress();
+  const el=document.getElementById('dt-question-area');
+  if(!el)return;
+  const data=dtState.data;
+  if(!data){el.innerHTML='<p style="color:var(--sub);padding:20px 0">問題データを取得できませんでした。</p>';return;}
+  dtState.answered=false;
+  dtState.revealed=false;
+  if(data.type==='mc'){
+    const passageHtml=data.passage
+      ?`<div class="dt-passage">${data.passageLabel?`<div style="font-size:.72rem;color:var(--sub);margin-bottom:6px">${data.passageLabel}</div>`:''}${data.passage}</div>`
+      :'';
+    const optsHtml=data.opts.map((o,j)=>
+      `<div class="dt-opt" id="dt-opt-${j}" onclick="answerDailyTen(${j})">(${chr(j)}) ${esc(o)}</div>`
+    ).join('');
+    el.innerHTML=`<div class="dt-card">`
+      +passageHtml
+      +`<div class="dt-stem">${data.stem}</div>`
+      +`<div class="dt-opts">${optsHtml}</div>`
+      +`<div class="dt-exp" id="dt-exp">${data.exp}</div>`
+      +`<div class="dt-next-area" id="dt-next-area">`
+      +`<button class="dt-next-btn" onclick="nextDailyTenQuestion()">次の問題へ →</button>`
+      +`</div></div>`;
+  }else{
+    el.innerHTML=`<div class="dt-card">`
+      +`<div class="dt-instant-jp">${esc(data.stem)}</div>`
+      +`<textarea class="dt-instant-input" id="dt-inst-input" placeholder="英文を入力してください…"></textarea>`
+      +`<div class="dt-instant-btns">`
+      +`<button class="dt-reveal-btn" onclick="showDailyTenInstantAnswer()">答えを見る</button>`
+      +`</div>`
+      +`<div class="dt-instant-answer" id="dt-inst-answer"></div>`
+      +`<div class="dt-judge-row" id="dt-judge-row">`
+      +`<button class="dt-judge-ok" onclick="judgeInstantDailyTen(true)">できた ✓</button>`
+      +`<button class="dt-judge-ng" onclick="judgeInstantDailyTen(false)">できなかった ✗</button>`
+      +`</div>`
+      +`<div class="dt-next-area" id="dt-next-area">`
+      +`<button class="dt-next-btn" onclick="nextDailyTenQuestion()">次の問題へ →</button>`
+      +`</div></div>`;
+  }
+  try{document.getElementById('daily-ten').scrollIntoView({behavior:'smooth',block:'start'});}catch(_){}
+}
+
+function answerDailyTen(choiceIndex){
+  if(dtState.answered)return;
+  dtState.answered=true;
+  const data=dtState.data;
+  const isCorrect=(choiceIndex===data.ans);
+  if(isCorrect)dtState.sessionCorrect++;else dtState.sessionWrong++;
+  document.querySelectorAll('.dt-opt').forEach((opt,j)=>{
+    opt.classList.add('disabled');
+    if(j===data.ans)opt.classList.add('correct');
+    else if(j===choiceIndex&&!isCorrect)opt.classList.add('wrong');
+  });
+  const expEl=document.getElementById('dt-exp');
+  if(expEl)expEl.classList.add('show');
+  const nextArea=document.getElementById('dt-next-area');
+  if(nextArea)nextArea.classList.add('show');
+  try{
+    const part=partFromId(data.id);
+    const qid=data.id.substring(part.length+1);
+    recordQuestionHistory(part,qid,isCorrect);
+    recordDaily(isCorrect);
+    markDailyPlanCompleted(data.id);
+  }catch(e){console.error('[answerDailyTen]',e);}
+}
+
+function showDailyTenInstantAnswer(){
+  if(dtState.revealed)return;
+  dtState.revealed=true;
+  const data=dtState.data;
+  const ansEl=document.getElementById('dt-inst-answer');
+  if(ansEl){ansEl.innerHTML=buildAnswerHtml(data,'',null);ansEl.classList.add('show');}
+  const judgeRow=document.getElementById('dt-judge-row');
+  if(judgeRow)judgeRow.classList.add('show');
+}
+
+function judgeInstantDailyTen(isCorrect){
+  if(dtState.answered)return;
+  dtState.answered=true;
+  if(isCorrect)dtState.sessionCorrect++;else dtState.sessionWrong++;
+  document.querySelectorAll('#dt-judge-row button').forEach(b=>{b.disabled=true;b.style.opacity='.5';});
+  const nextArea=document.getElementById('dt-next-area');
+  if(nextArea)nextArea.classList.add('show');
+  try{
+    const data=dtState.data;
+    const mi=data.id.match(/^instant-(\d+)$/);
+    if(mi){
+      recordQuestionHistory('instant',mi[1],isCorrect);
+      recordDaily(isCorrect);
+      markDailyPlanCompleted(data.id);
+    }
+  }catch(e){console.error('[judgeInstantDailyTen]',e);}
+}
+
+function nextDailyTenQuestion(){
+  dtState.qIndex++;
+  if(dtState.qIndex>=dtState.queue.length){
+    renderDailyTenResult();
+    return;
+  }
+  dtState.data=getQuestionDataById(dtState.queue[dtState.qIndex]);
+  renderDailyTenQuestion();
+}
+
+function renderDailyTenResult(){
+  renderDailyTenProgress();
+  const el=document.getElementById('dt-question-area');
+  if(!el)return;
+  try{
+    const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+    const total=dtState.sessionCorrect+dtState.sessionWrong;
+    const rate=total>0?Math.round(dtState.sessionCorrect/total*100):0;
+    const reviewCount=Object.values(hist).filter(r=>r.inReview&&!r.graduatedAt).length;
+    const tomorrow=addDaysLocal(getLocalDateKey(),1);
+    const tomorrowDue=Object.values(hist).filter(r=>r.nextReviewAt&&r.nextReviewAt<=tomorrow&&!r.graduatedAt).length;
+    el.innerHTML=`<div class="dt-result">`
+      +`<div class="dt-result-title">今日の10問 完了！</div>`
+      +`<div class="dt-result-sub">${getLocalDateKey()} の学習</div>`
+      +`<div class="dt-result-stats">`
+      +`<div class="dt-stat"><div class="dt-stat-val">${total}</div><div class="dt-stat-label">回答数</div></div>`
+      +`<div class="dt-stat ok"><div class="dt-stat-val">${dtState.sessionCorrect}</div><div class="dt-stat-label">正解</div></div>`
+      +`<div class="dt-stat ng"><div class="dt-stat-val">${dtState.sessionWrong}</div><div class="dt-stat-label">ミス</div></div>`
+      +`<div class="dt-stat"><div class="dt-stat-val">${rate}%</div><div class="dt-stat-label">正答率</div></div>`
+      +`<div class="dt-stat"><div class="dt-stat-val">${reviewCount}</div><div class="dt-stat-label">復習中の問題</div></div>`
+      +`<div class="dt-stat"><div class="dt-stat-val">${tomorrowDue}</div><div class="dt-stat-label">明日の復習数</div></div>`
+      +`</div>`
+      +`<div class="dt-result-btns">`
+      +`<button class="dt-result-btn prim" onclick="exitDailyTenMode()">Part 5 に戻る</button>`
+      +`<button class="dt-result-btn" onclick="activateTab('history');renderHistory()">履歴を見る</button>`
+      +`</div></div>`;
+  }catch(e){el.innerHTML='';}
+}
+
+function exitDailyTenMode(){
+  activateTab('p5');
+}
+
+function startDailyTen(){
+  startDailyTenMode();
 }
 
 // INIT
