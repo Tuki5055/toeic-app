@@ -595,6 +595,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
     <p>すべての学習データ（進捗・ミス・日別履歴）を削除します。この操作は元に戻せません。</p>
     <div class="sbtn-row">
       <button class="sbtn sbtn-red" onclick="resetAllData()">🗑 すべてリセット</button>
+      <button class="sbtn sbtn-ghost" onclick="resetDailyPlanOnly()">🔄 今日の10問をやり直す</button>
     </div>
   </div>
 </div>
@@ -2577,6 +2578,36 @@ function resetAllData(){
   location.reload();
 }
 
+function resetDailyPlanOnly(){
+  if(!confirm('今日の10問の進捗だけをリセットします。日別履歴・問題別履歴は削除されません。よろしいですか？'))return;
+  localStorage.removeItem(LS_DAILY_PLAN);
+  dtState={queue:[],qIndex:0,data:null,planTotal:0,planDone:0,sessionCorrect:0,sessionWrong:0,answered:false,revealed:false};
+  lastDailyTenAnswerSnapshot=null;
+  renderDailyTen();
+  // If currently on daily-ten screen, go back to start state
+  const dtSection=document.getElementById('daily-ten');
+  if(dtSection&&dtSection.classList.contains('active')){
+    startDailyTenMode();
+  }
+}
+
+function restartDailyTenProgress(){
+  if(!confirm('今日の10問を最初からやり直しますか？日別履歴・問題別履歴は削除されません。'))return;
+  try{
+    const raw=localStorage.getItem(LS_DAILY_PLAN);
+    if(raw){
+      const plan=JSON.parse(raw);
+      plan.completedIds=[];
+      plan.updatedAt=new Date().toISOString();
+      localStorage.setItem(LS_DAILY_PLAN,JSON.stringify(plan));
+    }
+  }catch(e){}
+  dtState={queue:[],qIndex:0,data:null,planTotal:0,planDone:0,sessionCorrect:0,sessionWrong:0,answered:false,revealed:false};
+  lastDailyTenAnswerSnapshot=null;
+  renderDailyTen();
+  startDailyTenMode();
+}
+
 // ============================================================
 // CLOUD BACKUP — Google Apps Script 連携
 // ============================================================
@@ -2964,6 +2995,9 @@ function buildDailyTenQuestions(){
     }
   }
 
+  const counts={p5:0,p6:0,p7:0,instant:0};
+  result.forEach(id=>{const p=partFromId(id);if(p)counts[p]++;});
+  console.log('[daily-ten] generated plan',result,'part counts',counts);
   return result.slice(0,10);
 }
 
@@ -3025,6 +3059,10 @@ function renderDailyTen(){
     if(unanswC>0)parts.push(`未回答 ${unanswC}問`);
     if(regularC>0)parts.push(`通常 ${regularC}問`);
 
+    const partCounts={p5:0,p6:0,p7:0,instant:0};
+    plan.questionIds.forEach(id=>{const p=partFromId(id);if(p)partCounts[p]++;});
+    const partStr=`Part5 ${partCounts.p5}問｜Part6 ${partCounts.p6}問｜Part7 ${partCounts.p7}問｜英作文 ${partCounts.instant}問`;
+
     const btnLabel=allDone?'✅ 今日は完了！':done===0?'今日の10問を始める':'今日の10問を続ける';
     const btnClass=allDone?'daily-ten-btn all-done':'daily-ten-btn';
     const btnAttr=allDone?'':'onclick="startDailyTen()"';
@@ -3039,6 +3077,7 @@ function renderDailyTen(){
       +`<div class="daily-ten-body">`
       +`<div class="daily-ten-title">今日の10問${remaining>0&&done>0?`（残り${remaining}問）`:allDone?' — 完了！':''}</div>`
       +(parts.length?`<div class="daily-ten-breakdown">${parts.join(' ／ ')}</div>`:'')
+      +`<div class="daily-ten-breakdown" style="font-size:.72rem;color:var(--sub);margin-top:2px">${partStr}</div>`
       +`</div>`
       +`<button class="${btnClass}" ${btnAttr}>${btnLabel}</button>`
       +`</div>`;
@@ -3286,9 +3325,9 @@ function renderDailyTenQuestion(){
 
 function answerDailyTen(choiceIndex){
   if(dtState.answered)return;
+  dtState.answered=true;
   const data=dtState.data;
   captureDailyTenAnswerSnapshot(data.id);
-  dtState.answered=true;
   const isCorrect=(choiceIndex===data.ans);
   if(isCorrect)dtState.sessionCorrect++;else dtState.sessionWrong++;
   document.querySelectorAll('.dt-opt').forEach((opt,j)=>{
@@ -3321,9 +3360,9 @@ function showDailyTenInstantAnswer(){
 
 function judgeInstantDailyTen(isCorrect){
   if(dtState.answered)return;
+  dtState.answered=true;
   const data=dtState.data;
   captureDailyTenAnswerSnapshot(data.id);
-  dtState.answered=true;
   if(isCorrect)dtState.sessionCorrect++;else dtState.sessionWrong++;
   document.querySelectorAll('#dt-judge-row button').forEach(b=>{b.disabled=true;b.style.opacity='.5';});
   const nextArea=document.getElementById('dt-next-area');
@@ -3374,6 +3413,7 @@ function renderDailyTenResult(){
       +`<div class="dt-result-btns">`
       +`<button class="dt-result-btn prim" onclick="exitDailyTenMode()">Part 5 に戻る</button>`
       +`<button class="dt-result-btn" onclick="activateTab('history');renderHistory()">履歴を見る</button>`
+      +`<button class="dt-result-btn" onclick="restartDailyTenProgress()">今日の10問を最初からやり直す</button>`
       +`</div></div>`;
   }catch(e){el.innerHTML='';}
 }
