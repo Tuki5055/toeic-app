@@ -371,6 +371,67 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .dt-result-btn:hover{border-color:var(--primary);color:var(--primary)}
 .dt-result-btn.prim{background:var(--primary);color:white;border-color:var(--primary)}
 .dt-result-btn.prim:hover{background:var(--primary-dim)}
+
+/* ── Topic Training ── */
+.tp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.tp-title{font-size:1rem;font-weight:700;color:var(--primary)}
+.tp-weak-box{background:var(--red-bg);border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;margin-bottom:18px;font-size:.82rem;color:var(--red);line-height:1.6}
+.tp-weak-label{font-weight:700;margin-bottom:3px}
+.tp-grid{display:grid;gap:10px}
+.tp-row{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.tp-row-name{font-size:.9rem;font-weight:700;color:var(--text);min-width:60px}
+.tp-row-stats{flex:1;display:flex;flex-wrap:wrap;gap:10px;font-size:.78rem;color:var(--sub)}
+.tp-stat-item{white-space:nowrap}
+.tp-rate{font-size:.82rem;font-weight:700;min-width:46px;text-align:right}
+.tp-rate.good{color:var(--green)}
+.tp-rate.mid{color:var(--primary)}
+.tp-rate.bad{color:var(--red)}
+.tp-rate.none{color:var(--sub)}
+.tp-pbar-wrap{width:80px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;flex-shrink:0}
+.tp-pbar{height:100%;border-radius:3px;background:var(--primary-dim);transition:width .4s}
+.tp-pbar.bad{background:var(--red)}
+.tp-pbar.good{background:var(--green)}
+.tp-solve-btn{padding:6px 14px;border-radius:7px;background:var(--primary);color:white;border:none;cursor:pointer;font-size:.78rem;font-weight:700;white-space:nowrap;flex-shrink:0}
+.tp-solve-btn:hover{background:var(--primary-dim)}
+/* topic practice (in-tab) */
+.tp-practice-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
+.tp-practice-title{font-size:.95rem;font-weight:700;color:var(--primary)}
+.tp-back-btn{padding:6px 13px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--sub);cursor:pointer;font-size:.78rem;white-space:nowrap}
+.tp-back-btn:hover{border-color:var(--primary);color:var(--primary)}
+.tp-prog{background:var(--surface);border-radius:9px;padding:11px 16px;margin-bottom:14px;border:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.tp-prog-num{font-size:1.1rem;font-weight:800;color:var(--primary);white-space:nowrap}
+.tp-prog-num span{font-size:.78rem;font-weight:400;color:var(--sub)}
+.tp-prog-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.tp-prog-fill{height:100%;background:linear-gradient(90deg,var(--primary-dim),var(--primary));border-radius:3px;transition:width .4s}
+.tp-q-card{background:var(--surface);border-radius:12px;padding:20px 22px;box-shadow:0 1px 5px rgba(0,0,0,.07);margin-bottom:14px}
+.tp-q-stem{font-size:.93rem;line-height:1.65;margin-bottom:16px;font-weight:500}
+.tp-q-stem em{background:var(--yellow-bg);font-style:normal;padding:1px 4px;border-radius:3px}
+.tp-q-opts{display:grid;gap:8px}
+.tp-opt{padding:11px 14px;border-radius:8px;border:2px solid var(--border);cursor:pointer;font-size:.86rem;transition:border-color .15s,background .15s;background:var(--surface)}
+.tp-opt:not(.disabled):hover{border-color:var(--primary-dim);background:rgba(59,91,219,.06)}
+.tp-opt.disabled{cursor:default}
+.tp-opt.correct{border-color:var(--green)!important;background:var(--green-bg)!important;color:var(--green);font-weight:600}
+.tp-opt.wrong{border-color:var(--red)!important;background:var(--red-bg)!important;color:var(--red)}
+.tp-exp{margin-top:14px;padding:12px 14px;background:var(--yellow-bg);border-radius:7px;font-size:.81rem;line-height:1.65;display:none}
+.tp-exp.show{display:block}
+.tp-next-area{margin-top:14px;display:none}
+.tp-next-area.show{display:block}
+.tp-next-btn{padding:10px 22px;border-radius:8px;background:var(--primary);color:white;border:none;cursor:pointer;font-size:.86rem;font-weight:700}
+.tp-next-btn:hover{background:var(--primary-dim)}
+.tp-result{background:var(--surface);border-radius:12px;padding:26px 22px;text-align:center;box-shadow:0 1px 5px rgba(0,0,0,.07)}
+.tp-result-title{font-size:1.25rem;font-weight:800;color:var(--primary);margin-bottom:4px}
+.tp-result-sub{font-size:.8rem;color:var(--sub);margin-bottom:20px}
+.tp-result-stats{display:flex;justify-content:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.tp-res-stat{background:var(--surface2);border-radius:9px;padding:13px 18px;border:1px solid var(--border);min-width:90px}
+.tp-res-stat-val{font-size:1.4rem;font-weight:800;color:var(--primary)}
+.tp-res-stat-val.ok{color:var(--green)}
+.tp-res-stat-val.ng{color:var(--red)}
+.tp-res-stat-label{font-size:.7rem;color:var(--sub);margin-top:3px}
+.tp-result-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.tp-result-btn{padding:10px 18px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-size:.83rem;font-weight:600}
+.tp-result-btn:hover{border-color:var(--primary);color:var(--primary)}
+.tp-result-btn.prim{background:var(--primary);color:white;border-color:var(--primary)}
+.tp-result-btn.prim:hover{background:var(--primary-dim)}
 </style>
 </head>
 <body>
@@ -400,6 +461,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 <div class="tabs-bar">
   <div class="tabs-inner">
     <div class="tab" onclick="showPart('daily-ten',this)">今日の10問</div>
+    <div class="tab" onclick="showPart('topic',this)">Part5論点別</div>
     <div class="tab active" onclick="showPart('p5',this)">Part 5 <small>(50問)</small></div>
     <div class="tab" onclick="showPart('p6',this)">Part 6 <small>(7セット)</small></div>
     <div class="tab" onclick="showPart('p7',this)">Part 7 <small>(7セット)</small></div>
@@ -463,6 +525,22 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   </div>
   <div id="p5-review" style="display:none"></div>
   <div id="p5-questions"></div>
+</div>
+
+<!-- PART 5 TOPIC TRAINING -->
+<div id="topic" class="part-section">
+  <div class="part-intro"><h2>Part5 論点別トレーニング</h2><p>文法論点ごとの正答率を確認し、苦手な分野を集中練習できます。</p></div>
+  <div id="topic-list-view">
+    <div id="topic-list-content"></div>
+  </div>
+  <div id="topic-practice-view" style="display:none">
+    <div class="tp-practice-header">
+      <div class="tp-practice-title" id="tp-practice-label">論点別練習</div>
+      <button class="tp-back-btn" onclick="exitTopicPractice()">← 論点一覧へ</button>
+    </div>
+    <div id="tp-progress-area"></div>
+    <div id="tp-question-area"></div>
+  </div>
 </div>
 
 <!-- PART 6 -->
@@ -607,163 +685,163 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 // DATA — Part 5 (50問)
 // ============================================================
 const P5=[
-  {q:"The manager asked all employees to submit their reports ------- the end of the day.",opts:["until","by","during","within"],ans:1,exp:"期限を示す前置詞は by（〜までに）。until は継続を示す。"},
-  {q:"The new regulation will ------- affect all departments in the company.",opts:["significant","significance","significantly","signify"],ans:2,exp:"動詞 affect を修飾するので副詞 significantly が正解。"},
-  {q:"Please let us know if the conference room is ------- for Friday afternoon.",opts:["avail","available","availability","availably"],ans:1,exp:"be 動詞の後ろに来る補語は形容詞。available（利用可能な）が正解。"},
-  {q:"The project requires the ------- of the department head before it can proceed.",opts:["approve","approving","approval","approved"],ans:2,exp:"冠詞 the の後は名詞。approval（承認）が正解。"},
-  {q:"Our company has built a ------- reputation for delivering high-quality products.",opts:["rely","reliance","reliable","reliably"],ans:2,exp:"名詞 reputation を修飾する形容詞 reliable（信頼できる）が正解。"},
-  {q:"All technicians must ------- check the equipment before each use.",opts:["careful","care","careless","carefully"],ans:3,exp:"動詞 check を修飾する副詞 carefully（注意深く）が正解。"},
-  {q:"The ------- team will review all applications by next Monday.",opts:["manage","manager","management","managerial"],ans:3,exp:"名詞 team を修飾する形容詞 managerial（管理上の）が正解。"},
-  {q:"Our pricing is ------- with other firms in the industry.",opts:["compete","competitive","competition","competitively"],ans:1,exp:"be 動詞の補語は形容詞。competitive（競争力のある）が正解。"},
-  {q:"Customers who call after business hours will ------- receive a callback the next day.",opts:["prompt","promptness","promptly","prompted"],ans:2,exp:"動詞 receive を修飾する副詞 promptly（迅速に）が正解。"},
-  {q:"------- at the annual conference was higher than expected this year.",opts:["Attend","Attendant","Attendance","Attending"],ans:2,exp:"主語になれる名詞 Attendance（出席）が正解。"},
-  {q:"The board of directors voted ------- to approve the merger.",opts:["unanimous","unanimously","unanimity","unanimousness"],ans:1,exp:"動詞 voted を修飾する副詞 unanimously（全会一致で）が正解。"},
-  {q:"She made an ------- contribution to the success of the new product launch.",opts:["exception","exceptional","exceptionally","except"],ans:1,exp:"名詞 contribution を修飾するのは形容詞 exceptional（並外れた）。"},
-  {q:"A high level of ------- in English is required for this position.",opts:["proficient","proficiency","proficiently","proficience"],ans:1,exp:"冠詞 A と前置詞 of の間は名詞 proficiency（熟達）が正解。"},
-  {q:"The safety manual must be read ------- by all new employees.",opts:["thorough","thoroughness","thoroughly","thorougher"],ans:2,exp:"be 動詞 + 過去分詞を修飾するのは副詞 thoroughly（徹底的に）。"},
-  {q:"The new schedule is more ------- than the previous one.",opts:["flex","flexible","flexibility","flexibly"],ans:1,exp:"比較級 more の後は形容詞 flexible（柔軟な）が正解。"},
-  {q:"The company ------- in operation for over 50 years.",opts:["is","has been","will be","had been"],ans:1,exp:"for を伴う継続の文は現在完了形 has been が正解。"},
-  {q:"The budget proposal ------- by the finance committee last Thursday.",opts:["approves","was approved","has approved","will approve"],ans:1,exp:"last Thursday という過去表現があるので受動態の過去形 was approved が正解。"},
-  {q:"The new branch office ------- opened next spring.",opts:["was","is","will be","had been"],ans:2,exp:"next spring という未来の表現があるので will be が正解。"},
-  {q:"By the time the director arrived, the team ------- the presentation.",opts:["completed","has completed","had completed","will complete"],ans:2,exp:"過去の時点より前の完了を示す過去完了形 had completed が正解。"},
-  {q:"Our sales figures ------- steadily over the past three quarters.",opts:["increase","increased","have increased","had increased"],ans:2,exp:"over the past three quarters は現在完了 have increased を示す。"},
-  {q:"The IT department ------- the software issue when the manager called.",opts:["was resolving","resolved","has resolved","resolves"],ans:0,exp:"「電話があったとき、まさに〜していた」という過去進行形 was resolving が正解。"},
-  {q:"By next Friday, the construction crew ------- the renovation.",opts:["will finish","has finished","finished","will have finished"],ans:3,exp:"by next Friday は未来完了形 will have finished を示す。"},
-  {q:"The company ------- its revenue by 20% last fiscal year.",opts:["increase","increases","increased","has increased"],ans:2,exp:"last fiscal year という過去表現があるので単純過去 increased が正解。"},
-  {q:"The policy ------- all staff to wear identification badges at all times.",opts:["require","requires","required","is requiring"],ans:1,exp:"現在の規則を述べる文では単純現在形 requires が正解。"},
-  {q:"The CEO ------- in this industry for 25 years before he retired.",opts:["has worked","worked","had worked","was working"],ans:2,exp:"過去の基準点（retired）より前の継続は過去完了 had worked が正解。"},
-  {q:"Ms. Chen is ------- charge of the new marketing campaign.",opts:["on","in","at","for"],ans:1,exp:"in charge of は「〜を担当している」という慣用表現。"},
-  {q:"The lawyer signed the contract ------- behalf of her client.",opts:["in","by","on","at"],ans:2,exp:"on behalf of は「〜の代わりに、〜を代表して」という慣用表現。"},
-  {q:"All reports must be submitted ------- the deadline.",opts:["until","by","in","at"],ans:1,exp:"by the deadline は「締め切りまでに」。by は期限を示す前置詞。"},
-  {q:"------- addition to the salary, employees receive a generous benefits package.",opts:["For","By","In","With"],ans:2,exp:"In addition to は「〜に加えて」という慣用表現。"},
-  {q:"The keynote speaker will present her findings ------- the annual conference.",opts:["in","on","at","by"],ans:2,exp:"at a conference など、イベントの場所には at を使う。"},
-  {q:"The training session is scheduled ------- 9:00 A.M. ------- noon.",opts:["from / to","at / to","from / until","between / to"],ans:2,exp:"from A until B は「AからBまで」という時間の範囲を示す表現。"},
-  {q:"Please forward this memo to all staff ------- the accounting department.",opts:["except","despite","although","unless"],ans:0,exp:"except（〜を除いて）が正解。"},
-  {q:"------- the heavy rain, the outdoor event continued as planned.",opts:["Although","Because of","Despite","Since"],ans:2,exp:"Despite（〜にもかかわらず）は名詞句を取る前置詞。"},
-  {q:"------- the price is high, the product quality justifies the cost.",opts:["Because","Although","Unless","So that"],ans:1,exp:"Although（〜であるが）は逆接の接続詞。"},
-  {q:"We need to finalize the report ------- the client has requested it urgently.",opts:["although","because","unless","whereas"],ans:1,exp:"because（なぜなら）は理由を示す接続詞。"},
-  {q:"The shipment arrived on time; -------, the invoice contained several errors.",opts:["therefore","however","moreover","otherwise"],ans:1,exp:"however（しかし）は逆接の接続詞副詞。セミコロンの後に使える。"},
-  {q:"Sales have been declining for months; -------, management has decided to restructure.",opts:["however","although","therefore","unless"],ans:2,exp:"therefore（したがって）は結果を示す接続詞副詞。"},
-  {q:"The project cannot move forward ------- the budget is approved.",opts:["although","unless","because","while"],ans:1,exp:"unless（〜でない限り）は条件の否定を示す接続詞。"},
-  {q:"------- she was attending the conference, her assistant handled all incoming calls.",opts:["Although","While","Unless","Therefore"],ans:1,exp:"while（〜している間）は同時進行を示す接続詞。"},
-  {q:"You may take Friday off ------- you complete the report by Thursday.",opts:["unless","provided that","although","however"],ans:1,exp:"provided that（〜という条件で）は条件を示す接続詞句。"},
-  {q:"Please ------- about our current promotional offers by calling our customer service line.",opts:["inquire","require","acquire","inspire"],ans:0,exp:"inquire about〜（〜について問い合わせる）が正解。"},
-  {q:"The hotel can ------- up to 500 guests for banquets and special events.",opts:["accommodate","accumulate","acclimate","accelerate"],ans:0,exp:"accommodate（収容する、対応する）が文脈に合う語。"},
-  {q:"The company will ------- employees for any work-related travel expenses.",opts:["reimbursed","reimburse","reimbursement","reimbursing"],ans:1,exp:"will の後は原形動詞。reimburse（払い戻す）が正解。"},
-  {q:"The new CEO plans to ------- a more flexible work-from-home policy.",opts:["implement","imply","impose","import"],ans:0,exp:"implement（実施する）は「政策や計画を実行に移す」意味。"},
-  {q:"The two teams will ------- closely to ensure the project is completed on time.",opts:["collaborate","celebrate","correlate","elaborate"],ans:0,exp:"collaborate（協力する）は「共に取り組む」意味。"},
-  {q:"The new software is designed to ------- communication between departments.",opts:["fascinate","facilitate","fabricate","fluctuate"],ans:1,exp:"facilitate（促進する）が正解。"},
-  {q:"The research team was asked to ------- a series of tests to verify the results.",opts:["carry out","carry on","carry over","carry off"],ans:0,exp:"carry out（実施する）は「業務・実験・計画を遂行する」意味。"},
-  {q:"The auditors will ------- the accounting irregularities reported last quarter.",opts:["look into","look over","look up","look after"],ans:0,exp:"look into（調査する）は「問題・事件を調べる」意味。"},
-  {q:"Due to the storm, the board meeting has been ------- until next week.",opts:["put off","put out","put away","put up"],ans:0,exp:"put off（延期する）は postpone と同義。"},
-  {q:"The design team needs to ------- a creative solution before the deadline.",opts:["come up with","come along with","come down with","come out with"],ans:0,exp:"come up with（思いつく）は「アイデアや解決策を生み出す」意味。"},
+  {q:"The manager asked all employees to submit their reports ------- the end of the day.",opts:["until","by","during","within"],ans:1,exp:"期限を示す前置詞は by（〜までに）。until は継続を示す。",topic:"前置詞"},
+  {q:"The new regulation will ------- affect all departments in the company.",opts:["significant","significance","significantly","signify"],ans:2,exp:"動詞 affect を修飾するので副詞 significantly が正解。",topic:"品詞"},
+  {q:"Please let us know if the conference room is ------- for Friday afternoon.",opts:["avail","available","availability","availably"],ans:1,exp:"be 動詞の後ろに来る補語は形容詞。available（利用可能な）が正解。",topic:"品詞"},
+  {q:"The project requires the ------- of the department head before it can proceed.",opts:["approve","approving","approval","approved"],ans:2,exp:"冠詞 the の後は名詞。approval（承認）が正解。",topic:"品詞"},
+  {q:"Our company has built a ------- reputation for delivering high-quality products.",opts:["rely","reliance","reliable","reliably"],ans:2,exp:"名詞 reputation を修飾する形容詞 reliable（信頼できる）が正解。",topic:"品詞"},
+  {q:"All technicians must ------- check the equipment before each use.",opts:["careful","care","careless","carefully"],ans:3,exp:"動詞 check を修飾する副詞 carefully（注意深く）が正解。",topic:"品詞"},
+  {q:"The ------- team will review all applications by next Monday.",opts:["manage","manager","management","managerial"],ans:3,exp:"名詞 team を修飾する形容詞 managerial（管理上の）が正解。",topic:"品詞"},
+  {q:"Our pricing is ------- with other firms in the industry.",opts:["compete","competitive","competition","competitively"],ans:1,exp:"be 動詞の補語は形容詞。competitive（競争力のある）が正解。",topic:"品詞"},
+  {q:"Customers who call after business hours will ------- receive a callback the next day.",opts:["prompt","promptness","promptly","prompted"],ans:2,exp:"動詞 receive を修飾する副詞 promptly（迅速に）が正解。",topic:"品詞"},
+  {q:"------- at the annual conference was higher than expected this year.",opts:["Attend","Attendant","Attendance","Attending"],ans:2,exp:"主語になれる名詞 Attendance（出席）が正解。",topic:"品詞"},
+  {q:"The board of directors voted ------- to approve the merger.",opts:["unanimous","unanimously","unanimity","unanimousness"],ans:1,exp:"動詞 voted を修飾する副詞 unanimously（全会一致で）が正解。",topic:"品詞"},
+  {q:"She made an ------- contribution to the success of the new product launch.",opts:["exception","exceptional","exceptionally","except"],ans:1,exp:"名詞 contribution を修飾するのは形容詞 exceptional（並外れた）。",topic:"品詞"},
+  {q:"A high level of ------- in English is required for this position.",opts:["proficient","proficiency","proficiently","proficience"],ans:1,exp:"冠詞 A と前置詞 of の間は名詞 proficiency（熟達）が正解。",topic:"品詞"},
+  {q:"The safety manual must be read ------- by all new employees.",opts:["thorough","thoroughness","thoroughly","thorougher"],ans:2,exp:"be 動詞 + 過去分詞を修飾するのは副詞 thoroughly（徹底的に）。",topic:"品詞"},
+  {q:"The new schedule is more ------- than the previous one.",opts:["flex","flexible","flexibility","flexibly"],ans:1,exp:"比較級 more の後は形容詞 flexible（柔軟な）が正解。",topic:"品詞"},
+  {q:"The company ------- in operation for over 50 years.",opts:["is","has been","will be","had been"],ans:1,exp:"for を伴う継続の文は現在完了形 has been が正解。",topic:"時制"},
+  {q:"The budget proposal ------- by the finance committee last Thursday.",opts:["approves","was approved","has approved","will approve"],ans:1,exp:"last Thursday という過去表現があるので受動態の過去形 was approved が正解。",topic:"時制"},
+  {q:"The new branch office ------- opened next spring.",opts:["was","is","will be","had been"],ans:2,exp:"next spring という未来の表現があるので will be が正解。",topic:"時制"},
+  {q:"By the time the director arrived, the team ------- the presentation.",opts:["completed","has completed","had completed","will complete"],ans:2,exp:"過去の時点より前の完了を示す過去完了形 had completed が正解。",topic:"時制"},
+  {q:"Our sales figures ------- steadily over the past three quarters.",opts:["increase","increased","have increased","had increased"],ans:2,exp:"over the past three quarters は現在完了 have increased を示す。",topic:"時制"},
+  {q:"The IT department ------- the software issue when the manager called.",opts:["was resolving","resolved","has resolved","resolves"],ans:0,exp:"「電話があったとき、まさに〜していた」という過去進行形 was resolving が正解。",topic:"時制"},
+  {q:"By next Friday, the construction crew ------- the renovation.",opts:["will finish","has finished","finished","will have finished"],ans:3,exp:"by next Friday は未来完了形 will have finished を示す。",topic:"時制"},
+  {q:"The company ------- its revenue by 20% last fiscal year.",opts:["increase","increases","increased","has increased"],ans:2,exp:"last fiscal year という過去表現があるので単純過去 increased が正解。",topic:"時制"},
+  {q:"The policy ------- all staff to wear identification badges at all times.",opts:["require","requires","required","is requiring"],ans:1,exp:"現在の規則を述べる文では単純現在形 requires が正解。",topic:"時制"},
+  {q:"The CEO ------- in this industry for 25 years before he retired.",opts:["has worked","worked","had worked","was working"],ans:2,exp:"過去の基準点（retired）より前の継続は過去完了 had worked が正解。",topic:"時制"},
+  {q:"Ms. Chen is ------- charge of the new marketing campaign.",opts:["on","in","at","for"],ans:1,exp:"in charge of は「〜を担当している」という慣用表現。",topic:"前置詞"},
+  {q:"The lawyer signed the contract ------- behalf of her client.",opts:["in","by","on","at"],ans:2,exp:"on behalf of は「〜の代わりに、〜を代表して」という慣用表現。",topic:"前置詞"},
+  {q:"All reports must be submitted ------- the deadline.",opts:["until","by","in","at"],ans:1,exp:"by the deadline は「締め切りまでに」。by は期限を示す前置詞。",topic:"前置詞"},
+  {q:"------- addition to the salary, employees receive a generous benefits package.",opts:["For","By","In","With"],ans:2,exp:"In addition to は「〜に加えて」という慣用表現。",topic:"前置詞"},
+  {q:"The keynote speaker will present her findings ------- the annual conference.",opts:["in","on","at","by"],ans:2,exp:"at a conference など、イベントの場所には at を使う。",topic:"前置詞"},
+  {q:"The training session is scheduled ------- 9:00 A.M. ------- noon.",opts:["from / to","at / to","from / until","between / to"],ans:2,exp:"from A until B は「AからBまで」という時間の範囲を示す表現。",topic:"前置詞"},
+  {q:"Please forward this memo to all staff ------- the accounting department.",opts:["except","despite","although","unless"],ans:0,exp:"except（〜を除いて）が正解。",topic:"前置詞"},
+  {q:"------- the heavy rain, the outdoor event continued as planned.",opts:["Although","Because of","Despite","Since"],ans:2,exp:"Despite（〜にもかかわらず）は名詞句を取る前置詞。",topic:"接続詞"},
+  {q:"------- the price is high, the product quality justifies the cost.",opts:["Because","Although","Unless","So that"],ans:1,exp:"Although（〜であるが）は逆接の接続詞。",topic:"接続詞"},
+  {q:"We need to finalize the report ------- the client has requested it urgently.",opts:["although","because","unless","whereas"],ans:1,exp:"because（なぜなら）は理由を示す接続詞。",topic:"接続詞"},
+  {q:"The shipment arrived on time; -------, the invoice contained several errors.",opts:["therefore","however","moreover","otherwise"],ans:1,exp:"however（しかし）は逆接の接続詞副詞。セミコロンの後に使える。",topic:"接続詞"},
+  {q:"Sales have been declining for months; -------, management has decided to restructure.",opts:["however","although","therefore","unless"],ans:2,exp:"therefore（したがって）は結果を示す接続詞副詞。",topic:"接続詞"},
+  {q:"The project cannot move forward ------- the budget is approved.",opts:["although","unless","because","while"],ans:1,exp:"unless（〜でない限り）は条件の否定を示す接続詞。",topic:"接続詞"},
+  {q:"------- she was attending the conference, her assistant handled all incoming calls.",opts:["Although","While","Unless","Therefore"],ans:1,exp:"while（〜している間）は同時進行を示す接続詞。",topic:"接続詞"},
+  {q:"You may take Friday off ------- you complete the report by Thursday.",opts:["unless","provided that","although","however"],ans:1,exp:"provided that（〜という条件で）は条件を示す接続詞句。",topic:"接続詞"},
+  {q:"Please ------- about our current promotional offers by calling our customer service line.",opts:["inquire","require","acquire","inspire"],ans:0,exp:"inquire about〜（〜について問い合わせる）が正解。",topic:"語彙"},
+  {q:"The hotel can ------- up to 500 guests for banquets and special events.",opts:["accommodate","accumulate","acclimate","accelerate"],ans:0,exp:"accommodate（収容する、対応する）が文脈に合う語。",topic:"語彙"},
+  {q:"The company will ------- employees for any work-related travel expenses.",opts:["reimbursed","reimburse","reimbursement","reimbursing"],ans:1,exp:"will の後は原形動詞。reimburse（払い戻す）が正解。",topic:"語彙"},
+  {q:"The new CEO plans to ------- a more flexible work-from-home policy.",opts:["implement","imply","impose","import"],ans:0,exp:"implement（実施する）は「政策や計画を実行に移す」意味。",topic:"語彙"},
+  {q:"The two teams will ------- closely to ensure the project is completed on time.",opts:["collaborate","celebrate","correlate","elaborate"],ans:0,exp:"collaborate（協力する）は「共に取り組む」意味。",topic:"語彙"},
+  {q:"The new software is designed to ------- communication between departments.",opts:["fascinate","facilitate","fabricate","fluctuate"],ans:1,exp:"facilitate（促進する）が正解。",topic:"語彙"},
+  {q:"The research team was asked to ------- a series of tests to verify the results.",opts:["carry out","carry on","carry over","carry off"],ans:0,exp:"carry out（実施する）は「業務・実験・計画を遂行する」意味。",topic:"語彙"},
+  {q:"The auditors will ------- the accounting irregularities reported last quarter.",opts:["look into","look over","look up","look after"],ans:0,exp:"look into（調査する）は「問題・事件を調べる」意味。",topic:"語彙"},
+  {q:"Due to the storm, the board meeting has been ------- until next week.",opts:["put off","put out","put away","put up"],ans:0,exp:"put off（延期する）は postpone と同義。",topic:"語彙"},
+  {q:"The design team needs to ------- a creative solution before the deadline.",opts:["come up with","come along with","come down with","come out with"],ans:0,exp:"come up with（思いつく）は「アイデアや解決策を生み出す」意味。",topic:"語彙"},
   // ── Phase 11 追加: 100問 ──────────────────────────────────────
   // 品詞 (25問)
-  {q:"The ------- of the annual report will begin next week.",opts:["prepare","preparation","preparatory","prepares"],ans:1,exp:"The の後ろなので名詞 preparation（準備）が正解。"},
-  {q:"All employees are required to dress ------- when meeting clients.",opts:["profession","professional","professionally","professionalism"],ans:2,exp:"動詞 dress を修飾するので副詞 professionally（プロらしく）が正解。"},
-  {q:"The ------- decision was approved by the board of directors.",opts:["finally","finalize","final","finality"],ans:2,exp:"名詞 decision を修飾するので形容詞 final（最終的な）が正解。"},
-  {q:"The ------- in sales this quarter exceeded all expectations.",opts:["grow","growth","growing","grown"],ans:1,exp:"The の後ろなので名詞 growth（成長）が正解。"},
-  {q:"Please handle all client requests -------.",opts:["prompt","promptly","promptness","prompter"],ans:1,exp:"動詞句 handle を修飾するので副詞 promptly（迅速に）が正解。"},
-  {q:"The company's ------- policy covers all full-time staff.",opts:["insure","insured","insurance","insuring"],ans:2,exp:"名詞 policy を修飾する名詞 insurance（保険）が正解。"},
-  {q:"The new software update was ------- installed on all computers.",opts:["success","successful","successfully","succeed"],ans:2,exp:"動詞 installed を修飾するので副詞 successfully（正常に）が正解。"},
-  {q:"Her ------- to detail has made her an invaluable team member.",opts:["attend","attention","attentive","attentively"],ans:1,exp:"Her の後なので名詞 attention（注意力）が正解。attention to detail は定型表現。"},
-  {q:"The project manager provided ------- instructions to the team.",opts:["clarity","clear","clearly","clarify"],ans:1,exp:"名詞 instructions を修飾するので形容詞 clear（明確な）が正解。"},
-  {q:"The ------- of all submitted applications will take two weeks.",opts:["review","reviewer","reviewing","reviewed"],ans:0,exp:"The の後なので名詞 review（審査）が正解。"},
-  {q:"The new marketing strategy proved to be highly -------.",opts:["effect","effective","effectively","effectiveness"],ans:1,exp:"be 動詞の補語になるので形容詞 effective（効果的な）が正解。"},
-  {q:"The ------- announced changes to the company's benefit package.",opts:["manage","manager","managerial","managed"],ans:1,exp:"The の後なので名詞 manager（マネージャー）が正解。"},
-  {q:"The board reached a ------- agreement on the merger proposal.",opts:["unanimous","unanimously","unanimity","unanimousness"],ans:0,exp:"名詞 agreement を修飾するので形容詞 unanimous（満場一致の）が正解。"},
-  {q:"The new policy aims to ------- communication between departments.",opts:["improve","improvement","improved","improving"],ans:0,exp:"to 不定詞なので動詞の原形 improve が正解。"},
-  {q:"Her ------- of the contract terms saved the company from a loss.",opts:["understand","understanding","understood","understandable"],ans:1,exp:"Her の後なので名詞 understanding（理解）が正解。"},
-  {q:"The team ------- completed the project ahead of schedule.",opts:["success","successful","successfully","succeed"],ans:2,exp:"動詞 completed を修飾するので副詞 successfully が正解。"},
-  {q:"There was a ------- increase in productivity after the training.",opts:["remark","remarkable","remarkably","remarking"],ans:1,exp:"名詞 increase を修飾するので形容詞 remarkable（著しい）が正解。"},
-  {q:"The CEO expressed ------- about the upcoming merger.",opts:["optimize","optimism","optimistic","optimistically"],ans:1,exp:"expressed の目的語になるので名詞 optimism（楽観論）が正解。"},
-  {q:"The ------- of all new employees is conducted by HR.",opts:["orient","orientation","oriented","orientating"],ans:1,exp:"The の後なので名詞 orientation（オリエンテーション）が正解。"},
-  {q:"Please ensure that all reports are submitted -------.",opts:["accurate","accuracy","inaccurate","accurately"],ans:3,exp:"動詞 submitted を修飾するので副詞 accurately（正確に）が正解。"},
-  {q:"The ------- of the two companies will create the largest firm in the industry.",opts:["merge","merger","merged","merging"],ans:1,exp:"The の後なので名詞 merger（合併）が正解。"},
-  {q:"The sales team showed ------- initiative in securing the new contract.",opts:["remark","remarkable","remarkably","remarked"],ans:1,exp:"名詞 initiative を修飾するので形容詞 remarkable が正解。"},
-  {q:"The ------- of a new marketing campaign has been approved.",opts:["launch","launching","launched","launcher"],ans:0,exp:"The の後なので名詞 launch（開始・発表）が正解。"},
-  {q:"The ------- results of the survey were shared with all stakeholders.",opts:["preliminary","preliminarily","preliminaries","prelim"],ans:0,exp:"名詞 results を修飾するので形容詞 preliminary（予備的な）が正解。"},
-  {q:"We must ensure the ------- of all personal data stored in our system.",opts:["secure","security","securely","securing"],ans:1,exp:"ensure の目的語になるので名詞 security（安全性）が正解。"},
+  {q:"The ------- of the annual report will begin next week.",opts:["prepare","preparation","preparatory","prepares"],ans:1,exp:"The の後ろなので名詞 preparation（準備）が正解。",topic:"品詞"},
+  {q:"All employees are required to dress ------- when meeting clients.",opts:["profession","professional","professionally","professionalism"],ans:2,exp:"動詞 dress を修飾するので副詞 professionally（プロらしく）が正解。",topic:"品詞"},
+  {q:"The ------- decision was approved by the board of directors.",opts:["finally","finalize","final","finality"],ans:2,exp:"名詞 decision を修飾するので形容詞 final（最終的な）が正解。",topic:"品詞"},
+  {q:"The ------- in sales this quarter exceeded all expectations.",opts:["grow","growth","growing","grown"],ans:1,exp:"The の後ろなので名詞 growth（成長）が正解。",topic:"品詞"},
+  {q:"Please handle all client requests -------.",opts:["prompt","promptly","promptness","prompter"],ans:1,exp:"動詞句 handle を修飾するので副詞 promptly（迅速に）が正解。",topic:"品詞"},
+  {q:"The company's ------- policy covers all full-time staff.",opts:["insure","insured","insurance","insuring"],ans:2,exp:"名詞 policy を修飾する名詞 insurance（保険）が正解。",topic:"品詞"},
+  {q:"The new software update was ------- installed on all computers.",opts:["success","successful","successfully","succeed"],ans:2,exp:"動詞 installed を修飾するので副詞 successfully（正常に）が正解。",topic:"品詞"},
+  {q:"Her ------- to detail has made her an invaluable team member.",opts:["attend","attention","attentive","attentively"],ans:1,exp:"Her の後なので名詞 attention（注意力）が正解。attention to detail は定型表現。",topic:"品詞"},
+  {q:"The project manager provided ------- instructions to the team.",opts:["clarity","clear","clearly","clarify"],ans:1,exp:"名詞 instructions を修飾するので形容詞 clear（明確な）が正解。",topic:"品詞"},
+  {q:"The ------- of all submitted applications will take two weeks.",opts:["review","reviewer","reviewing","reviewed"],ans:0,exp:"The の後なので名詞 review（審査）が正解。",topic:"品詞"},
+  {q:"The new marketing strategy proved to be highly -------.",opts:["effect","effective","effectively","effectiveness"],ans:1,exp:"be 動詞の補語になるので形容詞 effective（効果的な）が正解。",topic:"品詞"},
+  {q:"The ------- announced changes to the company's benefit package.",opts:["manage","manager","managerial","managed"],ans:1,exp:"The の後なので名詞 manager（マネージャー）が正解。",topic:"品詞"},
+  {q:"The board reached a ------- agreement on the merger proposal.",opts:["unanimous","unanimously","unanimity","unanimousness"],ans:0,exp:"名詞 agreement を修飾するので形容詞 unanimous（満場一致の）が正解。",topic:"品詞"},
+  {q:"The new policy aims to ------- communication between departments.",opts:["improve","improvement","improved","improving"],ans:0,exp:"to 不定詞なので動詞の原形 improve が正解。",topic:"品詞"},
+  {q:"Her ------- of the contract terms saved the company from a loss.",opts:["understand","understanding","understood","understandable"],ans:1,exp:"Her の後なので名詞 understanding（理解）が正解。",topic:"品詞"},
+  {q:"The team ------- completed the project ahead of schedule.",opts:["success","successful","successfully","succeed"],ans:2,exp:"動詞 completed を修飾するので副詞 successfully が正解。",topic:"品詞"},
+  {q:"There was a ------- increase in productivity after the training.",opts:["remark","remarkable","remarkably","remarking"],ans:1,exp:"名詞 increase を修飾するので形容詞 remarkable（著しい）が正解。",topic:"品詞"},
+  {q:"The CEO expressed ------- about the upcoming merger.",opts:["optimize","optimism","optimistic","optimistically"],ans:1,exp:"expressed の目的語になるので名詞 optimism（楽観論）が正解。",topic:"品詞"},
+  {q:"The ------- of all new employees is conducted by HR.",opts:["orient","orientation","oriented","orientating"],ans:1,exp:"The の後なので名詞 orientation（オリエンテーション）が正解。",topic:"品詞"},
+  {q:"Please ensure that all reports are submitted -------.",opts:["accurate","accuracy","inaccurate","accurately"],ans:3,exp:"動詞 submitted を修飾するので副詞 accurately（正確に）が正解。",topic:"品詞"},
+  {q:"The ------- of the two companies will create the largest firm in the industry.",opts:["merge","merger","merged","merging"],ans:1,exp:"The の後なので名詞 merger（合併）が正解。",topic:"品詞"},
+  {q:"The sales team showed ------- initiative in securing the new contract.",opts:["remark","remarkable","remarkably","remarked"],ans:1,exp:"名詞 initiative を修飾するので形容詞 remarkable が正解。",topic:"品詞"},
+  {q:"The ------- of a new marketing campaign has been approved.",opts:["launch","launching","launched","launcher"],ans:0,exp:"The の後なので名詞 launch（開始・発表）が正解。",topic:"品詞"},
+  {q:"The ------- results of the survey were shared with all stakeholders.",opts:["preliminary","preliminarily","preliminaries","prelim"],ans:0,exp:"名詞 results を修飾するので形容詞 preliminary（予備的な）が正解。",topic:"品詞"},
+  {q:"We must ensure the ------- of all personal data stored in our system.",opts:["secure","security","securely","securing"],ans:1,exp:"ensure の目的語になるので名詞 security（安全性）が正解。",topic:"品詞"},
   // 動詞の形 (20問)
-  {q:"The report ------- by the accounting team before the meeting tomorrow.",opts:["will prepare","will be prepared","is preparing","prepares"],ans:1,exp:"主語 report は行為を受ける側なので受動態 will be prepared が正解。"},
-  {q:"She ------- for the company for over ten years when she was promoted.",opts:["worked","has worked","had been working","is working"],ans:2,exp:"過去の昇進時点まで継続していた行為なので過去完了進行形 had been working が正解。"},
-  {q:"The factory ------- shut down immediately after the safety inspection.",opts:["was ordered","ordered","is ordering","will order"],ans:0,exp:"工場が命令を受けた側なので受動態 was ordered が正解。"},
-  {q:"Please remember ------- the meeting room after use.",opts:["booking","booked","to book","books"],ans:2,exp:"remember to do〜（〜することを覚えておく）。remember doing は過去の行為を思い出す意。"},
-  {q:"The manager suggested ------- the deadline by one week.",opts:["extend","extending","to extend","extends"],ans:1,exp:"suggest は動名詞を目的語に取る。suggest extending が正解。"},
-  {q:"By the time the CEO arrived, all preparations -------.",opts:["were completed","had been completed","will be completed","are completing"],ans:1,exp:"By the time ... arrived（過去）の時点で完了済みなので過去完了受動態 had been completed が正解。"},
-  {q:"The new branch ------- within six months if demand continues to grow.",opts:["will open","is opened","opens","would open"],ans:0,exp:"条件が成立すれば未来に起こることなので will open が正解。"},
-  {q:"All employees are encouraged ------- in the wellness program.",opts:["participating","to participate","participate","participated"],ans:1,exp:"be encouraged to do〜（〜するよう奨励される）。to participate が正解。"},
-  {q:"The company's quarterly earnings report ------- next Monday.",opts:["release","will be released","released","is releasing"],ans:1,exp:"report は発表される側なので受動態 will be released が正解。"},
-  {q:"She ------- the project proposal when the client called.",opts:["was reviewing","reviewed","has reviewed","reviews"],ans:0,exp:"クライアントが電話してきた時点で進行中だったので過去進行形 was reviewing が正解。"},
-  {q:"The new product line ------- well since its launch last month.",opts:["sells","sold","has been selling","will sell"],ans:2,exp:"先月の発売から現在まで継続しているので現在完了進行形 has been selling が正解。"},
-  {q:"All participants are required ------- their badges at all times.",opts:["worn","wearing","to wear","wore"],ans:2,exp:"be required to do〜（〜することが求められる）。to wear が正解。"},
-  {q:"The decision ------- until all board members have voted.",opts:["will not finalize","will not be finalized","is not finalizing","was not finalized"],ans:1,exp:"決定は「最終化される」側なので受動態 will not be finalized が正解。"},
-  {q:"I recommend ------- the contract terms before signing.",opts:["review","reviews","to review","reviewing"],ans:3,exp:"recommend は動名詞を目的語に取る。reviewing が正解。"},
-  {q:"The construction on the highway ------- for three months.",opts:["has delayed","has been delayed","was delaying","delayed"],ans:1,exp:"工事は「遅れさせられている」ので受動態。現在も続いているので現在完了受動態 has been delayed が正解。"},
-  {q:"The annual audit ------- by the end of the fiscal year.",opts:["completes","is completing","will have been completed","was completing"],ans:2,exp:"会計年度末までに完了している予定なので未来完了受動態 will have been completed が正解。"},
-  {q:"Staff members are advised ------- any safety hazards immediately.",opts:["report","to report","reporting","reported"],ans:1,exp:"be advised to do〜（〜するよう言われる）。to report が正解。"},
-  {q:"The presentation ------- well, despite some technical difficulties.",opts:["went","was gone","has been going","is going"],ans:0,exp:"過去の出来事の評価なので過去形 went が正解。go well（うまくいく）。"},
-  {q:"The new regulation ------- into effect on January 1st of next year.",opts:["comes","will come","is coming","came"],ans:1,exp:"来年1月1日は未来なので will come が正解。come into effect（発効する）は定型表現。"},
-  {q:"We ------- to reduce our carbon footprint by 30% within the next decade.",opts:["aim","aimed","are aimed","will be aimed"],ans:0,exp:"目標を述べる現在の状態なので単純現在形 aim が適切。aim to do〜（〜することを目指す）。"},
+  {q:"The report ------- by the accounting team before the meeting tomorrow.",opts:["will prepare","will be prepared","is preparing","prepares"],ans:1,exp:"主語 report は行為を受ける側なので受動態 will be prepared が正解。",topic:"分詞"},
+  {q:"She ------- for the company for over ten years when she was promoted.",opts:["worked","has worked","had been working","is working"],ans:2,exp:"過去の昇進時点まで継続していた行為なので過去完了進行形 had been working が正解。",topic:"時制"},
+  {q:"The factory ------- shut down immediately after the safety inspection.",opts:["was ordered","ordered","is ordering","will order"],ans:0,exp:"工場が命令を受けた側なので受動態 was ordered が正解。",topic:"分詞"},
+  {q:"Please remember ------- the meeting room after use.",opts:["booking","booked","to book","books"],ans:2,exp:"remember to do〜（〜することを覚えておく）。remember doing は過去の行為を思い出す意。",topic:"時制"},
+  {q:"The manager suggested ------- the deadline by one week.",opts:["extend","extending","to extend","extends"],ans:1,exp:"suggest は動名詞を目的語に取る。suggest extending が正解。",topic:"時制"},
+  {q:"By the time the CEO arrived, all preparations -------.",opts:["were completed","had been completed","will be completed","are completing"],ans:1,exp:"By the time ... arrived（過去）の時点で完了済みなので過去完了受動態 had been completed が正解。",topic:"分詞"},
+  {q:"The new branch ------- within six months if demand continues to grow.",opts:["will open","is opened","opens","would open"],ans:0,exp:"条件が成立すれば未来に起こることなので will open が正解。",topic:"時制"},
+  {q:"All employees are encouraged ------- in the wellness program.",opts:["participating","to participate","participate","participated"],ans:1,exp:"be encouraged to do〜（〜するよう奨励される）。to participate が正解。",topic:"時制"},
+  {q:"The company's quarterly earnings report ------- next Monday.",opts:["release","will be released","released","is releasing"],ans:1,exp:"report は発表される側なので受動態 will be released が正解。",topic:"分詞"},
+  {q:"She ------- the project proposal when the client called.",opts:["was reviewing","reviewed","has reviewed","reviews"],ans:0,exp:"クライアントが電話してきた時点で進行中だったので過去進行形 was reviewing が正解。",topic:"時制"},
+  {q:"The new product line ------- well since its launch last month.",opts:["sells","sold","has been selling","will sell"],ans:2,exp:"先月の発売から現在まで継続しているので現在完了進行形 has been selling が正解。",topic:"時制"},
+  {q:"All participants are required ------- their badges at all times.",opts:["worn","wearing","to wear","wore"],ans:2,exp:"be required to do〜（〜することが求められる）。to wear が正解。",topic:"時制"},
+  {q:"The decision ------- until all board members have voted.",opts:["will not finalize","will not be finalized","is not finalizing","was not finalized"],ans:1,exp:"決定は「最終化される」側なので受動態 will not be finalized が正解。",topic:"分詞"},
+  {q:"I recommend ------- the contract terms before signing.",opts:["review","reviews","to review","reviewing"],ans:3,exp:"recommend は動名詞を目的語に取る。reviewing が正解。",topic:"時制"},
+  {q:"The construction on the highway ------- for three months.",opts:["has delayed","has been delayed","was delaying","delayed"],ans:1,exp:"工事は「遅れさせられている」ので受動態。現在も続いているので現在完了受動態 has been delayed が正解。",topic:"分詞"},
+  {q:"The annual audit ------- by the end of the fiscal year.",opts:["completes","is completing","will have been completed","was completing"],ans:2,exp:"会計年度末までに完了している予定なので未来完了受動態 will have been completed が正解。",topic:"分詞"},
+  {q:"Staff members are advised ------- any safety hazards immediately.",opts:["report","to report","reporting","reported"],ans:1,exp:"be advised to do〜（〜するよう言われる）。to report が正解。",topic:"時制"},
+  {q:"The presentation ------- well, despite some technical difficulties.",opts:["went","was gone","has been going","is going"],ans:0,exp:"過去の出来事の評価なので過去形 went が正解。go well（うまくいく）。",topic:"時制"},
+  {q:"The new regulation ------- into effect on January 1st of next year.",opts:["comes","will come","is coming","came"],ans:1,exp:"来年1月1日は未来なので will come が正解。come into effect（発効する）は定型表現。",topic:"時制"},
+  {q:"We ------- to reduce our carbon footprint by 30% within the next decade.",opts:["aim","aimed","are aimed","will be aimed"],ans:0,exp:"目標を述べる現在の状態なので単純現在形 aim が適切。aim to do〜（〜することを目指す）。",topic:"時制"},
   // 前置詞 (15問)
-  {q:"The conference will be held ------- the Grand Hotel next month.",opts:["in","at","on","by"],ans:1,exp:"建物の一地点を示すので at が正解。in は空間の内部、on は表面を示す。"},
-  {q:"The project was completed ahead ------- schedule.",opts:["in","of","on","for"],ans:1,exp:"ahead of schedule（予定より前に）は定型表現。"},
-  {q:"Please send the completed form ------- fax or email.",opts:["by","with","in","through"],ans:0,exp:"手段を表す前置詞は by。by fax（ファックスで）。"},
-  {q:"The price of the product varies ------- season.",opts:["by","on","with","in"],ans:2,exp:"vary with〜（〜によって変わる）。with が最も自然。"},
-  {q:"Employees must obtain approval ------- their supervisors before traveling.",opts:["to","with","from","by"],ans:2,exp:"obtain approval from〜（〜から承認を得る）。"},
-  {q:"The training session will last ------- three hours.",opts:["during","for","since","within"],ans:1,exp:"継続期間を表す for（〜の間）が正解。during の後には期間でなく名詞が来る。"},
-  {q:"The company has been operating ------- more than 30 years.",opts:["since","during","for","within"],ans:2,exp:"期間を表す for（〜の間）が正解。since は起点を表す。"},
-  {q:"The invoice must be paid ------- 30 days of receipt.",opts:["within","by","until","in"],ans:0,exp:"within 30 days of〜（受領から30日以内に）は請求書の定型表現。"},
-  {q:"The proposal is ------- review and will be finalized by Friday.",opts:["under","in","on","at"],ans:0,exp:"under review（審査中）は定型表現。"},
-  {q:"The package was delivered ------- the wrong address.",opts:["in","to","at","on"],ans:1,exp:"delivered to〜（〜に配達された）。to は目的地を表す。"},
-  {q:"She was promoted ------- the position of Regional Director.",opts:["to","as","into","for"],ans:0,exp:"be promoted to〜（〜に昇進する）は定型表現。"},
-  {q:"The seminar will focus ------- effective communication skills.",opts:["in","at","on","about"],ans:2,exp:"focus on〜（〜に焦点を当てる）は定型表現。"},
-  {q:"Please be ------- time for the meeting tomorrow morning.",opts:["in","at","on","by"],ans:2,exp:"on time（時間通りに）は定型表現。"},
-  {q:"The store will be closed ------- renovation until the end of the month.",opts:["for","by","during","to"],ans:0,exp:"目的を表す for。closed for renovation（改装のため休業）。"},
-  {q:"The CEO is responsible ------- overseeing all global operations.",opts:["of","for","on","with"],ans:1,exp:"be responsible for〜（〜の責任を持つ）は定型表現。"},
+  {q:"The conference will be held ------- the Grand Hotel next month.",opts:["in","at","on","by"],ans:1,exp:"建物の一地点を示すので at が正解。in は空間の内部、on は表面を示す。",topic:"前置詞"},
+  {q:"The project was completed ahead ------- schedule.",opts:["in","of","on","for"],ans:1,exp:"ahead of schedule（予定より前に）は定型表現。",topic:"前置詞"},
+  {q:"Please send the completed form ------- fax or email.",opts:["by","with","in","through"],ans:0,exp:"手段を表す前置詞は by。by fax（ファックスで）。",topic:"前置詞"},
+  {q:"The price of the product varies ------- season.",opts:["by","on","with","in"],ans:2,exp:"vary with〜（〜によって変わる）。with が最も自然。",topic:"前置詞"},
+  {q:"Employees must obtain approval ------- their supervisors before traveling.",opts:["to","with","from","by"],ans:2,exp:"obtain approval from〜（〜から承認を得る）。",topic:"前置詞"},
+  {q:"The training session will last ------- three hours.",opts:["during","for","since","within"],ans:1,exp:"継続期間を表す for（〜の間）が正解。during の後には期間でなく名詞が来る。",topic:"前置詞"},
+  {q:"The company has been operating ------- more than 30 years.",opts:["since","during","for","within"],ans:2,exp:"期間を表す for（〜の間）が正解。since は起点を表す。",topic:"前置詞"},
+  {q:"The invoice must be paid ------- 30 days of receipt.",opts:["within","by","until","in"],ans:0,exp:"within 30 days of〜（受領から30日以内に）は請求書の定型表現。",topic:"前置詞"},
+  {q:"The proposal is ------- review and will be finalized by Friday.",opts:["under","in","on","at"],ans:0,exp:"under review（審査中）は定型表現。",topic:"前置詞"},
+  {q:"The package was delivered ------- the wrong address.",opts:["in","to","at","on"],ans:1,exp:"delivered to〜（〜に配達された）。to は目的地を表す。",topic:"前置詞"},
+  {q:"She was promoted ------- the position of Regional Director.",opts:["to","as","into","for"],ans:0,exp:"be promoted to〜（〜に昇進する）は定型表現。",topic:"前置詞"},
+  {q:"The seminar will focus ------- effective communication skills.",opts:["in","at","on","about"],ans:2,exp:"focus on〜（〜に焦点を当てる）は定型表現。",topic:"前置詞"},
+  {q:"Please be ------- time for the meeting tomorrow morning.",opts:["in","at","on","by"],ans:2,exp:"on time（時間通りに）は定型表現。",topic:"前置詞"},
+  {q:"The store will be closed ------- renovation until the end of the month.",opts:["for","by","during","to"],ans:0,exp:"目的を表す for。closed for renovation（改装のため休業）。",topic:"前置詞"},
+  {q:"The CEO is responsible ------- overseeing all global operations.",opts:["of","for","on","with"],ans:1,exp:"be responsible for〜（〜の責任を持つ）は定型表現。",topic:"前置詞"},
   // 接続詞・接続副詞 (15問)
-  {q:"------- the meeting ran long, we were unable to cover all agenda items.",opts:["Although","Because","However","Despite"],ans:1,exp:"Because は原因を示す接続詞。「会議が長引いたので議題をすべて消化できなかった」。"},
-  {q:"Sales increased significantly this quarter; -------, we are still below the annual target.",opts:["therefore","however","moreover","consequently"],ans:1,exp:"セミコロン後に逆接の接続副詞 however（しかし）が正解。"},
-  {q:"Please review the attached document ------- submitting your application.",opts:["while","before","after","until"],ans:1,exp:"「提出する前に」なので before が正解。"},
-  {q:"------- the weather improves, the outdoor event will be cancelled.",opts:["Unless","Although","Because","Since"],ans:0,exp:"Unless（〜しない限り）。「天気が回復しない限り、イベントは中止になる」。"},
-  {q:"The company expanded its overseas operations ------- increasing domestic competition.",opts:["due to","despite","while","although"],ans:1,exp:"despite（〜にもかかわらず）の後に名詞句。「国内競争激化にもかかわらず海外展開した」。"},
-  {q:"The project was successful ------- the team worked under a tight deadline.",opts:["even though","due to","in spite","therefore"],ans:0,exp:"even though（〜にもかかわらず）は節（SV）を取る。"},
-  {q:"Submit your application ------- the deadline passes to avoid late penalties.",opts:["before","while","after","because"],ans:0,exp:"「締め切り前に提出する」なので before が正解。"},
-  {q:"The new software is user-friendly; -------, many staff members adopted it quickly.",opts:["however","therefore","although","despite"],ans:1,exp:"therefore（したがって）は前の内容から導かれる結果を示す接続副詞。"},
-  {q:"------- we increase the marketing budget, we can expect higher brand awareness.",opts:["If","Although","Unless","Because"],ans:0,exp:"If（もし〜なら）。「予算を増やせばブランド認知度が上がる」という条件。"},
-  {q:"The store remains open ------- it is a public holiday.",opts:["even if","so that","in order that","therefore"],ans:0,exp:"even if（たとえ〜でも）。「祝日でも開店している」という譲歩。"},
-  {q:"We reduced costs ------- maintaining the same level of quality.",opts:["while","during","when","although"],ans:0,exp:"while（〜しながら）は同時進行を表す。「品質を維持しながらコスト削減した」。"},
-  {q:"The flight was delayed ------- heavy fog at the departure airport.",opts:["due to","because","since","so that"],ans:0,exp:"due to（〜のために）の後には名詞句が来る。"},
-  {q:"------- all deadlines have passed, we can now review the collected data.",opts:["Now that","Although","Despite","However"],ans:0,exp:"Now that（今や〜なので）は現在の状況を原因とする表現。"},
-  {q:"The training program was redesigned ------- it would better meet employee needs.",opts:["so that","because","although","despite"],ans:0,exp:"so that（〜するために）は目的を表す。"},
-  {q:"The office was closed early ------- the severe weather warning issued by authorities.",opts:["due to","because","although","however"],ans:0,exp:"due to（〜のために）の後に名詞句 the severe weather warning が来る。"},
+  {q:"------- the meeting ran long, we were unable to cover all agenda items.",opts:["Although","Because","However","Despite"],ans:1,exp:"Because は原因を示す接続詞。「会議が長引いたので議題をすべて消化できなかった」。",topic:"接続詞"},
+  {q:"Sales increased significantly this quarter; -------, we are still below the annual target.",opts:["therefore","however","moreover","consequently"],ans:1,exp:"セミコロン後に逆接の接続副詞 however（しかし）が正解。",topic:"接続詞"},
+  {q:"Please review the attached document ------- submitting your application.",opts:["while","before","after","until"],ans:1,exp:"「提出する前に」なので before が正解。",topic:"接続詞"},
+  {q:"------- the weather improves, the outdoor event will be cancelled.",opts:["Unless","Although","Because","Since"],ans:0,exp:"Unless（〜しない限り）。「天気が回復しない限り、イベントは中止になる」。",topic:"接続詞"},
+  {q:"The company expanded its overseas operations ------- increasing domestic competition.",opts:["due to","despite","while","although"],ans:1,exp:"despite（〜にもかかわらず）の後に名詞句。「国内競争激化にもかかわらず海外展開した」。",topic:"接続詞"},
+  {q:"The project was successful ------- the team worked under a tight deadline.",opts:["even though","due to","in spite","therefore"],ans:0,exp:"even though（〜にもかかわらず）は節（SV）を取る。",topic:"接続詞"},
+  {q:"Submit your application ------- the deadline passes to avoid late penalties.",opts:["before","while","after","because"],ans:0,exp:"「締め切り前に提出する」なので before が正解。",topic:"接続詞"},
+  {q:"The new software is user-friendly; -------, many staff members adopted it quickly.",opts:["however","therefore","although","despite"],ans:1,exp:"therefore（したがって）は前の内容から導かれる結果を示す接続副詞。",topic:"接続詞"},
+  {q:"------- we increase the marketing budget, we can expect higher brand awareness.",opts:["If","Although","Unless","Because"],ans:0,exp:"If（もし〜なら）。「予算を増やせばブランド認知度が上がる」という条件。",topic:"接続詞"},
+  {q:"The store remains open ------- it is a public holiday.",opts:["even if","so that","in order that","therefore"],ans:0,exp:"even if（たとえ〜でも）。「祝日でも開店している」という譲歩。",topic:"接続詞"},
+  {q:"We reduced costs ------- maintaining the same level of quality.",opts:["while","during","when","although"],ans:0,exp:"while（〜しながら）は同時進行を表す。「品質を維持しながらコスト削減した」。",topic:"接続詞"},
+  {q:"The flight was delayed ------- heavy fog at the departure airport.",opts:["due to","because","since","so that"],ans:0,exp:"due to（〜のために）の後には名詞句が来る。",topic:"接続詞"},
+  {q:"------- all deadlines have passed, we can now review the collected data.",opts:["Now that","Although","Despite","However"],ans:0,exp:"Now that（今や〜なので）は現在の状況を原因とする表現。",topic:"接続詞"},
+  {q:"The training program was redesigned ------- it would better meet employee needs.",opts:["so that","because","although","despite"],ans:0,exp:"so that（〜するために）は目的を表す。",topic:"接続詞"},
+  {q:"The office was closed early ------- the severe weather warning issued by authorities.",opts:["due to","because","although","however"],ans:0,exp:"due to（〜のために）の後に名詞句 the severe weather warning が来る。",topic:"接続詞"},
   // 語彙 (15問)
-  {q:"The human resources department will ------- new staff next month.",opts:["hire","fire","retire","aspire"],ans:0,exp:"hire（採用する）。来月新しいスタッフを採用する。"},
-  {q:"All employees must ------- a non-disclosure agreement before starting work.",opts:["write","sign","print","file"],ans:1,exp:"sign（署名する）。書類に署名する場合は sign を使う。"},
-  {q:"The company will ------- its annual report to shareholders next week.",opts:["distribute","contribute","attribute","execute"],ans:0,exp:"distribute（配布する）。年次報告書を株主に配布する。"},
-  {q:"The manager gave ------- approval for the budget increase.",opts:["formal","former","foreign","forward"],ans:0,exp:"formal approval（正式な承認）。former（前の）、foreign（外国の）との語彙の区別。"},
-  {q:"Please ------- any errors you find in the document to your supervisor.",opts:["report","import","export","transport"],ans:0,exp:"report（報告する）。文書内のエラーを上司に報告する。"},
-  {q:"The company plans to ------- its product line to include more eco-friendly options.",opts:["extend","purchase","reform","remove"],ans:0,exp:"extend（拡大する）。製品ラインを環境配慮製品まで拡張する。"},
-  {q:"Our customer service team is available ------- the clock.",opts:["around","over","through","along"],ans:0,exp:"around the clock（24時間ずっと）は定型表現。"},
-  {q:"The contract ------- both parties' rights and obligations.",opts:["outlines","outperforms","outlasts","outsources"],ans:0,exp:"outline（概説する）。契約書が双方の権利と義務を概説している。"},
-  {q:"We need to ------- the project timeline to accommodate the new requirements.",opts:["adjust","object","project","reject"],ans:0,exp:"adjust（調整する）。新しい要件に対応するためタイムラインを調整する。"},
-  {q:"All visitors must ------- at the reception desk upon arrival.",opts:["check in","check out","check up","check off"],ans:0,exp:"check in（受付をする）。来訪者は到着時に受付でチェックインしなければならない。"},
-  {q:"The vendor ------- that the shipment will arrive by next Friday.",opts:["confirmed","agreed","promised","stated"],ans:0,exp:"confirm（確認する）。配送業者が来週金曜日までに届くことを確認した。"},
-  {q:"The new system will ------- manual data entry and reduce errors.",opts:["eliminate","accumulate","calculate","circulate"],ans:0,exp:"eliminate（排除する）。新システムが手動データ入力をなくし、エラーを減らす。"},
-  {q:"Employees are encouraged to ------- their ideas during the brainstorming session.",opts:["contribute","distribute","attribute","constitute"],ans:0,exp:"contribute（提供する・貢献する）。アイデアをブレインストーミングで出すよう奨励される。"},
-  {q:"The ------- of the new product exceeded all sales forecasts.",opts:["performance","formation","confirmation","transportation"],ans:0,exp:"performance（実績）。新製品の業績がすべての売上予測を上回った。"},
-  {q:"The company decided to ------- its operations in the Asia-Pacific region.",opts:["expand","abandon","reduce","ignore"],ans:0,exp:"expand（拡大する）。アジア太平洋地域での事業を拡大することにした。"},
+  {q:"The human resources department will ------- new staff next month.",opts:["hire","fire","retire","aspire"],ans:0,exp:"hire（採用する）。来月新しいスタッフを採用する。",topic:"語彙"},
+  {q:"All employees must ------- a non-disclosure agreement before starting work.",opts:["write","sign","print","file"],ans:1,exp:"sign（署名する）。書類に署名する場合は sign を使う。",topic:"語彙"},
+  {q:"The company will ------- its annual report to shareholders next week.",opts:["distribute","contribute","attribute","execute"],ans:0,exp:"distribute（配布する）。年次報告書を株主に配布する。",topic:"語彙"},
+  {q:"The manager gave ------- approval for the budget increase.",opts:["formal","former","foreign","forward"],ans:0,exp:"formal approval（正式な承認）。former（前の）、foreign（外国の）との語彙の区別。",topic:"語彙"},
+  {q:"Please ------- any errors you find in the document to your supervisor.",opts:["report","import","export","transport"],ans:0,exp:"report（報告する）。文書内のエラーを上司に報告する。",topic:"語彙"},
+  {q:"The company plans to ------- its product line to include more eco-friendly options.",opts:["extend","purchase","reform","remove"],ans:0,exp:"extend（拡大する）。製品ラインを環境配慮製品まで拡張する。",topic:"語彙"},
+  {q:"Our customer service team is available ------- the clock.",opts:["around","over","through","along"],ans:0,exp:"around the clock（24時間ずっと）は定型表現。",topic:"語彙"},
+  {q:"The contract ------- both parties' rights and obligations.",opts:["outlines","outperforms","outlasts","outsources"],ans:0,exp:"outline（概説する）。契約書が双方の権利と義務を概説している。",topic:"語彙"},
+  {q:"We need to ------- the project timeline to accommodate the new requirements.",opts:["adjust","object","project","reject"],ans:0,exp:"adjust（調整する）。新しい要件に対応するためタイムラインを調整する。",topic:"語彙"},
+  {q:"All visitors must ------- at the reception desk upon arrival.",opts:["check in","check out","check up","check off"],ans:0,exp:"check in（受付をする）。来訪者は到着時に受付でチェックインしなければならない。",topic:"語彙"},
+  {q:"The vendor ------- that the shipment will arrive by next Friday.",opts:["confirmed","agreed","promised","stated"],ans:0,exp:"confirm（確認する）。配送業者が来週金曜日までに届くことを確認した。",topic:"語彙"},
+  {q:"The new system will ------- manual data entry and reduce errors.",opts:["eliminate","accumulate","calculate","circulate"],ans:0,exp:"eliminate（排除する）。新システムが手動データ入力をなくし、エラーを減らす。",topic:"語彙"},
+  {q:"Employees are encouraged to ------- their ideas during the brainstorming session.",opts:["contribute","distribute","attribute","constitute"],ans:0,exp:"contribute（提供する・貢献する）。アイデアをブレインストーミングで出すよう奨励される。",topic:"語彙"},
+  {q:"The ------- of the new product exceeded all sales forecasts.",opts:["performance","formation","confirmation","transportation"],ans:0,exp:"performance（実績）。新製品の業績がすべての売上予測を上回った。",topic:"語彙"},
+  {q:"The company decided to ------- its operations in the Asia-Pacific region.",opts:["expand","abandon","reduce","ignore"],ans:0,exp:"expand（拡大する）。アジア太平洋地域での事業を拡大することにした。",topic:"語彙"},
   // 代名詞・関係詞 (10問)
-  {q:"The manager sent the report to ------- needed it most urgently.",opts:["whoever","whomever","who","whom"],ans:1,exp:"sent to の目的語なので目的格 whomever が正解。"},
-  {q:"------- of the applicants were qualified for the senior position.",opts:["Any","None","Some","Each"],ans:1,exp:"None（誰も〜ない）。上級職に資格のある応募者は誰もいなかった。"},
-  {q:"The department ------- budget was cut will need to find alternative funding.",opts:["which","whose","where","that"],ans:1,exp:"先行詞 department の所有を示すので whose（〜の）が正解。"},
-  {q:"Please forward this email to ------- is handling the account.",opts:["whoever","whomever","whom","who"],ans:0,exp:"forward to の後の節の主語なので主格 whoever が正解。"},
-  {q:"The seminar is open to ------- employees who have completed the basic training.",opts:["all","any","every","each"],ans:0,exp:"all employees（すべての従業員）。every/each の後には単数名詞が来る。"},
-  {q:"------- you need additional information, please do not hesitate to contact us.",opts:["Should","Would","Could","Might"],ans:0,exp:"Should you need〜 は If you should need〜 の倒置形。丁寧なビジネス表現。"},
-  {q:"The client ------- we met yesterday will return next week for a follow-up.",opts:["which","who","whose","where"],ans:1,exp:"先行詞が人（client）なので who が正解。"},
-  {q:"------- the proposals, the board decided to proceed with Option A.",opts:["Having reviewed","Having been reviewed","To review","Reviewed"],ans:0,exp:"主語（board）が自分でレビューしたので能動態の分詞構文 Having reviewed が正解。"},
-  {q:"The team will be led by ------- has the most experience in international projects.",opts:["whoever","whomever","whom","who"],ans:0,exp:"led by の後の節で主語の役割をするので主格 whoever が正解。"},
-  {q:"Each of the employees ------- required to complete the online safety training.",opts:["is","are","were","have been"],ans:0,exp:"each of + 複数名詞は単数扱いなので is が正解。"},
+  {q:"The manager sent the report to ------- needed it most urgently.",opts:["whoever","whomever","who","whom"],ans:1,exp:"sent to の目的語なので目的格 whomever が正解。",topic:"関係詞"},
+  {q:"------- of the applicants were qualified for the senior position.",opts:["Any","None","Some","Each"],ans:1,exp:"None（誰も〜ない）。上級職に資格のある応募者は誰もいなかった。",topic:"関係詞"},
+  {q:"The department ------- budget was cut will need to find alternative funding.",opts:["which","whose","where","that"],ans:1,exp:"先行詞 department の所有を示すので whose（〜の）が正解。",topic:"関係詞"},
+  {q:"Please forward this email to ------- is handling the account.",opts:["whoever","whomever","whom","who"],ans:0,exp:"forward to の後の節の主語なので主格 whoever が正解。",topic:"関係詞"},
+  {q:"The seminar is open to ------- employees who have completed the basic training.",opts:["all","any","every","each"],ans:0,exp:"all employees（すべての従業員）。every/each の後には単数名詞が来る。",topic:"関係詞"},
+  {q:"------- you need additional information, please do not hesitate to contact us.",opts:["Should","Would","Could","Might"],ans:0,exp:"Should you need〜 は If you should need〜 の倒置形。丁寧なビジネス表現。",topic:"関係詞"},
+  {q:"The client ------- we met yesterday will return next week for a follow-up.",opts:["which","who","whose","where"],ans:1,exp:"先行詞が人（client）なので who が正解。",topic:"関係詞"},
+  {q:"------- the proposals, the board decided to proceed with Option A.",opts:["Having reviewed","Having been reviewed","To review","Reviewed"],ans:0,exp:"主語（board）が自分でレビューしたので能動態の分詞構文 Having reviewed が正解。",topic:"分詞"},
+  {q:"The team will be led by ------- has the most experience in international projects.",opts:["whoever","whomever","whom","who"],ans:0,exp:"led by の後の節で主語の役割をするので主格 whoever が正解。",topic:"関係詞"},
+  {q:"Each of the employees ------- required to complete the online safety training.",opts:["is","are","were","have been"],ans:0,exp:"each of + 複数名詞は単数扱いなので is が正解。",topic:"関係詞"},
 ];
 
 // ============================================================
@@ -2040,6 +2118,7 @@ function showPart(part,el){
   el.classList.add('active');
   if(part==='history')renderHistory();
   if(part==='settings'){renderSettingsStatus();renderCloudSettings();}
+  if(part==='topic')renderTopicTraining();
 }
 function chr(j){return String.fromCharCode(65+j);}
 
@@ -2567,6 +2646,204 @@ function importData(){
     reader.readAsText(file);
   };
   input.click();
+}
+
+// ============================================================
+// PHASE 14 — Part5 Topic Training
+// ============================================================
+
+const TOPICS=['品詞','時制','分詞','接続詞','前置詞','関係詞','語彙'];
+
+function calcTopicStats(){
+  const hist=JSON.parse(localStorage.getItem('toeic-question-history')||'{}');
+  const stats={};
+  TOPICS.forEach(t=>{stats[t]={total:0,attempts:0,correct:0,wrong:0};});
+  P5.forEach((q,i)=>{
+    const topic=q.topic||'語彙';
+    if(!stats[topic])stats[topic]={total:0,attempts:0,correct:0,wrong:0};
+    stats[topic].total++;
+    const key=`p5-${i}`;
+    if(hist[key]){
+      stats[topic].attempts+=(hist[key].attempts||0);
+      stats[topic].correct+=(hist[key].correct||0);
+      stats[topic].wrong+=(hist[key].wrong||0);
+    }
+  });
+  return stats;
+}
+
+function renderTopicTraining(){
+  const stats=calcTopicStats();
+  // find weak topics: attempts>=3, accuracy<60%
+  const weak=TOPICS.filter(t=>{
+    const s=stats[t];
+    if(!s||s.attempts<3)return false;
+    return s.attempts>0&&(s.correct/s.attempts)<0.6;
+  });
+  let html='';
+  if(weak.length>0){
+    html+=`<div class="tp-weak-box"><div class="tp-weak-label">⚠ 苦手論点</div>${weak.join('、')}</div>`;
+  }
+  html+='<div class="tp-grid">';
+  TOPICS.forEach(topic=>{
+    const s=stats[topic]||{total:0,attempts:0,correct:0,wrong:0};
+    const answered=s.attempts>0?s.attempts:0;
+    const correct=s.correct||0;
+    const wrong=s.wrong||0;
+    const rate=answered>0?Math.round(correct/answered*100):null;
+    const rateStr=rate!==null?rate+'%':'—';
+    let rateClass='none';
+    if(rate!==null)rateClass=rate>=80?'good':rate>=60?'mid':'bad';
+    let pbarClass='';
+    if(rate!==null)pbarClass=rate>=80?'good':rate<60?'bad':'';
+    const pbarW=rate!==null?rate:0;
+    html+=`<div class="tp-row">
+      <div class="tp-row-name">${topic}</div>
+      <div class="tp-row-stats">
+        <span class="tp-stat-item">全${s.total}問</span>
+        <span class="tp-stat-item">回答${answered}</span>
+        <span class="tp-stat-item" style="color:var(--green)">正解${correct}</span>
+        <span class="tp-stat-item" style="color:var(--red)">ミス${wrong}</span>
+      </div>
+      <div class="tp-pbar-wrap"><div class="tp-pbar ${pbarClass}" style="width:${pbarW}%"></div></div>
+      <div class="tp-rate ${rateClass}">${rateStr}</div>
+      <button class="tp-solve-btn" onclick="startTopicPractice('${topic}')">解く</button>
+    </div>`;
+  });
+  html+='</div>';
+  document.getElementById('topic-list-content').innerHTML=html;
+}
+
+let tpState={topic:null,queue:[],cursor:0,answered:false,shuffled:null,sessionCorrect:0,sessionWrong:0};
+
+function startTopicPractice(topic){
+  const hist=JSON.parse(localStorage.getItem('toeic-question-history')||'{}');
+  // build ordered list: wrong/unanswered first, then by accuracy
+  const indices=[];
+  P5.forEach((q,i)=>{if((q.topic||'語彙')===topic)indices.push(i);});
+  if(indices.length===0){alert('この論点の問題が見つかりません。');return;}
+  // sort: unanswered first, then inReview, then by wrong count desc, then by accuracy asc
+  indices.sort((a,b)=>{
+    const ka=`p5-${a}`,kb=`p5-${b}`;
+    const ha=hist[ka],hb=hist[kb];
+    if(!ha&&!hb)return 0;
+    if(!ha)return -1;
+    if(!hb)return 1;
+    // inReview first
+    const irA=ha.inReview?1:0,irB=hb.inReview?1:0;
+    if(irA!==irB)return irB-irA;
+    // wrong count desc
+    const wa=ha.wrong||0,wb=hb.wrong||0;
+    if(wa!==wb)return wb-wa;
+    // accuracy asc
+    const accA=ha.attempts>0?ha.correct/ha.attempts:1;
+    const accB=hb.attempts>0?hb.correct/hb.attempts:1;
+    return accA-accB;
+  });
+  tpState={
+    topic,
+    queue:indices,
+    cursor:0,
+    answered:false,
+    shuffled:null,
+    sessionCorrect:0,
+    sessionWrong:0
+  };
+  document.getElementById('topic-list-view').style.display='none';
+  document.getElementById('topic-practice-view').style.display='block';
+  document.getElementById('tp-practice-label').textContent=`${topic} — 論点別練習`;
+  renderTopicProgress();
+  renderTopicQuestion();
+}
+
+function renderTopicProgress(){
+  const el=document.getElementById('tp-progress-area');
+  if(!el)return;
+  const cur=tpState.cursor+1;
+  const tot=tpState.queue.length;
+  const pct=Math.round((tpState.cursor/tot)*100);
+  el.innerHTML=`<div class="tp-prog">
+    <div class="tp-prog-num">${cur}<span>/${tot}</span></div>
+    <div class="tp-prog-bar"><div class="tp-prog-fill" style="width:${pct}%"></div></div>
+  </div>`;
+}
+
+function renderTopicQuestion(){
+  const el=document.getElementById('tp-question-area');
+  if(!el)return;
+  if(tpState.cursor>=tpState.queue.length){renderTopicResult();return;}
+  const qi=tpState.queue[tpState.cursor];
+  const q=P5[qi];
+  const shuf=shuffleOpts(q.opts,q.ans);
+  tpState.shuffled=shuf;
+  tpState.answered=false;
+  const stemHtml=esc(q.q).replace(/-------/,'<em>-------</em>');
+  const optsHtml=shuf.opts.map((o,j)=>`<div class="tp-opt" onclick="answerTopicQuestion(${j})">(${chr(j)}) ${esc(o)}</div>`).join('');
+  el.innerHTML=`<div class="tp-q-card">
+    <div class="q-num" style="font-size:.72rem;color:var(--sub);margin-bottom:8px">P5 Q${qi+1}</div>
+    <div class="tp-q-stem">${stemHtml}</div>
+    <div class="tp-q-opts" id="tp-opts">${optsHtml}</div>
+    <div class="tp-exp" id="tp-exp">${esc(q.exp)}</div>
+    <div class="tp-next-area" id="tp-next-area">
+      <button class="tp-next-btn" onclick="nextTopicQuestion()">
+        ${tpState.cursor+1<tpState.queue.length?'次の問題へ →':'結果を見る →'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function answerTopicQuestion(chosen){
+  if(tpState.answered)return;
+  tpState.answered=true;
+  const qi=tpState.queue[tpState.cursor];
+  const {opts,ans}=tpState.shuffled;
+  const isCorrect=(chosen===ans);
+  if(isCorrect)tpState.sessionCorrect++;else tpState.sessionWrong++;
+  document.querySelectorAll('#tp-opts .tp-opt').forEach((o,j)=>{
+    o.classList.add('disabled');
+    if(j===ans)o.classList.add('correct');
+    else if(j===chosen)o.classList.add('wrong');
+  });
+  document.getElementById('tp-exp').classList.add('show');
+  document.getElementById('tp-next-area').classList.add('show');
+  recordQuestionHistory('p5',qi,isCorrect);
+  recordDaily(isCorrect);
+  updateDailyUI();
+}
+
+function nextTopicQuestion(){
+  tpState.cursor++;
+  renderTopicProgress();
+  renderTopicQuestion();
+}
+
+function renderTopicResult(){
+  const tot=tpState.queue.length;
+  const cor=tpState.sessionCorrect;
+  const wrg=tpState.sessionWrong;
+  const rate=tot>0?Math.round(cor/tot*100):0;
+  let rateColor=rate>=80?'var(--green)':rate>=60?'var(--primary)':'var(--red)';
+  document.getElementById('tp-progress-area').innerHTML='';
+  document.getElementById('tp-question-area').innerHTML=`<div class="tp-result">
+    <div class="tp-result-title">練習完了！</div>
+    <div class="tp-result-sub">${tpState.topic} — ${tot}問</div>
+    <div class="tp-result-stats">
+      <div class="tp-res-stat"><div class="tp-res-stat-val ok">${cor}</div><div class="tp-res-stat-label">正解</div></div>
+      <div class="tp-res-stat"><div class="tp-res-stat-val ng">${wrg}</div><div class="tp-res-stat-label">ミス</div></div>
+      <div class="tp-res-stat"><div class="tp-res-stat-val" style="color:${rateColor}">${rate}%</div><div class="tp-res-stat-label">正答率</div></div>
+    </div>
+    <div class="tp-result-btns">
+      <button class="tp-result-btn prim" onclick="startTopicPractice('${tpState.topic}')">もう一度</button>
+      <button class="tp-result-btn" onclick="exitTopicPractice()">論点一覧へ</button>
+    </div>
+  </div>`;
+}
+
+function exitTopicPractice(){
+  tpState={topic:null,queue:[],cursor:0,answered:false,shuffled:null,sessionCorrect:0,sessionWrong:0};
+  document.getElementById('topic-list-view').style.display='block';
+  document.getElementById('topic-practice-view').style.display='none';
+  renderTopicTraining();
 }
 
 function resetAllData(){
