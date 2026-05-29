@@ -3112,6 +3112,9 @@ function undoLastDailyTenAnswer(){
   if(!lastDailyTenAnswerSnapshot)return;
   if(!confirm('この回答記録を取り消しますか？日別履歴・問題別履歴・今日の10問進捗・復習判定が回答前の状態に戻ります。'))return;
   const snap=lastDailyTenAnswerSnapshot;
+  // 誤った状態のバックアップが送信されないよう既存タイマーを即キャンセル
+  clearTimeout(_autoBackupTimer);
+  _autoBackupTimer=null;
   // localStorage を回答前の状態に復元
   if(snap.daily!==null)localStorage.setItem(LS_DAILY,snap.daily);else localStorage.removeItem(LS_DAILY);
   if(snap.qhist!==null)localStorage.setItem(LS_QHIST,snap.qhist);else localStorage.removeItem(LS_QHIST);
@@ -3128,6 +3131,13 @@ function undoLastDailyTenAnswer(){
   updateDailyUI();
   renderDailyTen();
   renderDailyTenQuestion();
+  // 復元後の正しい状態をクラウドへ反映（5分制限をバイパスして直接予約）
+  try{
+    const cfg=loadCloudSettings();
+    if(cfg.enabled&&cfg.endpointUrl&&cfg.token){
+      _autoBackupTimer=setTimeout(()=>backupToCloud(),2000);
+    }
+  }catch(e){}
 }
 
 function getQuestionDataById(id){
