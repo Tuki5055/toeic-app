@@ -340,6 +340,8 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .dt-next-area.show{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .dt-next-btn{padding:10px 24px;border-radius:8px;background:var(--primary);color:white;border:none;cursor:pointer;font-size:.87rem;font-weight:700}
 .dt-next-btn:hover{background:var(--primary-dim)}
+.dt-undo-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--sub);cursor:pointer;font-size:.78rem}
+.dt-undo-btn:hover{border-color:var(--red);color:var(--red)}
 .dt-instant-jp{font-size:1.05rem;font-weight:600;margin-bottom:14px;line-height:1.55}
 .dt-instant-input{width:100%;border:2px solid var(--border);border-radius:8px;padding:10px 14px;font-size:.9rem;resize:vertical;min-height:70px;background:var(--surface);color:var(--text);font-family:inherit;transition:border-color .15s}
 .dt-instant-input:focus{outline:none;border-color:var(--primary-dim)}
@@ -3091,6 +3093,42 @@ function goToQuestionById(id){
 // ============================================================
 
 let dtState={queue:[],qIndex:0,data:null,planTotal:0,planDone:0,sessionCorrect:0,sessionWrong:0,answered:false,revealed:false};
+let lastDailyTenAnswerSnapshot=null;
+
+function captureDailyTenAnswerSnapshot(questionId){
+  lastDailyTenAnswerSnapshot={
+    questionId,
+    savedAt:new Date().toISOString(),
+    daily:localStorage.getItem(LS_DAILY),
+    qhist:localStorage.getItem(LS_QHIST),
+    plan:localStorage.getItem(LS_DAILY_PLAN),
+    state:localStorage.getItem(LS_STATE),
+    sessionCorrect:dtState.sessionCorrect,
+    sessionWrong:dtState.sessionWrong
+  };
+}
+
+function undoLastDailyTenAnswer(){
+  if(!lastDailyTenAnswerSnapshot)return;
+  if(!confirm('この回答記録を取り消しますか？日別履歴・問題別履歴・今日の10問進捗・復習判定が回答前の状態に戻ります。'))return;
+  const snap=lastDailyTenAnswerSnapshot;
+  // localStorage を回答前の状態に復元
+  if(snap.daily!==null)localStorage.setItem(LS_DAILY,snap.daily);else localStorage.removeItem(LS_DAILY);
+  if(snap.qhist!==null)localStorage.setItem(LS_QHIST,snap.qhist);else localStorage.removeItem(LS_QHIST);
+  if(snap.plan!==null)localStorage.setItem(LS_DAILY_PLAN,snap.plan);else localStorage.removeItem(LS_DAILY_PLAN);
+  if(snap.state!==null)localStorage.setItem(LS_STATE,snap.state);else localStorage.removeItem(LS_STATE);
+  // セッションカウントも回答前に戻す
+  dtState.sessionCorrect=snap.sessionCorrect;
+  dtState.sessionWrong=snap.sessionWrong;
+  dtState.answered=false;
+  dtState.revealed=false;
+  lastDailyTenAnswerSnapshot=null;
+  // UI を再描画
+  try{loadState();}catch(e){}
+  updateDailyUI();
+  renderDailyTen();
+  renderDailyTenQuestion();
+}
 
 function getQuestionDataById(id){
   const m5=id.match(/^p5-(\d+)$/);
@@ -3207,6 +3245,7 @@ function renderDailyTenQuestion(){
       +`<div class="dt-exp" id="dt-exp">${data.exp}</div>`
       +`<div class="dt-next-area" id="dt-next-area">`
       +`<button class="dt-next-btn" onclick="nextDailyTenQuestion()">次の問題へ →</button>`
+      +`<button class="dt-undo-btn" onclick="undoLastDailyTenAnswer()">この回答を取り消す</button>`
       +`</div></div>`;
   }else{
     el.innerHTML=`<div class="dt-card">`
@@ -3222,6 +3261,7 @@ function renderDailyTenQuestion(){
       +`</div>`
       +`<div class="dt-next-area" id="dt-next-area">`
       +`<button class="dt-next-btn" onclick="nextDailyTenQuestion()">次の問題へ →</button>`
+      +`<button class="dt-undo-btn" onclick="undoLastDailyTenAnswer()">この回答を取り消す</button>`
       +`</div></div>`;
   }
   try{document.getElementById('daily-ten').scrollIntoView({behavior:'smooth',block:'start'});}catch(_){}
@@ -3229,8 +3269,9 @@ function renderDailyTenQuestion(){
 
 function answerDailyTen(choiceIndex){
   if(dtState.answered)return;
-  dtState.answered=true;
   const data=dtState.data;
+  captureDailyTenAnswerSnapshot(data.id);
+  dtState.answered=true;
   const isCorrect=(choiceIndex===data.ans);
   if(isCorrect)dtState.sessionCorrect++;else dtState.sessionWrong++;
   document.querySelectorAll('.dt-opt').forEach((opt,j)=>{
@@ -3263,13 +3304,14 @@ function showDailyTenInstantAnswer(){
 
 function judgeInstantDailyTen(isCorrect){
   if(dtState.answered)return;
+  const data=dtState.data;
+  captureDailyTenAnswerSnapshot(data.id);
   dtState.answered=true;
   if(isCorrect)dtState.sessionCorrect++;else dtState.sessionWrong++;
   document.querySelectorAll('#dt-judge-row button').forEach(b=>{b.disabled=true;b.style.opacity='.5';});
   const nextArea=document.getElementById('dt-next-area');
   if(nextArea)nextArea.classList.add('show');
   try{
-    const data=dtState.data;
     const mi=data.id.match(/^instant-(\d+)$/);
     if(mi){
       recordQuestionHistory('instant',mi[1],isCorrect);
@@ -3280,6 +3322,7 @@ function judgeInstantDailyTen(isCorrect){
 }
 
 function nextDailyTenQuestion(){
+  lastDailyTenAnswerSnapshot=null;  // 次問へ進んだらスナップショット破棄
   dtState.qIndex++;
   if(dtState.qIndex>=dtState.queue.length){
     renderDailyTenResult();
