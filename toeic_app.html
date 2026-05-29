@@ -337,7 +337,9 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .dt-exp{margin-top:16px;padding:14px 16px;background:var(--yellow-bg);border-radius:8px;font-size:.83rem;line-height:1.65;display:none}
 .dt-exp.show{display:block}
 .dt-next-area{margin-top:16px;display:none}
-.dt-next-area.show{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.dt-next-area.show{display:flex;flex-direction:column;gap:8px}
+.dt-undo-hint{font-size:.74rem;color:var(--sub)}
+.dt-next-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .dt-next-btn{padding:10px 24px;border-radius:8px;background:var(--primary);color:white;border:none;cursor:pointer;font-size:.87rem;font-weight:700}
 .dt-next-btn:hover{background:var(--primary-dim)}
 .dt-undo-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--sub);cursor:pointer;font-size:.78rem}
@@ -2571,6 +2573,7 @@ function resetAllData(){
   localStorage.removeItem(LS_STATE);
   localStorage.removeItem(LS_DAILY);
   localStorage.removeItem(LS_QHIST);
+  localStorage.removeItem(LS_DAILY_PLAN);
   location.reload();
 }
 
@@ -3254,9 +3257,11 @@ function renderDailyTenQuestion(){
       +`<div class="dt-opts">${optsHtml}</div>`
       +`<div class="dt-exp" id="dt-exp">${data.exp}</div>`
       +`<div class="dt-next-area" id="dt-next-area">`
-      +`<button class="dt-next-btn" onclick="nextDailyTenQuestion()">次の問題へ →</button>`
+      +`<div class="dt-undo-hint">押し間違えた場合は、この回答だけ履歴から取り消せます。</div>`
+      +`<div class="dt-next-btns">`
       +`<button class="dt-undo-btn" onclick="undoLastDailyTenAnswer()">この回答を取り消す</button>`
-      +`</div></div>`;
+      +`<button class="dt-next-btn" onclick="nextDailyTenQuestion()">次の問題へ →</button>`
+      +`</div></div></div>`;
   }else{
     el.innerHTML=`<div class="dt-card">`
       +`<div class="dt-instant-jp">${esc(data.stem)}</div>`
@@ -3270,9 +3275,11 @@ function renderDailyTenQuestion(){
       +`<button class="dt-judge-ng" onclick="judgeInstantDailyTen(false)">できなかった ✗</button>`
       +`</div>`
       +`<div class="dt-next-area" id="dt-next-area">`
-      +`<button class="dt-next-btn" onclick="nextDailyTenQuestion()">次の問題へ →</button>`
+      +`<div class="dt-undo-hint">押し間違えた場合は、この回答だけ履歴から取り消せます。</div>`
+      +`<div class="dt-next-btns">`
       +`<button class="dt-undo-btn" onclick="undoLastDailyTenAnswer()">この回答を取り消す</button>`
-      +`</div></div>`;
+      +`<button class="dt-next-btn" onclick="nextDailyTenQuestion()">次の問題へ →</button>`
+      +`</div></div></div>`;
   }
   try{document.getElementById('daily-ten').scrollIntoView({behavior:'smooth',block:'start'});}catch(_){}
 }
