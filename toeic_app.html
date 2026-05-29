@@ -2584,24 +2584,56 @@ function openHistoryTab(){
 
 function buildDailyTenQuestions(){
   const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
-  const ids=[];
   const seen=new Set();
-  function add(id){if(!seen.has(id)){seen.add(id);ids.push(id);}}
-  // 優先1: 忘却曲線復習期限（最大5問）
+  const result=[];
+  function add(id){if(!seen.has(id)){seen.add(id);result.push(id);}}
+
+  // ── 優先1: 忘却曲線復習期限（最大5問、Part横断） ──────────────
   getDueReviewQuestions(hist).slice(0,5).forEach(([id])=>add(id));
-  // 優先2: 苦手問題（最大3問、残り枠に収まる範囲）
-  if(ids.length<10)getWeakQuestions(hist).slice(0,Math.min(3,10-ids.length)).forEach(([id])=>add(id));
-  // 優先3: 未回答問題
-  if(ids.length<10)getUnansweredIds(hist).slice(0,10-ids.length).forEach(id=>add(id));
-  // 優先4: 通常復習（答えたことがある・未卒業・最終回答が古い順）
-  if(ids.length<10){
-    Object.entries(hist)
-      .filter(([id,r])=>!r.graduatedAt&&!seen.has(id))
-      .sort((a,b)=>(a[1].lastAnsweredAt||'').localeCompare(b[1].lastAnsweredAt||''))
-      .slice(0,10-ids.length)
-      .forEach(([id])=>add(id));
+
+  // ── 残り枠をPart別配分で埋める ────────────────────────────────
+  // 目標配分: p5=4, p6=2, p7=2, instant=2（合計10）
+  // 復習期限で既に埋まった枠は差し引く
+  const quota={p5:4,p6:2,p7:2,instant:2};
+  result.forEach(id=>{const p=partFromId(id);if(p&&quota[p]>0)quota[p]--;});
+
+  // 候補プールを優先度順（苦手 > 未回答 > 通常復習）に1本化して各Partの候補リストを作る
+  const weak=new Set(getWeakQuestions(hist).map(([id])=>id));
+  const unanswered=new Set(getUnansweredIds(hist));
+  function priority(id){
+    if(weak.has(id))return 0;
+    if(unanswered.has(id))return 1;
+    return 2;
   }
-  return ids.slice(0,10);
+  // Part別に優先度順ソートした候補IDリストを用意（既seen除外）
+  const candidates={};
+  ['p5','p6','p7','instant'].forEach(part=>{
+    let pool=[];
+    // 苦手
+    getWeakQuestions(hist).forEach(([id])=>{if(partFromId(id)===part&&!seen.has(id))pool.push(id);});
+    // 未回答
+    getUnansweredIds(hist).forEach(id=>{if(partFromId(id)===part&&!seen.has(id))pool.push(id);});
+    // 通常復習（未卒業・最終回答が古い順）
+    Object.entries(hist)
+      .filter(([id,r])=>partFromId(id)===part&&!r.graduatedAt&&!seen.has(id)&&!pool.includes(id))
+      .sort((a,b)=>(a[1].lastAnsweredAt||'').localeCompare(b[1].lastAnsweredAt||''))
+      .forEach(([id])=>pool.push(id));
+    candidates[part]=pool;
+  });
+
+  // 各Partの quota を満たす
+  ['p5','p6','p7','instant'].forEach(part=>{
+    candidates[part].slice(0,quota[part]).forEach(id=>add(id));
+  });
+
+  // ── まだ10問に満たない場合は余剰候補で補充 ──────────────────
+  if(result.length<10){
+    ['p5','p6','p7','instant'].forEach(part=>{
+      candidates[part].forEach(id=>{if(result.length<10)add(id);});
+    });
+  }
+
+  return result.slice(0,10);
 }
 
 function loadOrCreateDailyPlan(){
