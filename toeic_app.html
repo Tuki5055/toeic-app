@@ -440,13 +440,15 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .step-card-status.achieved{background:var(--green-bg);color:var(--green);border-color:#86efac}
 .step-hint{font-size:.72rem;color:var(--sub);margin-bottom:10px;line-height:1.5}
 .step-btns{display:flex;gap:7px;flex-wrap:wrap}
-.step-main-btn{background:var(--primary);color:white;border:none;border-radius:7px;padding:9px 18px;cursor:pointer;font-size:.84rem;font-weight:700;white-space:nowrap}
-.step-main-btn:hover{background:var(--primary-dim)}
-.step-sub-btn{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:8px 13px;cursor:pointer;font-size:.78rem;font-weight:600;white-space:nowrap}
+.step-main-btn{background:var(--primary);color:white;border:none;border-radius:8px;padding:12px 26px;cursor:pointer;font-size:.95rem;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(59,91,219,.25)}
+.step-main-btn:hover{background:var(--primary-dim);box-shadow:0 3px 12px rgba(59,91,219,.35)}
+.step-sub-btn{background:var(--surface2);color:var(--sub);border:1px solid var(--border);border-radius:7px;padding:7px 12px;cursor:pointer;font-size:.76rem;font-weight:600;white-space:nowrap}
 .step-sub-btn:hover{border-color:var(--primary);color:var(--primary)}
+.step-sub-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
 @media(max-width:540px){
-  .step-btns{flex-direction:column}
-  .step-main-btn,.step-sub-btn{width:100%;text-align:center}
+  .step-main-btn{width:100%;text-align:center}
+  .step-sub-row{flex-direction:column}
+  .step-sub-btn{width:100%;text-align:center}
 }
 </style>
 </head>
@@ -3370,9 +3372,9 @@ function renderDailyTen(){
     const tenBtnLabel2=done===0?'今日の10問を始める':'今日の10問を続ける';
     const stepHtml=`<div class="step-card">`
       +`<div class="step-card-top"><div class="step-card-title">🎯 今日の一歩</div><div class="${stepStatusClass}">${stepStatusText}</div></div>`
-      +`<div class="step-hint">今日は1問だけでもOK。押し間違えた回答は取り消せます。</div>`
-      +`<div class="step-btns">`
+      +`<div class="step-hint">今日は1問だけでもOK。<br>押し間違えた回答は取り消せます。</div>`
       +`<button class="step-main-btn" onclick="startOneQuestionMode()">まず1問だけ →</button>`
+      +`<div class="step-sub-row">`
       +`<button class="step-sub-btn" onclick="startDailyTen()">${tenBtnLabel2}</button>`
       +`<button class="step-sub-btn" onclick="startWeakTopicOneQuestion()">苦手論点を1問</button>`
       +`</div></div>`;
@@ -3857,15 +3859,15 @@ function renderOneQuestionResult(){
   const el=document.getElementById('dt-question-area');
   if(!el)return;
   const icon=isCorrect?'✅':'❌';
-  const msg=isCorrect?'正解！':'不正解。';
+  const resultText=isCorrect?'正解！':'不正解。';
   const valClass=isCorrect?'ok':'ng';
   const valText=isCorrect?'○':'✗';
   document.getElementById('dt-progress-area').innerHTML='';
   el.innerHTML=`<div class="dt-result">`
-    +`<div class="dt-result-title">${icon} ${msg}</div>`
-    +`<div class="dt-result-sub">今日の学習を始めました</div>`
+    +`<div class="dt-result-title">今日の学習を開始できました</div>`
+    +`<div class="dt-result-sub">最低目標達成です 🎉</div>`
     +`<div class="dt-result-stats">`
-    +`<div class="dt-stat ${valClass}"><div class="dt-stat-val">${valText}</div><div class="dt-stat-label">今回</div></div>`
+    +`<div class="dt-stat ${valClass}"><div class="dt-stat-val">${icon}</div><div class="dt-stat-label">${resultText}</div></div>`
     +`</div>`
     +`<div class="dt-result-btns">`
     +`<button class="dt-result-btn prim" onclick="startOneQuestionMode()">もう1問やる</button>`
