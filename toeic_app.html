@@ -432,6 +432,22 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .tp-result-btn:hover{border-color:var(--primary);color:var(--primary)}
 .tp-result-btn.prim{background:var(--primary);color:white;border-color:var(--primary)}
 .tp-result-btn.prim:hover{background:var(--primary-dim)}
+/* ── Today's First Step Card ── */
+.step-card{background:var(--surface);border:1px solid var(--primary-dim);border-radius:10px;padding:14px 16px;box-shadow:0 1px 5px rgba(59,91,219,.09);margin-bottom:10px}
+.step-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;gap:8px;flex-wrap:wrap}
+.step-card-title{font-size:.85rem;font-weight:700;color:var(--primary)}
+.step-card-status{font-size:.72rem;padding:2px 9px;border-radius:10px;background:var(--surface2);color:var(--sub);border:1px solid var(--border);white-space:nowrap}
+.step-card-status.achieved{background:var(--green-bg);color:var(--green);border-color:#86efac}
+.step-hint{font-size:.72rem;color:var(--sub);margin-bottom:10px;line-height:1.5}
+.step-btns{display:flex;gap:7px;flex-wrap:wrap}
+.step-main-btn{background:var(--primary);color:white;border:none;border-radius:7px;padding:9px 18px;cursor:pointer;font-size:.84rem;font-weight:700;white-space:nowrap}
+.step-main-btn:hover{background:var(--primary-dim)}
+.step-sub-btn{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:8px 13px;cursor:pointer;font-size:.78rem;font-weight:600;white-space:nowrap}
+.step-sub-btn:hover{border-color:var(--primary);color:var(--primary)}
+@media(max-width:540px){
+  .step-btns{flex-direction:column}
+  .step-main-btn,.step-sub-btn{width:100%;text-align:center}
+}
 </style>
 </head>
 <body>
@@ -3344,7 +3360,24 @@ function renderDailyTen(){
     const btnClass=allDone?'daily-ten-btn all-done':'daily-ten-btn';
     const btnAttr=allDone?'':'onclick="startDailyTen()"';
 
-    el.innerHTML=`<div class="daily-ten-card">`
+    // 今日の一歩カード
+    const daily2=JSON.parse(localStorage.getItem(LS_DAILY)||'{}');
+    const today2=getLocalDateKey();
+    const todayAns=(daily2[today2]||{answered:0}).answered;
+    const metGoal=todayAns>=1;
+    const stepStatusClass=metGoal?'step-card-status achieved':'step-card-status';
+    const stepStatusText=metGoal?'✅ 今日の目標達成！':`今日の回答: ${todayAns}問`;
+    const tenBtnLabel2=done===0?'今日の10問を始める':'今日の10問を続ける';
+    const stepHtml=`<div class="step-card">`
+      +`<div class="step-card-top"><div class="step-card-title">🎯 今日の一歩</div><div class="${stepStatusClass}">${stepStatusText}</div></div>`
+      +`<div class="step-hint">今日は1問だけでもOK。押し間違えた回答は取り消せます。</div>`
+      +`<div class="step-btns">`
+      +`<button class="step-main-btn" onclick="startOneQuestionMode()">まず1問だけ →</button>`
+      +`<button class="step-sub-btn" onclick="startDailyTen()">${tenBtnLabel2}</button>`
+      +`<button class="step-sub-btn" onclick="startWeakTopicOneQuestion()">苦手論点を1問</button>`
+      +`</div></div>`;
+
+    el.innerHTML=stepHtml+`<div class="daily-ten-card">`
       +`<div class="daily-ten-prog">`
       +`<div class="daily-ten-num">${done}<span style="font-size:.8rem;font-weight:500;color:var(--sub)"> / ${total}</span></div>`
       +`<div class="daily-ten-prog-label">今日の進捗</div>`
@@ -3696,11 +3729,186 @@ function renderDailyTenResult(){
 }
 
 function exitDailyTenMode(){
+  if(oqState&&oqState.active){exitOneQuestionMode();return;}
   activateTab('p5');
 }
 
 function startDailyTen(){
   startDailyTenMode();
+}
+
+// ============================================================
+// PHASE 15 — まず1問だけモード
+// ============================================================
+
+let oqState={active:false,qid:null,qi:0,q:null,shuffled:null,answered:false,isCorrect:false,snapshot:null};
+
+function buildOneQuestion(){
+  const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+  // Priority 1: due review (P5 only)
+  const due=getDueReviewQuestions(hist).filter(([id])=>id.startsWith('p5-'));
+  if(due.length>0)return due[0][0];
+  // Priority 2: weak (P5 only)
+  const weak=getWeakQuestions(hist).filter(([id])=>id.startsWith('p5-'));
+  if(weak.length>0)return weak[0][0];
+  // Priority 3: unanswered (P5 only)
+  const unanswered=getUnansweredIds(hist).filter(id=>id.startsWith('p5-'));
+  if(unanswered.length>0)return unanswered[0];
+  // Priority 4: random P5
+  return `p5-${Math.floor(Math.random()*P5.length)}`;
+}
+
+function startOneQuestionMode(qid){
+  const id=qid||buildOneQuestion();
+  const m=id.match(/^p5-(\d+)$/);
+  if(!m)return;
+  const qi=parseInt(m[1]);
+  const q=P5[qi];
+  oqState={
+    active:true,qid:id,qi,q,
+    shuffled:shuffleOpts(q.opts,q.ans),
+    answered:false,isCorrect:false,
+    snapshot:{
+      daily:localStorage.getItem(LS_DAILY),
+      qhist:localStorage.getItem(LS_QHIST),
+      plan:localStorage.getItem(LS_DAILY_PLAN),
+      state:localStorage.getItem(LS_STATE)
+    }
+  };
+  // navigate to daily-ten tab
+  document.querySelectorAll('.part-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('daily-ten').classList.add('active');
+  const tabEl=document.querySelector('.tab[onclick*="\'daily-ten\'"]');
+  if(tabEl)tabEl.classList.add('active');
+  renderOneQuestion();
+}
+
+function renderOneQuestion(){
+  const titleEl=document.querySelector('#daily-ten .dt-title');
+  if(titleEl)titleEl.textContent='まず1問チャレンジ';
+  // progress
+  const prog=document.getElementById('dt-progress-area');
+  if(prog){
+    const topic=oqState.q.topic||'Part5';
+    prog.innerHTML=`<div class="dt-progress">`
+      +`<div class="dt-prog-num">1<span style="font-size:.8rem;font-weight:400;color:var(--sub)"> / 1問</span></div>`
+      +`<div class="dt-prog-bar"><div class="dt-prog-fill" style="width:0%"></div></div>`
+      +`<div class="dt-part-badge">${topic}</div>`
+      +`</div>`
+      +`<p style="font-size:.72rem;color:var(--sub);margin:0 0 12px">ミスは復習用データです。押し間違えた場合は回答後に取り消せます。</p>`;
+  }
+  // question
+  const el=document.getElementById('dt-question-area');
+  if(!el)return;
+  const {opts}=oqState.shuffled;
+  const {qi,q}=oqState;
+  const stemHtml=esc(q.q).replace(/-------/,'<em>-------</em>');
+  const optsHtml=opts.map((o,j)=>`<div class="dt-opt" onclick="answerOneQuestion(${j})">(${chr(j)}) ${esc(o)}</div>`).join('');
+  el.innerHTML=`<div class="dt-card">`
+    +`<div class="q-num" style="font-size:.72rem;color:var(--sub);margin-bottom:6px">Part5 Q${qi+1}</div>`
+    +`<div class="dt-stem">${stemHtml}</div>`
+    +`<div class="dt-opts" id="oq-opts">${optsHtml}</div>`
+    +`<div class="dt-exp" id="oq-exp">${esc(q.exp)}</div>`
+    +`<div class="dt-next-area" id="oq-next-area">`
+    +`<div class="dt-undo-hint">押し間違えた場合は、この回答だけ取り消せます。</div>`
+    +`<div class="dt-next-btns">`
+    +`<button class="dt-undo-btn" onclick="undoOneQuestion()">この回答を取り消す</button>`
+    +`<button class="dt-next-btn" onclick="renderOneQuestionResult()">完了 →</button>`
+    +`</div></div></div>`;
+}
+
+function answerOneQuestion(chosen){
+  if(oqState.answered)return;
+  oqState.answered=true;
+  const {opts,ans}=oqState.shuffled;
+  const isCorrect=(chosen===ans);
+  oqState.isCorrect=isCorrect;
+  document.querySelectorAll('#oq-opts .dt-opt').forEach((o,j)=>{
+    o.classList.add('disabled');
+    if(j===ans)o.classList.add('correct');
+    else if(j===chosen)o.classList.add('wrong');
+  });
+  document.getElementById('oq-exp').classList.add('show');
+  document.getElementById('oq-next-area').classList.add('show');
+  recordQuestionHistory('p5',oqState.qi,isCorrect);
+  recordDaily(isCorrect);
+  updateDailyUI();
+}
+
+function undoOneQuestion(){
+  if(!oqState.snapshot)return;
+  if(!confirm('この回答記録を取り消しますか？'))return;
+  const snap=oqState.snapshot;
+  clearTimeout(_autoBackupTimer);_autoBackupTimer=null;
+  if(snap.daily!==null)localStorage.setItem(LS_DAILY,snap.daily);else localStorage.removeItem(LS_DAILY);
+  if(snap.qhist!==null)localStorage.setItem(LS_QHIST,snap.qhist);else localStorage.removeItem(LS_QHIST);
+  if(snap.plan!==null)localStorage.setItem(LS_DAILY_PLAN,snap.plan);else localStorage.removeItem(LS_DAILY_PLAN);
+  if(snap.state!==null)localStorage.setItem(LS_STATE,snap.state);else localStorage.removeItem(LS_STATE);
+  oqState.answered=false;oqState.snapshot=null;
+  try{loadState();}catch(e){}
+  updateDailyUI();
+  renderOneQuestion();
+}
+
+function renderOneQuestionResult(){
+  if(!oqState.answered)return;
+  const isCorrect=oqState.isCorrect;
+  const el=document.getElementById('dt-question-area');
+  if(!el)return;
+  const icon=isCorrect?'✅':'❌';
+  const msg=isCorrect?'正解！':'不正解。';
+  const valClass=isCorrect?'ok':'ng';
+  const valText=isCorrect?'○':'✗';
+  document.getElementById('dt-progress-area').innerHTML='';
+  el.innerHTML=`<div class="dt-result">`
+    +`<div class="dt-result-title">${icon} ${msg}</div>`
+    +`<div class="dt-result-sub">今日の学習を始めました</div>`
+    +`<div class="dt-result-stats">`
+    +`<div class="dt-stat ${valClass}"><div class="dt-stat-val">${valText}</div><div class="dt-stat-label">今回</div></div>`
+    +`</div>`
+    +`<div class="dt-result-btns">`
+    +`<button class="dt-result-btn prim" onclick="startOneQuestionMode()">もう1問やる</button>`
+    +`<button class="dt-result-btn" onclick="exitOneQuestionAndStartDailyTen()">今日の10問へ進む</button>`
+    +`<button class="dt-result-btn" onclick="exitOneQuestionMode()">終了</button>`
+    +`</div></div>`;
+}
+
+function exitOneQuestionAndStartDailyTen(){
+  oqState.active=false;
+  startDailyTenMode();
+}
+
+function exitOneQuestionMode(){
+  oqState.active=false;
+  activateTab('p5');
+}
+
+function startWeakTopicOneQuestion(){
+  const stats=calcTopicStats();
+  const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+  // find weakest topic (min 3 attempts, lowest accuracy)
+  let worstTopic=null,worstRate=2;
+  TOPICS.forEach(t=>{
+    const s=stats[t];
+    if(s&&s.attempts>=3){
+      const rate=s.attempts>0?s.correct/s.attempts:1;
+      if(rate<worstRate){worstRate=rate;worstTopic=t;}
+    }
+  });
+  if(worstTopic){
+    const topicQs=P5.map((q,i)=>({q,i})).filter(({q})=>(q.topic||'語彙')===worstTopic);
+    topicQs.sort((a,b)=>{
+      const ha=hist[`p5-${a.i}`],hb=hist[`p5-${b.i}`];
+      if(!ha&&!hb)return 0;if(!ha)return -1;if(!hb)return 1;
+      const accA=ha.attempts>0?ha.correct/ha.attempts:1;
+      const accB=hb.attempts>0?hb.correct/hb.attempts:1;
+      return accA-accB;
+    });
+    if(topicQs.length>0){startOneQuestionMode(`p5-${topicQs[0].i}`);return;}
+  }
+  // fallback: general 1-question
+  startOneQuestionMode();
 }
 
 // INIT
