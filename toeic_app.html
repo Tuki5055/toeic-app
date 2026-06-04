@@ -36,7 +36,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .tab:hover{color:var(--text);background:rgba(0,0,0,.04)}
 .tab.active{color:var(--primary);border-bottom-color:var(--primary);background:rgba(59,91,219,.07);font-weight:600}
 /* ── Layout ── */
-.content{max-width:1180px;margin:22px auto;padding:0 16px 56px}
+.content{max-width:1180px;margin:22px auto;padding:0 16px 110px}
 .part-section{display:none}
 .part-section.active{display:block}
 /* ── Part intro ── */
@@ -129,6 +129,12 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .p67-sticky-top .passage{margin-bottom:0}
 .p67-sticky-top .reading{margin-bottom:0}
 .p67-sticky-top .double-passage{margin-bottom:0}
+.p67-passage-toggle{margin-top:12px}
+.p67-passage-toggle summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;list-style:none;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--primary);font-size:.8rem;font-weight:700}
+.p67-passage-toggle summary::-webkit-details-marker{display:none}
+.p67-passage-toggle summary::after{content:'閉じる';font-size:.72rem;color:var(--sub);font-weight:600}
+.p67-passage-toggle:not([open]) summary::after{content:'開く'}
+.p67-passage-body{margin-top:8px}
 .p67-questions-area{background:var(--surface);border:1px solid var(--border);border-radius:0 0 10px 10px;padding:16px 20px 20px;margin-bottom:12px}
 /* ── Instant Translation ── */
 .inst-card{position:relative;background:var(--surface);border-radius:10px;padding:20px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s;box-shadow:0 1px 4px rgba(0,0,0,.06)}
@@ -347,10 +353,10 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .dt-exp{margin-top:16px;padding:14px 16px;background:var(--yellow-bg);border-radius:8px;font-size:.83rem;line-height:1.65;display:none}
 .dt-exp.show{display:block}
 .dt-next-area{margin-top:16px;display:none}
-.dt-next-area.show{display:flex;flex-direction:column;gap:8px}
+.dt-next-area.show{position:fixed;left:50%;bottom:70px;transform:translateX(-50%);z-index:850;width:min(680px,calc(100% - 24px));display:flex;flex-direction:column;gap:8px;background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:10px;padding:10px;box-shadow:0 8px 30px rgba(31,41,55,.18);backdrop-filter:blur(8px)}
 .dt-undo-hint{font-size:.74rem;color:var(--sub)}
 .dt-next-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.dt-next-btn{padding:10px 24px;border-radius:8px;background:var(--primary);color:white;border:none;cursor:pointer;font-size:.87rem;font-weight:700}
+.dt-next-btn{flex:1;min-width:180px;padding:12px 24px;border-radius:8px;background:var(--primary);color:white;border:none;cursor:pointer;font-size:.92rem;font-weight:800}
 .dt-next-btn:hover{background:var(--primary-dim)}
 .dt-undo-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--sub);cursor:pointer;font-size:.78rem}
 .dt-undo-btn:hover{border-color:var(--red);color:var(--red)}
@@ -460,6 +466,13 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   .step-sub-row{flex-direction:column}
   .step-sub-btn{width:100%;text-align:center}
 }
+/* ── Bottom primary nav ── */
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:800;background:rgba(255,255,255,.96);border-top:1px solid var(--border);box-shadow:0 -6px 24px rgba(31,41,55,.08);backdrop-filter:blur(10px)}
+.bottom-nav-inner{max-width:760px;margin:0 auto;padding:7px 12px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.bottom-nav-btn{border:none;background:transparent;color:var(--sub);border-radius:8px;padding:7px 4px;cursor:pointer;font-size:.74rem;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bottom-nav-btn:hover{background:var(--surface2);color:var(--primary)}
+.bottom-nav-btn.active{background:#eef2ff;color:var(--primary)}
+.bottom-nav-icon{font-size:1rem;line-height:1}
 </style>
 </head>
 <body>
@@ -533,6 +546,15 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   </div>
   <div id="miss-panel-body"></div>
 </div>
+
+<nav class="bottom-nav" aria-label="主要メニュー">
+  <div class="bottom-nav-inner">
+    <button class="bottom-nav-btn active" data-nav="home" onclick="showHome()"><span class="bottom-nav-icon">◎</span><span>今日</span></button>
+    <button class="bottom-nav-btn" data-nav="review" onclick="startSmartReview()"><span class="bottom-nav-icon">↻</span><span>復習</span></button>
+    <button class="bottom-nav-btn" data-nav="all" onclick="showFullApp('p5')"><span class="bottom-nav-icon">▦</span><span>全問題</span></button>
+    <button class="bottom-nav-btn" data-nav="history" onclick="showFullApp('history');renderHistory()"><span class="bottom-nav-icon">↗</span><span>履歴</span></button>
+  </div>
+</nav>
 
 <div class="content" id="main-content" style="display:none">
 
@@ -1659,7 +1681,7 @@ function renderP6(){
   if(revealed)nextContent=si+1<P6.length?`<button class="btn btn-primary" onclick="nextQ('p6')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p6')">結果を見る →</button>`;
   else if(allSelected)nextContent=`<button class="btn btn-primary" onclick="revealP6(${si})">回答を見る →</button>`;
   document.getElementById('p6-sets').innerHTML=`<div class="p67-sticky-top"><div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P6.length} — ${set.type}</div>
-    <div class="passage">${pass}</div></div></div>
+    <details class="p67-passage-toggle" open><summary>本文</summary><div class="p67-passage-body"><div class="passage">${pass}</div></div></details></div></div>
   <div class="p67-questions-area"><div class="p6-qs">${qs}</div></div>
   <div class="next-area" id="p6-next"${nextContent?'':' style="display:none"'}>${nextContent}</div>`;
   set.qs.forEach((_,qi)=>{if(revealed)updateMissBadge('p6',`${si}-${qi}`);});
@@ -1750,7 +1772,8 @@ function renderP7(){
   let nextContent='';
   if(revealed)nextContent=si+1<P7.length?`<button class="btn btn-primary" onclick="nextQ('p7')">次のセットへ →</button>`:`<button class="btn btn-primary" onclick="nextQ('p7')">結果を見る →</button>`;
   else if(allSelected)nextContent=`<button class="btn btn-primary" onclick="revealP7(${si})">回答を見る →</button>`;
-  document.getElementById('p7-sets').innerHTML=`<div class="p67-sticky-top"><div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P7.length} — ${set.type}</div>${pass}</div></div>
+  document.getElementById('p7-sets').innerHTML=`<div class="p67-sticky-top"><div class="set-card"><div class="set-title">${set.title}</div><div class="set-type">Set ${si+1} / ${P7.length} — ${set.type}</div>
+    <details class="p67-passage-toggle" open><summary>本文</summary><div class="p67-passage-body">${pass}</div></details></div></div>
   <div class="p67-questions-area">${qs}</div>
   <div class="next-area" id="p7-next"${nextContent?'':' style="display:none"'}>${nextContent}</div>`;
   set.qs.forEach((_,qi)=>{if(revealed)updateMissBadge('p7',`${si}-${qi}`);});
@@ -2331,12 +2354,36 @@ function showPart(part,el){
   document.querySelectorAll('.part-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(part).classList.add('active');
-  el.classList.add('active');
+  if(el)el.classList.add('active');
+  setBottomNavActive(part);
   if(part==='history')renderHistory();
   if(part==='settings'){renderSettingsStatus();renderCloudSettings();}
   if(part==='topic')renderTopicTraining();
 }
 function chr(j){return String.fromCharCode(65+j);}
+
+function setBottomNavActive(part){
+  const key=part==='history'?'history':part==='daily-ten'?'home':['p5','p6','p7','instant','topic'].includes(part)?'all':part;
+  document.querySelectorAll('.bottom-nav-btn').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.nav===key);
+  });
+}
+
+function showHome(){
+  document.getElementById('main-content').style.display='none';
+  document.getElementById('tabs-bar').style.display='none';
+  renderDailyTen();
+  setBottomNavActive('daily-ten');
+  try{window.scrollTo({top:0,behavior:'smooth'});}catch(_){window.scrollTo(0,0);}
+}
+
+function startSmartReview(){
+  const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
+  if(getDueReviewQuestions(hist).length>0){startRecommendedDueReview();return;}
+  if(getWeakQuestions(hist).length>0){startRecommendedWeakReview();return;}
+  showFullApp('history');
+  renderHistory();
+}
 
 // ============================================================
 // LOCALSTORAGE — セッション継続 & 日別履歴 & 問題別履歴
@@ -2581,6 +2628,10 @@ function activateTab(part){
     if((t.getAttribute('onclick')||'').includes(`'${part}'`))t.classList.add('active');
   });
   document.getElementById(part).classList.add('active');
+  setBottomNavActive(part);
+  if(part==='history')renderHistory();
+  if(part==='settings'){renderSettingsStatus();renderCloudSettings();}
+  if(part==='topic')renderTopicTraining();
 }
 
 function renderHistoryDaily(){
