@@ -284,10 +284,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .daily-ten-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:4px}
 .daily-ten-lead{font-size:.82rem;color:var(--sub);line-height:1.5;margin-bottom:8px}
 .daily-ten-breakdown{font-size:.75rem;color:var(--sub);line-height:1.5}
-.daily-ten-details{margin-top:7px}
-.daily-ten-details summary{cursor:pointer;color:var(--primary);font-size:.75rem;font-weight:700;list-style:none;display:inline-flex}
-.daily-ten-details summary::-webkit-details-marker{display:none}
-.daily-ten-detail-body{margin-top:5px;color:var(--sub);font-size:.74rem;line-height:1.5}
+.daily-ten-detail-body{margin-top:7px;color:var(--sub);font-size:.74rem;line-height:1.5}
 .daily-ten-pbar{height:5px;background:var(--border);border-radius:3px;margin-top:7px;overflow:hidden;width:76px}
 .daily-ten-pfill{height:100%;background:linear-gradient(90deg,var(--primary-dim),var(--primary));border-radius:2px;transition:width .4s}
 .daily-ten-actions{display:flex;flex-direction:column;gap:8px;align-items:stretch}
@@ -2385,6 +2382,28 @@ function startSmartReview(){
   renderHistory();
 }
 
+function toggleHomePanel(part){
+  const main=document.getElementById('main-content');
+  const active=document.querySelector('.part-section.active');
+  if(main&&main.style.display!=='none'&&active&&active.id===part){
+    showHome();
+    return;
+  }
+  showFullApp(part);
+  if(part==='topic')renderTopicTraining();
+  if(part==='history')renderHistory();
+}
+
+function toggleHomeReview(){
+  const main=document.getElementById('main-content');
+  const active=document.querySelector('.part-section.active');
+  if(main&&main.style.display!=='none'&&active&&['p5','p6','p7','instant','history'].includes(active.id)){
+    showHome();
+    return;
+  }
+  startSmartReview();
+}
+
 // ============================================================
 // LOCALSTORAGE — セッション継続 & 日別履歴 & 問題別履歴
 // ============================================================
@@ -3635,11 +3654,7 @@ function renderDailyTen(){
     const lead=allDone?'今日のセットは完了です。必要なら追加練習や履歴確認に進めます。'
       :done===0?`今日のセットは ${total} 問です。まずはここから始めましょう。`
       :`${remaining} 問残っています。途中からそのまま再開できます。`;
-    const reviewAction=dueC>0?'startRecommendedDueReview()'
-      :weakC>0?'startRecommendedWeakReview()'
-      :"showFullApp('history');renderHistory()";
-
-    // ホームカード: まず始める導線を強くし、詳細は必要な時だけ開く
+    // ホームカード: まず始める導線を強くし、内訳は常に見せる
     el.innerHTML=`<div class="daily-ten-card">`
       +`<div class="daily-ten-prog">`
       +`<div class="daily-ten-num">${done}<span style="font-size:.8rem;font-weight:500;color:var(--sub)"> / ${total}</span></div>`
@@ -3649,19 +3664,17 @@ function renderDailyTen(){
       +`<div class="daily-ten-body">`
       +`<div class="daily-ten-title">今日の問題${remaining>0&&done>0?`（残り${remaining}問）`:allDone?' — 完了！':''}</div>`
       +`<div class="daily-ten-lead">${lead}</div>`
-      +`<details class="daily-ten-details">`
-      +`<summary>内訳を見る</summary>`
       +`<div class="daily-ten-detail-body">`
       +(parts.length?`${parts.join(' ／ ')}<br>`:'')
-      +`${partStr}</div></details>`
+      +`${partStr}</div>`
       +`</div>`
       +`<div class="daily-ten-actions"><button class="${btnClass}" ${btnAttr}>${btnLabel}</button></div>`
       +`</div>`
       +`<div class="home-nav">`
       +`<button class="home-nav-btn" onclick="startOneQuestionMode()">まず1問</button>`
-      +`<button class="home-nav-btn" onclick="${reviewAction}">復習</button>`
-      +`<button class="home-nav-btn" onclick="showFullApp('topic');renderTopicTraining()">論点別</button>`
-      +`<button class="home-nav-btn" onclick="showFullApp('p5')">全問題</button>`
+      +`<button class="home-nav-btn" onclick="toggleHomeReview()">復習</button>`
+      +`<button class="home-nav-btn" onclick="toggleHomePanel('topic')">論点別</button>`
+      +`<button class="home-nav-btn" onclick="toggleHomePanel('p5')">全問題</button>`
       +`</div>`;
   }catch(e){el.innerHTML='';}
 }
