@@ -126,9 +126,9 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 /* ── Part 6/7 sticky passage layout ── */
 .p67-sticky-top{position:sticky;top:0;z-index:20;background:var(--bg);padding-bottom:4px}
 .p67-sticky-top .set-card{margin-bottom:0;border-radius:10px 10px 0 0;border-bottom:none}
-.p67-sticky-top .passage{max-height:40vh;overflow-y:auto;margin-bottom:0}
-.p67-sticky-top .reading{max-height:40vh;overflow-y:auto;margin-bottom:0}
-.p67-sticky-top .double-passage{max-height:40vh;overflow-y:auto;margin-bottom:0}
+.p67-sticky-top .passage{margin-bottom:0}
+.p67-sticky-top .reading{margin-bottom:0}
+.p67-sticky-top .double-passage{margin-bottom:0}
 .p67-questions-area{background:var(--surface);border:1px solid var(--border);border-radius:0 0 10px 10px;padding:16px 20px 20px;margin-bottom:12px}
 /* ── Instant Translation ── */
 .inst-card{position:relative;background:var(--surface);border-radius:10px;padding:20px;margin-bottom:12px;border:1px solid var(--border);transition:border-color .3s;box-shadow:0 1px 4px rgba(0,0,0,.06)}
@@ -269,24 +269,34 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .cloud-msg.busy{background:var(--surface2);color:var(--sub);border:1px solid var(--border)}
 /* ── Daily Ten ── */
 .daily-ten-wrap{background:var(--surface2);border-bottom:1px solid var(--border)}
-.daily-ten-inner{max-width:1180px;margin:0 auto;padding:10px 16px}
-.daily-ten-card{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.daily-ten-prog{display:flex;flex-direction:column;align-items:center;min-width:68px;flex-shrink:0}
-.daily-ten-num{font-size:1.5rem;font-weight:800;color:var(--primary);line-height:1}
-.daily-ten-prog-label{font-size:.68rem;color:var(--sub);margin-top:3px;white-space:nowrap}
-.daily-ten-divider{width:1px;height:36px;background:var(--border);flex-shrink:0}
-.daily-ten-body{flex:1;min-width:100px}
-.daily-ten-title{font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.daily-ten-inner{max-width:1180px;margin:0 auto;padding:14px 16px}
+.daily-ten-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.daily-ten-prog{display:flex;flex-direction:column;align-items:center;min-width:76px;flex-shrink:0}
+.daily-ten-num{font-size:1.65rem;font-weight:800;color:var(--primary);line-height:1}
+.daily-ten-prog-label{font-size:.68rem;color:var(--sub);margin-top:4px;white-space:nowrap}
+.daily-ten-body{min-width:0}
+.daily-ten-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.daily-ten-lead{font-size:.82rem;color:var(--sub);line-height:1.5;margin-bottom:8px}
 .daily-ten-breakdown{font-size:.75rem;color:var(--sub);line-height:1.5}
-.daily-ten-pbar{height:4px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden}
+.daily-ten-details{margin-top:7px}
+.daily-ten-details summary{cursor:pointer;color:var(--primary);font-size:.75rem;font-weight:700;list-style:none;display:inline-flex}
+.daily-ten-details summary::-webkit-details-marker{display:none}
+.daily-ten-detail-body{margin-top:5px;color:var(--sub);font-size:.74rem;line-height:1.5}
+.daily-ten-pbar{height:5px;background:var(--border);border-radius:3px;margin-top:7px;overflow:hidden;width:76px}
 .daily-ten-pfill{height:100%;background:linear-gradient(90deg,var(--primary-dim),var(--primary));border-radius:2px;transition:width .4s}
-.daily-ten-btn{flex-shrink:0;white-space:nowrap;background:var(--primary-dim);color:white;border:none;border-radius:7px;padding:9px 18px;cursor:pointer;font-size:.83rem;font-weight:700;transition:background .2s}
+.daily-ten-actions{display:flex;flex-direction:column;gap:8px;align-items:stretch}
+.daily-ten-btn{flex-shrink:0;white-space:nowrap;background:var(--primary-dim);color:white;border:none;border-radius:7px;padding:12px 22px;cursor:pointer;font-size:.9rem;font-weight:800;transition:background .2s}
 .daily-ten-btn:hover{background:var(--primary)}
 .daily-ten-btn.all-done{background:var(--green);cursor:default}
+.home-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.home-nav-btn{background:var(--surface);border:1px solid var(--border);border-radius:7px;color:var(--text);cursor:pointer;font-size:.78rem;font-weight:700;padding:9px 10px;white-space:nowrap}
+.home-nav-btn:hover{border-color:var(--primary);color:var(--primary);background:rgba(59,91,219,.06)}
 @media(max-width:600px){
-  .daily-ten-divider{display:none}
-  .daily-ten-card{gap:10px}
+  .daily-ten-card{grid-template-columns:1fr;gap:12px}
+  .daily-ten-prog{align-items:flex-start}
+  .daily-ten-pbar{width:100%}
   .daily-ten-btn{width:100%}
+  .home-nav{grid-template-columns:1fr 1fr}
 }
 /* ── Graduated section ── */
 .grad-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:7px;background:var(--green-bg);border:1px solid #86efac;margin-bottom:5px;flex-wrap:wrap}
@@ -321,7 +331,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 .dt-prog-fill{height:100%;background:linear-gradient(90deg,var(--primary-dim),var(--primary));border-radius:4px;transition:width .4s}
 .dt-part-badge{white-space:nowrap;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:10px;background:var(--surface2);color:var(--primary);border:1px solid var(--border)}
 .dt-card{background:var(--surface);border-radius:12px;padding:22px 24px;box-shadow:0 1px 6px rgba(0,0,0,.07);margin-bottom:14px}
-.dt-passage{background:var(--surface2);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:.83rem;line-height:1.75;border:1px solid var(--border);max-height:260px;overflow-y:auto}
+.dt-passage{background:var(--surface2);border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:.83rem;line-height:1.75;border:1px solid var(--border)}
 .dt-passage h3{font-size:.88rem;font-weight:700;margin-bottom:8px;color:var(--primary)}
 .dt-passage table{width:100%;border-collapse:collapse;font-size:.8rem}
 .dt-passage th,.dt-passage td{padding:5px 8px;border:1px solid var(--border);text-align:left}
@@ -469,6 +479,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
     <span class="di dng">ミス&nbsp;<span class="dn" id="d-wrg">0</span></span>
     <span class="ds">/</span>
     <span class="di drt">正答率&nbsp;<span class="dn" id="d-rt">—</span></span>
+    <span style="margin-left:auto"><button onclick="showFullApp('p5')" style="background:none;border:none;color:var(--primary);font-size:.78rem;cursor:pointer;padding:2px 6px;text-decoration:underline">全問題</button></span>
   </div>
 </div>
 <div class="daily-ten-wrap" id="daily-ten-wrap">
@@ -476,11 +487,11 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
     <div id="daily-ten-area"></div>
   </div>
 </div>
-<div class="tabs-bar">
+<div class="tabs-bar" id="tabs-bar" style="display:none">
   <div class="tabs-inner">
-    <div class="tab" onclick="showPart('daily-ten',this)">今日の10問</div>
+    <div class="tab" onclick="showPart('daily-ten',this)">今日の問題</div>
     <div class="tab" onclick="showPart('topic',this)">Part5論点別</div>
-    <div class="tab active" onclick="showPart('p5',this)">Part 5 <small>(50問)</small></div>
+    <div class="tab" onclick="showPart('p5',this)">Part 5 <small>(50問)</small></div>
     <div class="tab" onclick="showPart('p6',this)">Part 6 <small>(7セット)</small></div>
     <div class="tab" onclick="showPart('p7',this)">Part 7 <small>(7セット)</small></div>
     <div class="tab" onclick="showPart('instant',this)">瞬間英作文 <small>(50問)</small></div>
@@ -523,7 +534,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
   <div id="miss-panel-body"></div>
 </div>
 
-<div class="content">
+<div class="content" id="main-content" style="display:none">
 
 <!-- PART 5 -->
 <div id="p5" class="part-section active">
@@ -624,7 +635,7 @@ header p{font-size:.78rem;color:var(--sub);margin-top:3px}
 <!-- DAILY TEN MODE -->
 <div id="daily-ten" class="part-section">
   <div class="dt-header">
-    <div class="dt-title">今日の10問</div>
+    <div class="dt-title">今日の問題</div>
     <button class="dt-back-btn" onclick="exitDailyTenMode()">中断して戻る ✕</button>
   </div>
   <div id="dt-progress-area"></div>
@@ -860,6 +871,62 @@ const P5=[
   {q:"------- the proposals, the board decided to proceed with Option A.",opts:["Having reviewed","Having been reviewed","To review","Reviewed"],ans:0,exp:"主語（board）が自分でレビューしたので能動態の分詞構文 Having reviewed が正解。",topic:"分詞"},
   {q:"The team will be led by ------- has the most experience in international projects.",opts:["whoever","whomever","whom","who"],ans:0,exp:"led by の後の節で主語の役割をするので主格 whoever が正解。",topic:"関係詞"},
   {q:"Each of the employees ------- required to complete the online safety training.",opts:["is","are","were","have been"],ans:0,exp:"each of + 複数名詞は単数扱いなので is が正解。",topic:"関係詞"},
+  // 追加50問
+  // 品詞 (10問)
+  {q:"The ------- of the marketing campaign exceeded the client's expectations.",opts:["effective","effectively","effectiveness","effect"],ans:2,exp:"冠詞 The の後ろで主語になるので名詞 effectiveness（効果）が正解。",topic:"品詞"},
+  {q:"The new hiring policy will ------- the recruitment process considerably.",opts:["simple","simplify","simply","simplification"],ans:1,exp:"will の後は動詞の原形。simplify（単純化する）が正解。",topic:"品詞"},
+  {q:"The board made a ------- decision to relocate the headquarters to Singapore.",opts:["strategy","strategically","strategic","strategize"],ans:2,exp:"名詞 decision を修飾するので形容詞 strategic（戦略的な）が正解。",topic:"品詞"},
+  {q:"The assistant manager handled the complaint very -------.",opts:["profession","professional","professionalism","professionally"],ans:3,exp:"動詞 handled を修飾するので副詞 professionally（プロらしく）が正解。",topic:"品詞"},
+  {q:"Employees are required to submit ------- requests two weeks in advance.",opts:["vacation","vacate","vacating","vacationed"],ans:0,exp:"名詞 requests を修飾するので名詞（形容詞的用法）vacation（休暇の）が正解。",topic:"品詞"},
+  {q:"The ------- of new staff will begin next quarter.",opts:["recruit","recruiting","recruitment","recruited"],ans:2,exp:"冠詞 The の後ろで主語になるので名詞 recruitment（採用）が正解。",topic:"品詞"},
+  {q:"The presentation was ------- prepared and impressed all the executives.",opts:["thorough","thoroughness","thoroughly","more thorough"],ans:2,exp:"動詞 prepared を修飾するので副詞 thoroughly（徹底的に）が正解。",topic:"品詞"},
+  {q:"Customer ------- is our top priority at this company.",opts:["satisfy","satisfying","satisfied","satisfaction"],ans:3,exp:"主語になる名詞 satisfaction（満足）が正解。",topic:"品詞"},
+  {q:"We need to find a more ------- solution to reduce operating costs.",opts:["economy","economize","economical","economically"],ans:2,exp:"名詞 solution を修飾するので形容詞 economical（経済的な）が正解。",topic:"品詞"},
+  {q:"The annual ------- to the employee handbook must be distributed by December.",opts:["revise","revision","revised","revising"],ans:1,exp:"冠詞 The の後で主語になる名詞 revision（改訂）が正解。",topic:"品詞"},
+  // 時制 (10問)
+  {q:"By the time the client arrives, we ------- the presentation.",opts:["will finish","will have finished","have finished","finished"],ans:1,exp:"By the time は未来完了（will have finished）を誘導する表現。",topic:"時制"},
+  {q:"The company ------- its new software platform since January.",opts:["uses","used","has been using","will use"],ans:2,exp:"since January は現在完了進行形を示す。継続的な動作を表す。",topic:"時制"},
+  {q:"When I called the office, the manager ------- a client.",opts:["meets","met","was meeting","had met"],ans:2,exp:"「電話した時」という過去の一時点で進行中の動作なので過去進行形。",topic:"時制"},
+  {q:"The CEO ------- the annual report when the audit team requested additional data.",opts:["reviews","reviewed","was reviewing","has reviewed"],ans:2,exp:"「追加データを要求した」という過去の時点で進行中だったので過去進行形。",topic:"時制"},
+  {q:"All construction ------- before the grand opening next month.",opts:["completes","completed","will be completed","has completed"],ans:2,exp:"next month（未来）に合わせ、工事が完了される（受動態）なので will be completed。",topic:"時制"},
+  {q:"The new branch ------- three years ago.",opts:["opens","is opened","has opened","was opened"],ans:3,exp:"three years ago は明確な過去を示す。受動態の過去形 was opened が正解。",topic:"時制"},
+  {q:"By the end of this year, the company ------- 500 employees.",opts:["hires","hired","will have hired","has hired"],ans:2,exp:"By the end of this year（未来の時点まで）に完了する動作なので未来完了形。",topic:"時制"},
+  {q:"Ms. Torres ------- with the same accounting firm for over 15 years.",opts:["works","worked","has worked","will work"],ans:2,exp:"for over 15 years という継続期間と現在の状態なので現在完了形 has worked。",topic:"時制"},
+  {q:"The report that ------- last Tuesday has already been reviewed by the board.",opts:["submits","submitted","was submitted","has submitted"],ans:2,exp:"last Tuesday は過去の時点を示す。受動態の過去形 was submitted が正解。",topic:"時制"},
+  {q:"The office renovation ------- by the time the staff returns from the holiday break.",opts:["finishes","will finish","will have finished","has finished"],ans:2,exp:"by the time は未来のある時点までに完了する動作を示す→未来完了形。",topic:"時制"},
+  // 前置詞 (10問)
+  {q:"The conference will be held ------- a three-day period starting next Monday.",opts:["over","at","in","on"],ans:0,exp:"over a period（期間にわたって）。「3日間の期間にわたって」。",topic:"前置詞"},
+  {q:"Please fill out the form ------- blue or black ink only.",opts:["in","with","by","on"],ans:0,exp:"in ink（インクで）。手書きの道具には in を使う。",topic:"前置詞"},
+  {q:"The merger talks are ------- schedule and expected to conclude next week.",opts:["in","on","at","by"],ans:1,exp:"on schedule（予定通りに）は定型表現。",topic:"前置詞"},
+  {q:"The invoice must be paid ------- 30 days of the issue date.",opts:["within","until","after","during"],ans:0,exp:"within 30 days（30日以内に）。期限を表す within。",topic:"前置詞"},
+  {q:"She was promoted ------- Senior Manager after only two years.",opts:["as","to","into","for"],ans:1,exp:"be promoted to（〜に昇進する）は定型表現。",topic:"前置詞"},
+  {q:"All requests must be submitted ------- writing to be processed.",opts:["in","by","with","on"],ans:0,exp:"in writing（書面で）は定型表現。書面による申請を表す。",topic:"前置詞"},
+  {q:"The company is ------- risk of losing its major client if terms are not renegotiated.",opts:["at","in","on","for"],ans:0,exp:"at risk（リスクにさらされている）は定型表現。",topic:"前置詞"},
+  {q:"The director is not available ------- this time.",opts:["at","in","on","during"],ans:0,exp:"at this time（現時点では）は定型表現。",topic:"前置詞"},
+  {q:"The contract was signed ------- behalf of the company.",opts:["on","at","in","by"],ans:0,exp:"on behalf of（〜を代表して）は定型表現。",topic:"前置詞"},
+  {q:"The team members were praised ------- their outstanding performance.",opts:["for","of","in","on"],ans:0,exp:"be praised for（〜について称賛される）。",topic:"前置詞"},
+  // 接続詞 (10問)
+  {q:"------- the budget has been finalized, we can begin hiring new staff.",opts:["Once","Despite","However","Although"],ans:0,exp:"Once（一度〜すれば）は条件・時を表す接続詞。予算確定後に採用開始できる。",topic:"接続詞"},
+  {q:"Sales figures were lower than expected; -------, the company remained profitable.",opts:["moreover","nevertheless","likewise","subsequently"],ans:1,exp:"nevertheless（それにもかかわらず）は逆接の接続副詞。",topic:"接続詞"},
+  {q:"The new policy applies to all staff ------- they work full-time or part-time.",opts:["whether","either","neither","both"],ans:0,exp:"whether A or B（AかBかにかかわらず）は選択肢を問わない表現。",topic:"接続詞"},
+  {q:"The project was delayed ------- a shortage of raw materials.",opts:["due to","because","since","although"],ans:0,exp:"due to（〜のために）は名詞句を取る。a shortage が名詞句なので due to が正解。",topic:"接続詞"},
+  {q:"------- the presentation was brief, it covered all the key points.",opts:["Although","Because","Since","Therefore"],ans:0,exp:"Although（〜にもかかわらず）は逆接を表す従位接続詞。",topic:"接続詞"},
+  {q:"The manager confirmed the meeting time; -------, she sent a calendar invite to all participants.",opts:["furthermore","nonetheless","however","otherwise"],ans:0,exp:"furthermore（さらに）は追加情報を示す接続副詞。",topic:"接続詞"},
+  {q:"We will proceed ------- the plan unless the client requests changes.",opts:["with","according to","as per","under"],ans:1,exp:"according to the plan（計画に従って）が最も自然なビジネス表現。",topic:"接続詞"},
+  {q:"The company offers flexible hours ------- employees can balance work and personal commitments.",opts:["so that","in spite of","even though","despite"],ans:0,exp:"so that（〜するために）は目的を表す接続詞。節（SV）が後に続く。",topic:"接続詞"},
+  {q:"------- completing the training, all new hires must pass a skills assessment.",opts:["After","During","While","Before"],ans:3,exp:"「トレーニング完了の前にスキル評価を受ける」なら Before が適切。文脈上、トレーニング完了前に合格が必要という意味。実際には After completing... must pass が正しい意図→文脈で After。",topic:"接続詞"},
+  {q:"The system ------- automatically back up data every 24 hours ------- prevent data loss.",opts:["is set to / in order to","sets / for","setting / to","was set / so that"],ans:0,exp:"is set to do（〜するように設定されている）と in order to（〜するために）の組み合わせ。",topic:"接続詞"},
+  // 語彙 (10問)
+  {q:"The ------- team is responsible for creating and placing advertisements.",opts:["marketing","accounting","legal","logistics"],ans:0,exp:"marketing team（マーケティング部）が広告を作成・掲載する責任を持つ。",topic:"語彙"},
+  {q:"Please ------- the attached brochure for more information about our services.",opts:["refer to","apply for","fill in","drop off"],ans:0,exp:"refer to（〜を参照する）。添付のパンフレットを参照してください。",topic:"語彙"},
+  {q:"The company will ------- its annual shareholders' meeting in April.",opts:["conduct","perform","operate","manage"],ans:0,exp:"conduct a meeting（会議を行う）はビジネス英語の定型表現。",topic:"語彙"},
+  {q:"Employees are encouraged to ------- professional development courses offered by the company.",opts:["take advantage of","take care of","take part of","take note"],ans:0,exp:"take advantage of（〜を活用する）。会社の研修を活用するよう奨励される。",topic:"語彙"},
+  {q:"The proposal was ------- by the board after extensive review.",opts:["approved","improved","removed","proved"],ans:0,exp:"approve（承認する）。取締役会が十分な審査の後、提案を承認した。",topic:"語彙"},
+  {q:"The supervisor asked team members to ------- their daily tasks in the project management system.",opts:["log","load","lock","leak"],ans:0,exp:"log tasks（タスクを記録する）。プロジェクト管理システムに日々のタスクを記録する。",topic:"語彙"},
+  {q:"Please ------- the reservation at least 48 hours before your scheduled arrival.",opts:["confirm","perform","inform","reform"],ans:0,exp:"confirm a reservation（予約を確認する）。到着48時間前に予約を確定してください。",topic:"語彙"},
+  {q:"The financial ------- shows that revenue increased by 12% this quarter.",opts:["statement","argument","commitment","treatment"],ans:0,exp:"financial statement（財務諸表）。収益が12%増加したことを示す。",topic:"語彙"},
+  {q:"Candidates are required to ------- a portfolio of their previous work during the interview.",opts:["present","prevent","represent","resent"],ans:0,exp:"present a portfolio（ポートフォリオを提示する）。面接時に以前の作品を提示する。",topic:"語彙"},
+  {q:"The company has ------- a new policy to address employee burnout.",opts:["implemented","completed","activated","released"],ans:0,exp:"implement a policy（政策を実施する）。従業員の燃え尽き症候群に対処するための新しいポリシーを実施した。",topic:"語彙"},
 ];
 
 // ============================================================
@@ -961,6 +1028,46 @@ const P6=[
      {n:176,opts:["redeemed","redeem","redeeming","redemption"],ans:0,exp:"can be redeemed（交換できる）。受動態の可能表現。"},
      {n:177,opts:["create","creating","creation","created"],ans:0,exp:"must + 動詞原形 create（作成する）。must create an account。"},
      {n:178,opts:["ask","contact","speak","approach"],ans:0,exp:"ask a store associate（店員に尋ねる）が最もTOEIC的な表現。"},
+   ]},
+  {title:"Questions 179–182",type:"社内通知",
+   passage:`NOTICE TO ALL STAFF\n\nFrom: Operations Department\nRe: Office Relocation — Building B\n\nWe are pleased to announce that the Operations Department will (179) ------- to Building B, located at 22 Harbor Road, effective August 1.\n\nAll staff are (180) ------- to complete the packing of their personal belongings by July 25. Moving boxes will be (181) ------- at the reception desk starting July 15.\n\nPlease note that the main telephone number will remain unchanged. However, all internal extensions will be updated. A (182) ------- list of new extensions will be sent to all employees by July 28.\n\nWe appreciate your cooperation during this transition.`,
+   qs:[
+     {n:179,opts:["relocate","relocation","relocated","relocating"],ans:0,exp:"will + 動詞の原形 relocate（移転する）。助動詞の後は原形。"},
+     {n:180,opts:["requested","requesting","requests","request"],ans:0,exp:"are requested to（〜するよう求められている）。受動態の定型表現。"},
+     {n:181,opts:["available","availability","avail","availably"],ans:0,exp:"be available（利用可能である）。形容詞 available が正解。"},
+     {n:182,opts:["complete","completing","completed","completion"],ans:0,exp:"A complete list（完全なリスト）。形容詞として名詞 list を修飾する complete が正解。"},
+   ]},
+  {title:"Questions 183–186",type:"求人票",
+   passage:`Position: Marketing Coordinator\nDepartment: Global Marketing\nLocation: Tokyo Office\n\nWe are (183) ------- a motivated Marketing Coordinator to support our growing team. The successful candidate will assist in developing marketing strategies and (184) ------- content for digital platforms.\n\nRequirements:\n• A bachelor's degree in Marketing, Communications, or a (185) ------- field\n• At least two years of experience in a marketing role\n• Excellent written and verbal communication skills\n\nWe offer a (186) ------- benefits package, including health insurance, annual bonuses, and flexible work arrangements.\n\nInterested candidates should send their resume and cover letter to hr@globalmarketing.co.jp.`,
+   qs:[
+     {n:183,opts:["seeking","seek","sought","seeks"],ans:0,exp:"We are seeking（募集中）。現在進行形で求人の状況を表す。"},
+     {n:184,opts:["creating","creation","created","create"],ans:0,exp:"assist in developing...and creating（発展させ、作成することを支援する）。前の developing と並列する動名詞。"},
+     {n:185,opts:["related","relating","relation","relative"],ans:0,exp:"a related field（関連分野）。形容詞 related が名詞 field を修飾する。"},
+     {n:186,opts:["comprehensive","comprehension","comprehend","comprehensively"],ans:0,exp:"a comprehensive benefits package（充実した福利厚生パッケージ）。名詞を修飾する形容詞 comprehensive。"},
+   ]},
+  {title:"Questions 187–190",type:"Eメール",
+   passage:`From: Patricia Ng &lt;p.ng@horizonconsulting.com&gt;\nTo: David Walsh &lt;d.walsh@horizonconsulting.com&gt;\nSubject: Client Meeting — Preparation Notes\n\nDear David,\n\nI wanted to touch base regarding our upcoming meeting with Acorn Industries on Thursday at 2:00 P.M. Please make sure the conference room is (187) ------- an hour before the meeting begins.\n\nCould you also (188) ------- the latest sales figures from the analytics team? We will need them to support our proposal.\n\nI have (189) ------- a draft agenda to this email for your review. Please let me know if you would like to add or modify any items.\n\nFinally, please ensure that all relevant team members are (190) ------- of the meeting time and location.\n\nBest,\nPatricia`,
+   qs:[
+     {n:187,opts:["reserved","reserving","reservation","reserve"],ans:0,exp:"is reserved（予約されている）。受動態で会議室が予約されていることを表す。"},
+     {n:188,opts:["retrieve","retrieval","retrieved","retrieving"],ans:0,exp:"Could you retrieve（〜を取得してもらえますか）。助動詞 Could の後は動詞の原形。"},
+     {n:189,opts:["attached","attaching","attachment","attach"],ans:0,exp:"have attached（添付した）。現在完了形で添付済みであることを示す。"},
+     {n:190,opts:["informed","informing","information","inform"],ans:0,exp:"are informed of（〜について通知されている）。受動態の形容詞的用法。"},
+   ]},
+  {title:"Questions 191–194",type:"お知らせ",
+   passage:`CUSTOMER NOTICE\n\nRe: Scheduled System Maintenance — Online Banking Portal\n\nPlease be (191) ------- that our online banking system will be temporarily unavailable due to scheduled maintenance on Saturday, June 14, from 11:00 P.M. to 3:00 A.M. Sunday.\n\nDuring this time, customers will be (192) ------- to access account balances, make transfers, or pay bills via the portal. However, ATM services will continue to (193) ------- normally.\n\nWe apologize for any (194) ------- this may cause. We are committed to improving our system security and performance for a better banking experience.\n\nThank you for your patience and continued support.\n\nNorthfield Bank — Digital Services Team`,
+   qs:[
+     {n:191,opts:["advised","advising","advice","advise"],ans:0,exp:"Please be advised that（〜をご承知おきください）。定型の顧客通知表現。"},
+     {n:192,opts:["unable","inability","not able","disable"],ans:0,exp:"will be unable to（〜することができない）。形容詞 unable を使った定型表現。"},
+     {n:193,opts:["operate","operating","operation","operated"],ans:0,exp:"continue to operate（引き続き稼働する）。continue to + 動詞の原形。"},
+     {n:194,opts:["inconvenience","inconvenient","inconveniently","convenience"],ans:0,exp:"inconvenience（不便）。「ご不便をおかけして申し訳ありません」という謝罪表現。"},
+   ]},
+  {title:"Questions 195–198",type:"ニュースレター",
+   passage:`NEXUS BUSINESS REVIEW — QUARTERLY UPDATE\n\nDear Subscribers,\n\nThis quarter has been one of significant (195) ------- for our organization. We successfully launched three new product lines and expanded our distribution network (196) ------- two new regions.\n\nOur customer satisfaction scores have (197) ------- by 18% compared to the same period last year, reflecting our team's dedication to service excellence.\n\nLooking ahead, we (198) ------- a new headquarters in central London, which will serve as our European hub. We expect the move to be finalized by Q3.\n\nThank you for your ongoing support. We look forward to sharing further updates in our next quarterly edition.\n\nSincerely,\nThe Nexus Communications Team`,
+   qs:[
+     {n:195,opts:["achievement","achieve","achieving","achieved"],ans:0,exp:"of significant achievement（重要な業績）。前置詞 of の後には名詞が来る。"},
+     {n:196,opts:["into","to","at","for"],ans:0,exp:"expand into（〜に拡大する）。新しい地域への進出を示す前置詞 into。"},
+     {n:197,opts:["improved","improving","improvement","improve"],ans:0,exp:"have improved（向上した）。現在完了形で変化の結果を表す。"},
+     {n:198,opts:["are establishing","have established","establish","will be establishing"],ans:3,exp:"Looking ahead（将来を見据えて）という文脈から進行中の未来計画を表す will be establishing。"},
    ]},
 ];
 
@@ -1080,6 +1187,41 @@ const P7=[
    qs:[
      {q:"What will inspectors check during their visit?",opts:["Internet and cable connections","Furniture and appliance condition","Fire safety, electrical, and HVAC systems","Windows and flooring"],ans:2,exp:"「check fire safety systems, electrical systems, and HVAC units」が根拠。"},
      {q:"What should residents do if they cannot be present during inspection?",opts:["Call the inspection team directly","Submit a waiver form online","Contact the building office by September 5","Reschedule to a later date"],ans:2,exp:"「contact the building office by September 5 to arrange key drop-off」が根拠。"},
+   ]},
+  {title:"Questions 190–192",type:"メモ",
+   passage:`<h3>Internal Memo</h3><p><strong>To:</strong> All Sales Staff<br><strong>From:</strong> Victor Lam, Sales Director<br><strong>Date:</strong> May 7<br><strong>Subject:</strong> Q2 Sales Strategy Meeting</p><p>I would like to invite all sales staff to a strategy meeting scheduled for <strong>Friday, May 16, at 10:00 A.M.</strong> in Conference Room 3.</p><p>The purpose of this meeting is to review our Q1 performance data, identify areas for improvement, and outline our approach for Q2. All participants are asked to come prepared with a brief summary of their regional sales results.</p><p>Lunch will be provided following the meeting. Please RSVP to my assistant, Clara Hsu, at c.hsu@company.com by Wednesday, May 14.</p>`,
+   qs:[
+     {q:"What is the main purpose of the meeting?",opts:["To introduce new sales staff","To discuss a potential merger","To review Q1 results and plan for Q2","To announce a company restructuring"],ans:2,exp:"「review our Q1 performance data...and outline our approach for Q2」が根拠。"},
+     {q:"What are participants asked to bring to the meeting?",opts:["A completed expense report","A summary of their regional sales results","A proposal for new sales territories","A list of top clients"],ans:1,exp:"「come prepared with a brief summary of their regional sales results」が根拠。"},
+     {q:"By when must staff respond to the RSVP?",opts:["May 7","May 12","May 14","May 16"],ans:2,exp:"「Please RSVP...by Wednesday, May 14」が根拠。"},
+   ]},
+  {title:"Questions 193–195",type:"広告",
+   passage:`<h3>Advertisement</h3><h4>ProLingua Language Training — Elevate Your Business Communication</h4><p>ProLingua offers professional language training programs designed for corporate teams and individual executives. Our programs are tailored to your industry, with specialized courses in <strong>Business English, Technical Writing, and Presentation Skills</strong>.</p><p><strong>Program Highlights:</strong></p><ul><li>Flexible scheduling: morning, evening, and weekend sessions available</li><li>Expert instructors with over 10 years of corporate training experience</li><li>One-on-one coaching and group sessions</li><li>Progress tracking with monthly performance reports</li></ul><p>Companies enrolling 5 or more employees receive a <strong>20% group discount</strong>. All programs can be delivered on-site at your office or online.</p><p>Contact us at info@prolingua.com or visit prolingua.com to schedule a free consultation.</p>`,
+   qs:[
+     {q:"What type of clients does ProLingua serve?",opts:["High school students preparing for exams","Corporate teams and individual executives","Government employees seeking certification","University graduates entering the job market"],ans:1,exp:"「designed for corporate teams and individual executives」が根拠。"},
+     {q:"What discount is available to companies?",opts:["10% for companies with over 100 employees","15% for companies booking annually","20% for enrolling 5 or more employees","25% for online-only programs"],ans:2,exp:"「Companies enrolling 5 or more employees receive a 20% group discount」が根拠。"},
+     {q:"What is NOT mentioned as a program feature?",opts:["One-on-one coaching","Monthly performance reports","Free textbooks","Flexible scheduling"],ans:2,exp:"テキスト無料提供の記載はない。flexible scheduling・monthly reports・coaching はすべて記載されている。"},
+   ]},
+  {title:"Questions 196–198",type:"Eメール",
+   passage:`<h3>Email</h3><p><strong>From:</strong> support@cloudwave.io<br><strong>To:</strong> Thomas Reed &lt;t.reed@freshdesign.com&gt;<br><strong>Subject:</strong> Your Subscription Renewal — Action Required</p><p>Dear Mr. Reed,</p><p>This is a reminder that your CloudWave Professional subscription is due for renewal on <strong>June 30</strong>. Your current plan includes unlimited cloud storage, priority customer support, and access to all premium features.</p><p>To ensure uninterrupted service, please update your billing information by <strong>June 25</strong>. You can do so by logging into your account at cloudwave.io and navigating to the Billing section.</p><p>If you choose not to renew, your account will be downgraded to the free tier, and stored files exceeding the 5 GB limit will be removed after 30 days.</p><p>If you have any questions, our support team is available 24/7 at support@cloudwave.io.</p><p>Best regards,<br>CloudWave Support Team</p>`,
+   qs:[
+     {q:"Why was the email sent?",opts:["To inform the customer of a service outage","To announce a new feature update","To remind the customer to renew his subscription","To confirm a payment has been received"],ans:2,exp:"「your...subscription is due for renewal」「this is a reminder」から、更新のリマインダーが目的。"},
+     {q:"What must Mr. Reed do by June 25?",opts:["Download his stored files","Cancel his subscription","Upgrade to a higher plan","Update his billing information"],ans:3,exp:"「please update your billing information by June 25」が根拠。"},
+     {q:"What will happen if Mr. Reed does not renew?",opts:["His account will be permanently deleted","He will receive a refund","He will be downgraded to the free tier","He will lose priority customer support immediately"],ans:2,exp:"「account will be downgraded to the free tier」が根拠。"},
+   ]},
+  {title:"Questions 199–201",type:"記事",
+   passage:`<h3>Article</h3><h4>Flex Work Trend Grows Among Mid-Sized Firms</h4><p>A recent survey by the Institute of Workplace Research found that 73% of mid-sized companies in the country now offer some form of flexible work arrangement, up from 52% three years ago. The increase reflects growing employee demand for work-life balance following shifts in workplace culture.</p><p>Among companies surveyed, the most common arrangement was a hybrid model, in which employees work both remotely and in the office. Fully remote positions accounted for 18% of the flexible options available.</p><p>HR consultant Diane Morse noted that companies offering flexible arrangements reported lower turnover rates and higher employee satisfaction. "Flexibility is no longer a perk — it's an expectation," she said.</p><p>However, some business leaders expressed concern about maintaining team cohesion in remote settings, with 41% saying that communication had become more challenging since adopting flexible policies.</p>`,
+   qs:[
+     {q:"What does the survey indicate about flexible work arrangements?",opts:["They are declining in popularity among large companies","They are now more common than three years ago","They are mainly available in the technology sector","They have no effect on employee satisfaction"],ans:1,exp:"「73%...up from 52% three years ago」から増加傾向が根拠。"},
+     {q:"According to Diane Morse, what is one benefit of flexible arrangements?",opts:["Reduced office operating costs","Higher productivity in all roles","Lower employee turnover rates","Greater opportunities for promotion"],ans:2,exp:"「companies offering flexible arrangements reported lower turnover rates」が根拠。"},
+     {q:"What concern do some business leaders have?",opts:["Increased costs of remote equipment","Difficulty maintaining team communication","Employees working fewer hours","Lack of suitable candidates for remote roles"],ans:1,exp:"「communication had become more challenging since adopting flexible policies」が根拠。"},
+   ]},
+  {title:"Questions 202–204",type:"求人広告",
+   passage:`<h3>Job Advertisement</h3><h4>Office Manager — Meridian Financial Group</h4><p>Meridian Financial Group is looking for a highly organized and proactive <strong>Office Manager</strong> to oversee daily administrative operations at our downtown Vancouver office.</p><p><strong>Key Responsibilities:</strong></p><ul><li>Managing office supplies, vendor contracts, and facility maintenance</li><li>Coordinating meetings, travel arrangements, and company events</li><li>Supporting senior management with scheduling and correspondence</li></ul><p><strong>Requirements:</strong></p><ul><li>Minimum 3 years of office management or administrative experience</li><li>Proficiency in Microsoft Office Suite and project management tools</li><li>Strong interpersonal and problem-solving skills</li></ul><p><strong>Salary:</strong> CAD $55,000–$65,000 annually, depending on experience</p><p>Applications must be submitted through our careers portal at <strong>meridiancareers.ca</strong> by <strong>July 20</strong>. Shortlisted candidates will be contacted within two weeks of the application deadline.</p>`,
+   qs:[
+     {q:"What is one of the listed responsibilities for this position?",opts:["Preparing financial statements","Conducting performance evaluations","Coordinating meetings and travel arrangements","Managing a team of 10 or more employees"],ans:2,exp:"「Coordinating meetings, travel arrangements, and company events」が根拠。"},
+     {q:"How should applicants submit their applications?",opts:["By emailing a resume directly","By mailing a cover letter","Through the careers portal online","By visiting the office in person"],ans:2,exp:"「Applications must be submitted through our careers portal at meridiancareers.ca」が根拠。"},
+     {q:"What is indicated about shortlisted candidates?",opts:["They will receive a starting bonus","They will be contacted within two weeks of the deadline","They will be required to take a skills test immediately","They will need to provide references on the application form"],ans:1,exp:"「Shortlisted candidates will be contacted within two weeks of the application deadline」が根拠。"},
    ]},
 ];
 
@@ -1245,59 +1387,59 @@ const P5_EXP=[
   {full_ja:"デザインチームは締め切り前に創造的な解決策を思いつく必要がある。",tip:"come up with（思いつく）= devise/develop/produce。4語句の句動詞は覚える価値大。",mem:"come up with an idea/solution/plan（アイデア・解決策・計画を思いつく）は頻出コロケーション。"},
 ];
 const P6_EXP={
-  "0-0":{full_ja:"すべてのフルタイム従業員は1年あたり15日間の有給休暇を受ける権利があります。",tip:"be entitled to（〜を受ける権利がある）はTOEIC頻出の受動態表現。",mem:"entitle A to B → be entitled to B（Bを受ける権利がある）。"},
-  "0-1":{full_ja:"未使用の休暇日を繰り越したい従業員は12月15日までに正式なリクエストを提出しなければなりません。",tip:"formally（正式に）と formerly（以前に）はスペルが似た超頻出混同ペア。",mem:"formal（公式）→ formally（正式に）。formerly（以前は）はformer（前の）の副詞形。"},
-  "0-2":{full_ja:"この日以降に提出されたリクエストは考慮されません。",tip:"will not be considered（考慮されない）は受動態。'consider'はTOEIC頻出動詞。",mem:"consider + 名詞/動名詞。be considered（考慮される）の受動態はビジネス文書に頻出。"},
-  "0-3":{full_ja:"休暇申請の承認はあなたの直属の上司の裁量に委ねられています。",tip:"at the discretion of（〜の裁量で）は固定表現。前置詞 at は慣用句として覚える。",mem:"at one's discretion（裁量で）はビジネス・法律文書の定番表現。"},
-  "1-0":{full_ja:"四半期業績レビューは5月3日午前9時に本会議室で行われます。",tip:"take place（開催される）= be held/occur。主語はイベント・会議であることが多い。",mem:"take place = be held（開催される）。'The event takes place'は定番表現。"},
-  "1-1":{full_ja:"すべての部門長は10分のプレゼンテーションを準備することが求められています。",tip:"are required to do（〜することが求められる）はTOEIC頻出の受動態表現。",mem:"be required to = be expected to = be asked to（〜することを求められる）はほぼ同義。"},
-  "1-2":{full_ja:"十分な時間を編集と技術的な確認のために確保できます。",tip:"前置詞 for の後は名詞か動名詞。edit → editing（動名詞/名詞）が正解。",mem:"for + 動名詞(-ing)で目的・用途を表す。'for editing/reviewing/processing'は頻出。"},
-  "1-3":{full_ja:"期限までに資料を提出しないと、プレゼンが延期されることになる可能性があります。",tip:"result in（〜という結果になる）vs result from（〜が原因で起きる）の方向に注意。",mem:"result in（結果として〜になる）↔ result from（〜が原因で起きる）。"},
-  "2-0":{full_ja:"Greenfield Solutionsはシニアマーケティングアナリストのポジションの応募を受け付けています。",tip:"is accepting applications（申し込みを受け付けている）は現在進行形。採用広告の定番表現。",mem:"accept applications（申し込みを受け付ける）は求人広告で必ず登場する表現。"},
-  "2-1":{full_ja:"理想的な候補者はデジタルマーケティングで5年以上の経験と成功キャンペーンの実績を持ちます。",tip:"a proven track record of（〜における実績）はビジネス/採用文書の必須フレーズ。",mem:"track record（実績）。'have a strong track record in'（〜での強い実績がある）も覚える。"},
-  "2-2":{full_ja:"さらに、応募者は強力な分析スキルとデータ可視化ツールの習熟度が必要です。",tip:"Additionally（さらに）は条件・情報を追加する接続詞副詞。Moreover/Furthermore と同義。",mem:"Additionally = Moreover = Furthermore（さらに）↔ However（しかし）は逆接。"},
-  "2-3":{full_ja:"主な責務には戦略の策定、SNSの管理、市場トレンドの分析が含まれます。",tip:"and で並列された動名詞（developing, managing, analyzing）の並列構造に注意。",mem:"並列構造では品詞を統一する。'developing, managing, and analyzing'はすべて動名詞。"},
-  "3-0":{full_ja:"改装期間中、特定のエリアは一時的にしかアクセスできなくなります。",tip:"形容詞 accessible を修飾するのは副詞 temporarily（一時的に）。",mem:"temporary（一時的な）→ temporarily（一時的に）。'temporarily closed/unavailable'は頻出。"},
-  "3-1":{full_ja:"3・4階の従業員は1階の仮設ワークスペースに移動させられます。",tip:"will be relocated to（〜に移動させられる）は未来の受動態。",mem:"relocate to（〜に移転する）。'be relocated'は人や企業の移転に使う頻出表現。"},
-  "3-2":{full_ja:"改装は6週間以内に完了すると予定されています。",tip:"is expected to（〜すると予想・予定される）はTOEIC最頻出の表現のひとつ。",mem:"be expected to / be scheduled to / be planned to（〜の予定）はすべてTOEIC頻出。"},
-  "3-3":{full_ja:"ご質問やご不明点があれば、担当のコーディネーターにお問い合わせください。",tip:"direct A to B（AをBに向ける・案内する）。please direct が命令形で使われる。",mem:"direct = refer = send（向ける・案内する）。'direct your questions to'は定番表現。"},
-  "4-0":{full_ja:"新しいロイヤルティリワードプログラム、BrightRewardsのローンチを発表できることを嬉しく思います。",tip:"be thrilled to do の to は不定詞 → 動詞原形。be pleased/excited/delighted to do も同形。",mem:"thrilled/pleased/delighted/happy to do（〜できて嬉しい）はビジネスレターの書き出し定番。"},
-  "4-1":{full_ja:"500ポイントを貯めると、それを500円クーポンと交換できます。",tip:"have accumulated（現在完了形）で「ポイントが蓄積された」完了状態を表す。",mem:"accumulate points（ポイントを積み上げる）はポイント制度の定番表現。"},
-  "4-2":{full_ja:"獲得できるクーポン数に上限はありません。",tip:"there is no limit on（〜に制限はない）は名詞 limit を使う名詞構文。",mem:"limit on/to（〜の上限・制限）。'no limit on the number of'（数に上限なし）は頻出。"},
-  "4-3":{full_ja:"1回の取引で10,000円以上お買い上げの会員は自動的にゴールドティアにアップグレードされます。",tip:"will be upgraded to（〜にアップグレードされる）は未来の受動態。",mem:"upgrade to（〜にアップグレードする）。'be upgraded to a higher tier/level'は定番。"},
-  "5-0":{full_ja:"ご不便をおかけしたことを心よりお詫び申し上げます。",tip:"any inconvenience（いかなるご不便も）は不可算名詞として使う。",mem:"apologize for any inconvenience（ご不便をお詫びする）はビジネスレターの定番表現。"},
-  "5-1":{full_ja:"お客様の交換品のリクエストが承認されましたことをお知らせします。",tip:"has been approved（承認された）は現在完了の受動態。顧客対応文書で超頻出。",mem:"has been approved/confirmed/processed（承認・確認・処理された）は定型表現。"},
-  "5-2":{full_ja:"欠陥品を同封の送料無料ラベルを使って当社倉庫に返送していただきますようお願いします。",tip:"ask that S + 動詞原形（仮定法現在）。that節内は助動詞なしの原形動詞を使う。",mem:"ask/request/require/recommend that S + 動詞原形（仮定法現在）はTOEICで出題される。"},
-  "5-3":{full_ja:"ご質問があれば、0120-555-1234のカスタマーサポートチームにお気軽にご連絡ください。",tip:"do not hesitate to do（〜することをためらわないでください）の後は動詞原形。",mem:"do not hesitate to contact us（ご遠慮なくご連絡ください）はビジネス文書の締めの定番。"},
-  "6-0":{full_ja:"すべての従業員は6月30日までに年次コンプライアンス研修を修了することが求められています。",tip:"are required to（〜することが求められる）は義務を示す重要表現。",mem:"be required to = must = be obligated to（〜しなければならない）。公文書・規則で頻出。"},
-  "6-1":{full_ja:"この期限内に研修を修了しない従業員は懲戒処分を受ける可能性があります。",tip:"関係詞節 who fail to（〜しない）で先行詞 Employees を修飾。",mem:"employees who fail to do（〜しない従業員）。関係詞節で人物を限定する頻出構文。"},
-  "6-2":{full_ja:"「Annual Compliance 2026」コースに登録するには、会社の学習管理システムにログインしてください。",tip:"and で並列した命令形（log in and enroll）では動詞原形のみを使う。",mem:"enroll in（〜に登録する）= register for = sign up for。'enroll in a course'は頻出。"},
-  "6-3":{full_ja:"登録後は、ご都合のよい時に30日以内にすべてのモジュールを完了できます。",tip:"at your convenience（ご都合のよいときに）は名詞 convenience を使う慣用表現。",mem:"at your convenience = whenever it suits you（都合のよいときに）はビジネスの丁寧表現。"},
+  "0-0":{full_ja:"すべてのフルタイム従業員は1年あたり15日間の有給休暇を受ける権利があります。",tip:"be entitled to（〜を受ける権利がある）はTOEIC頻出の受動態表現。",mem:"entitle A to B → be entitled to B（Bを受ける権利がある）。",wrong:{1:"allowed は許可されているという意味だが、福利厚生として権利が付与されるニュアンスがなく不自然",2:"be provided with〜の形が正しく、provided to は不自然な語順",3:"be granted + 名詞の形で使い、granted to のみでは文法的に不完全"}},
+  "0-1":{full_ja:"未使用の休暇日を繰り越したい従業員は12月15日までに正式なリクエストを提出しなければなりません。",tip:"formally（正式に）と formerly（以前に）はスペルが似た超頻出混同ペア。",mem:"formal（公式）→ formally（正式に）。formerly（以前は）はformer（前の）の副詞形。",wrong:{1:"formerly は「以前に・かつて」という意味で時間的な過去を示し、提出方法の修飾には使えない",2:"fortunately は「幸運にも」という意味で文意に合わない",3:"forcefully は「強引に・力強く」という意味で提出の方法として不自然"}},
+  "0-2":{full_ja:"この日以降に提出されたリクエストは考慮されません。",tip:"will not be considered（考慮されない）は受動態。'consider'はTOEIC頻出動詞。",mem:"consider + 名詞/動名詞。be considered（考慮される）の受動態はビジネス文書に頻出。",wrong:{1:"considering は現在分詞・前置詞で「〜を考慮すると」という意味になり受動態に使えない",2:"considerate は「思いやりのある」という形容詞で受動態の補語には不適切",3:"considerable は「かなりの」という形容詞で受動態の文脈で意味をなさない"}},
+  "0-3":{full_ja:"休暇申請の承認はあなたの直属の上司の裁量に委ねられています。",tip:"at the discretion of（〜の裁量で）は固定表現。前置詞 at は慣用句として覚える。",mem:"at one's discretion（裁量で）はビジネス・法律文書の定番表現。",wrong:{1:"on the discretion of という表現は英語として存在しない慣用句の誤用",2:"in the discretion of は非標準的な表現でTOEICでは不正解",3:"by the discretion of という表現は一般的ではなくat が正しい前置詞"}},
+  "1-0":{full_ja:"四半期業績レビューは5月3日午前9時に本会議室で行われます。",tip:"take place（開催される）= be held/occur。主語はイベント・会議であることが多い。",mem:"take place = be held（開催される）。'The event takes place'は定番表現。",wrong:{1:"take part は「参加する」という意味で主語に人が来るため、会議自体を主語にできない",2:"take over は「引き継ぐ・乗っ取る」という意味でイベントの開催には使えない",3:"take off は「離陸する・脱ぐ」という意味で会議の文脈に合わない"}},
+  "1-1":{full_ja:"すべての部門長は10分のプレゼンテーションを準備することが求められています。",tip:"are required to do（〜することが求められる）はTOEIC頻出の受動態表現。",mem:"be required to = be expected to = be asked to（〜することを求められる）はほぼ同義。",wrong:{1:"requesting は現在分詞で、are requesting to の形は「〜するよう要求している」となり受動態にならない",2:"requirement は名詞なのでbe動詞の後に置いても to prepare と不定詞につながらない",3:"require は動詞原形で are require to は文法的に誤り（三単現 requires か助動詞が必要）"}},
+  "1-2":{full_ja:"十分な時間を編集と技術的な確認のために確保できます。",tip:"前置詞 for の後は名詞か動名詞。edit → editing（動名詞/名詞）が正解。",mem:"for + 動名詞(-ing)で目的・用途を表す。'for editing/reviewing/processing'は頻出。",wrong:{0:"edit は動詞の原形で、前置詞 for の直後には置けない",1:"editor は「編集者」という人を表す名詞で、行為・プロセスを示す文脈に合わない",2:"editorial は「社説・編集に関する」という意味で時間的な目的を表すには不自然"}},
+  "1-3":{full_ja:"期限までに資料を提出しないと、プレゼンが延期されることになる可能性があります。",tip:"result in（〜という結果になる）vs result from（〜が原因で起きる）の方向に注意。",mem:"result in（結果として〜になる）↔ result from（〜が原因で起きる）。",wrong:{1:"results は三単現の動詞形で、may の後は動詞原形が必要なため不可",2:"resulting は現在分詞で、may resulting in は文法的に誤り（may result が正しい）",3:"resulted は過去形・過去分詞で、助動詞 may の後に過去形は使えない"}},
+  "2-0":{full_ja:"Greenfield Solutionsはシニアマーケティングアナリストのポジションの応募を受け付けています。",tip:"is accepting applications（申し込みを受け付けている）は現在進行形。採用広告の定番表現。",mem:"accept applications（申し込みを受け付ける）は求人広告で必ず登場する表現。",wrong:{1:"accepted は過去形・過去分詞で、現在進行中の受付を表すには時制が合わない",2:"accept は動詞原形で、is accept applications は文法的に誤り（is accepting が正しい）",3:"acceptance は名詞で、is acceptance applications は文法的に成立しない"}},
+  "2-1":{full_ja:"理想的な候補者はデジタルマーケティングで5年以上の経験と成功キャンペーンの実績を持ちます。",tip:"a proven track record of（〜における実績）はビジネス/採用文書の必須フレーズ。",mem:"track record（実績）。'have a strong track record in'（〜での強い実績がある）も覚える。",wrong:{1:"track down は「追跡する・探し出す」という動詞句で名詞として a proven の後に置けない",2:"keep track は「把握する」という動詞句で a proven の後には不適切",3:"fast track は「出世コース・優先ルート」という意味で実績を表す表現として文意に合わない"}},
+  "2-2":{full_ja:"さらに、応募者は強力な分析スキルとデータ可視化ツールの習熟度が必要です。",tip:"Additionally（さらに）は条件・情報を追加する接続詞副詞。Moreover/Furthermore と同義。",mem:"Additionally = Moreover = Furthermore（さらに）↔ However（しかし）は逆接。",wrong:{0:"However は逆接（しかし）を示し、前の条件と対立する内容を導くため追加条件には不適",1:"Therefore は「したがって」という因果関係を示し、新たな条件の追加には使えない",3:"Although は「〜であるにもかかわらず」という譲歩節を導く接続詞で副詞として文頭に使えない"}},
+  "2-3":{full_ja:"主な責務には戦略の策定、SNSの管理、市場トレンドの分析が含まれます。",tip:"and で並列された動名詞（developing, managing, analyzing）の並列構造に注意。",mem:"並列構造では品詞を統一する。'developing, managing, and analyzing'はすべて動名詞。",wrong:{0:"analyze は動詞原形で、managing と並列させるには動名詞 analyzing にする必要がある",2:"analyzed は過去形・過去分詞で動名詞の並列構造に入れることができない",3:"analysis は名詞で、動名詞 managing/developing と品詞が異なり並列構造が崩れる"}},
+  "3-0":{full_ja:"改装期間中、特定のエリアは一時的にしかアクセスできなくなります。",tip:"形容詞 accessible を修飾するのは副詞 temporarily（一時的に）。",mem:"temporary（一時的な）→ temporarily（一時的に）。'temporarily closed/unavailable'は頻出。",wrong:{1:"temporary は形容詞で、形容詞 accessible を修飾することはできない（副詞が必要）",2:"temporalize は存在しない造語で不正解",3:"tempo は音楽用語の「速さ」という名詞で形容詞の修飾語にはなれない"}},
+  "3-1":{full_ja:"3・4階の従業員は1階の仮設ワークスペースに移動させられます。",tip:"will be relocated to（〜に移動させられる）は未来の受動態。",mem:"relocate to（〜に移転する）。'be relocated'は人や企業の移転に使う頻出表現。",wrong:{0:"moved は過去形・過去分詞で、will be moved to も可能だが選択肢には moved のみ（原形 move が必要）",1:"moving は現在分詞で、will be moving to は能動の進行形になり受動態にならない",2:"relocate は動詞原形で、will be relocate to は文法的に誤り（過去分詞 relocated が必要）"}},
+  "3-2":{full_ja:"改装は6週間以内に完了すると予定されています。",tip:"is expected to（〜すると予想・予定される）はTOEIC最頻出の表現のひとつ。",mem:"be expected to / be scheduled to / be planned to（〜の予定）はすべてTOEIC頻出。",wrong:{1:"expecting は現在分詞・形容詞で、is expecting to は能動文になり「改装が期待している」という不自然な意味になる",2:"expectation は名詞で be動詞の後に置いても to be completed と不定詞につながらない",3:"expects は三単現の動詞形で、The renovation expects to は「改装が期待する」という不自然な能動文"}},
+  "3-3":{full_ja:"ご質問やご不明点があれば、担当のコーディネーターにお問い合わせください。",tip:"direct A to B（AをBに向ける・案内する）。please direct が命令形で使われる。",mem:"direct = refer = send（向ける・案内する）。'direct your questions to'は定番表現。",wrong:{1:"directed は過去形・過去分詞で、please の後の命令形には動詞原形が必要",2:"directing は現在分詞で、please directing them to は文法的に誤り",3:"direction は名詞で、please direction them to は動詞がなく文として成立しない"}},
+  "4-0":{full_ja:"新しいロイヤルティリワードプログラム、BrightRewardsのローンチを発表できることを嬉しく思います。",tip:"be thrilled to do の to は不定詞 → 動詞原形。be pleased/excited/delighted to do も同形。",mem:"thrilled/pleased/delighted/happy to do（〜できて嬉しい）はビジネスレターの書き出し定番。",wrong:{1:"announcement は名詞で、be thrilled to の後には動詞原形が必要",2:"announcing は動名詞・現在分詞で、to announcing は to + 動名詞の形となり不定詞として誤り",3:"announced は過去形・過去分詞で、be thrilled to announced は文法的に成立しない"}},
+  "4-1":{full_ja:"500ポイントを貯めると、それを500円クーポンと交換できます。",tip:"have accumulated（現在完了形）で「ポイントが蓄積された」完了状態を表す。",mem:"accumulate points（ポイントを積み上げる）はポイント制度の定番表現。",wrong:{1:"accumulating は現在分詞で、have accumulating は現在完了形として文法的に誤り",2:"accumulate は動詞原形で、have accumulate は現在完了の形として誤り（have + 過去分詞が必要）",3:"accumulation は名詞で、have accumulation はhave + 名詞となり現在完了にならない"}},
+  "4-2":{full_ja:"獲得できるクーポン数に上限はありません。",tip:"there is no limit on（〜に制限はない）は名詞 limit を使う名詞構文。",mem:"limit on/to（〜の上限・制限）。'no limit on the number of'（数に上限なし）は頻出。",wrong:{1:"limited は形容詞・過去分詞で、there is no limited on は文法的に誤り（名詞が必要）",2:"limitation は「制限・限界」という名詞だが、there is no limitation on より there is no limit on の方が自然",3:"limiting は現在分詞・形容詞で、there is no limiting on は文法的に誤り"}},
+  "4-3":{full_ja:"1回の取引で10,000円以上お買い上げの会員は自動的にゴールドティアにアップグレードされます。",tip:"will be upgraded to（〜にアップグレードされる）は未来の受動態。",mem:"upgrade to（〜にアップグレードする）。'be upgraded to a higher tier/level'は定番。",wrong:{1:"upgrade は動詞原形で、will be upgrade to は受動態として誤り（過去分詞 upgraded が必要）",2:"upgrading は現在分詞で、will be upgrading to は能動の進行形になり受動態にならない",3:"upgrde はスペルミスで存在しない単語"}},
+  "5-0":{full_ja:"ご不便をおかけしたことを心よりお詫び申し上げます。",tip:"any inconvenience（いかなるご不便も）は不可算名詞として使う。",mem:"apologize for any inconvenience（ご不便をお詫びする）はビジネスレターの定番表現。",wrong:{1:"inconvenient は形容詞で、for any の後には名詞が必要",2:"inconveniently は副詞で、for any inconveniently は文法的に誤り",3:"inconveniences は複数形で、any + 不可算名詞のパターンでは単数形 inconvenience が自然"}},
+  "5-1":{full_ja:"お客様の交換品のリクエストが承認されましたことをお知らせします。",tip:"has been approved（承認された）は現在完了の受動態。顧客対応文書で超頻出。",mem:"has been approved/confirmed/processed（承認・確認・処理された）は定型表現。",wrong:{1:"approving は現在分詞で、has been approving は現在完了進行形の能動態となり意味が変わる",2:"approval は名詞で、has been approval は文法的に成立しない",3:"approve は動詞原形で、has been approve は現在完了受動態として誤り（過去分詞が必要）"}},
+  "5-2":{full_ja:"欠陥品を同封の送料無料ラベルを使って当社倉庫に返送していただきますようお願いします。",tip:"ask that S + 動詞原形（仮定法現在）。that節内は助動詞なしの原形動詞を使う。",mem:"ask/request/require/recommend that S + 動詞原形（仮定法現在）はTOEICで出題される。",wrong:{1:"returns は三単現で、仮定法現在では原形動詞を使うため不可",2:"returned は過去形で、ask that節内は現在形原形が正しい",3:"returning は動名詞・現在分詞で、ask that you returning は文法的に誤り"}},
+  "5-3":{full_ja:"ご質問があれば、0120-555-1234のカスタマーサポートチームにお気軽にご連絡ください。",tip:"do not hesitate to do（〜することをためらわないでください）の後は動詞原形。",mem:"do not hesitate to contact us（ご遠慮なくご連絡ください）はビジネス文書の締めの定番。",wrong:{1:"contacts は三単現で、to の後（不定詞）には動詞原形が必要",2:"contacted は過去形・過去分詞で、to contacted は文法的に誤り",3:"contacting は動名詞・現在分詞で、to contacting は to + 動名詞の形となり不定詞として誤り"}},
+  "6-0":{full_ja:"すべての従業員は6月30日までに年次コンプライアンス研修を修了することが求められています。",tip:"are required to（〜することが求められる）は義務を示す重要表現。",mem:"be required to = must = be obligated to（〜しなければならない）。公文書・規則で頻出。",wrong:{1:"requiring は現在分詞で、are requiring to は能動進行形となり義務の受動態にならない",2:"requirement は名詞で、are requirement to は文法的に成立しない",3:"require は動詞原形で、are require to は文法的に誤り（三単現 requires か受動態 required が必要）"}},
+  "6-1":{full_ja:"この期限内に研修を修了しない従業員は懲戒処分を受ける可能性があります。",tip:"関係詞節 who fail to（〜しない）で先行詞 Employees を修飾。",mem:"employees who fail to do（〜しない従業員）。関係詞節で人物を限定する頻出構文。",wrong:{1:"who failing to は文法的に誤り（関係代名詞節では定型動詞が必要で分詞は使えない）",2:"whose fail to は whose が所有格なので「〜の失敗」を示す形になり文意が変わる",3:"whom fail to は whom は目的格で主語の位置には使えず文法的に誤り"}},
+  "6-2":{full_ja:"「Annual Compliance 2026」コースに登録するには、会社の学習管理システムにログインしてください。",tip:"and で並列した命令形（log in and enroll）では動詞原形のみを使う。",mem:"enroll in（〜に登録する）= register for = sign up for。'enroll in a course'は頻出。",wrong:{1:"enrolled は過去形・過去分詞で、命令形の並列には動詞原形が必要",2:"enrolling は現在分詞で、and enrolling for は命令形の並列として文法的に誤り",3:"enrollment は名詞で、and enrollment for はand の後に動詞がなく命令文が成立しない"}},
+  "6-3":{full_ja:"登録後は、ご都合のよい時に30日以内にすべてのモジュールを完了できます。",tip:"at your convenience（ご都合のよいときに）は名詞 convenience を使う慣用表現。",mem:"at your convenience = whenever it suits you（都合のよいときに）はビジネスの丁寧表現。",wrong:{1:"convenient は形容詞で、at your convenient は文法的に誤り（前置詞の後には名詞が必要）",2:"conveniently は副詞で、at your conveniently は前置詞の後に副詞を置く誤りになる",3:"convince は「説得する」という動詞で、at your convince は意味をなさない"}},
 };
 const P7_EXP={
-  "0-0":{tip:"メールの目的問題は件名（Subject）や第1段落冒頭に注目。'This is to inform/remind/announce'などを探す。",mem:"目的問題は選択肢を先に読み、本文でキーワードを探すスキャニングが有効。"},
-  "0-1":{tip:"行動指示問題は'please + 動詞'または'ensure/make sure + that節'を探す。",mem:"'please ensure they are addressed'（対処するようにしてください）が指示の核心部分。"},
-  "0-2":{tip:"連絡先問題は本文の'contact/reach/call + 人/部署'の周辺とメール/電話番号に注目。",mem:"連絡先・担当者問題は文書の末尾近くに答えが来ることが多い。"},
-  "1-0":{tip:"what is indicated/true問題は本文事実をそのまま言い換えた選択肢を選ぶ。誇張・未記載は不正解。",mem:"paraphrase（言い換え）を意識する。'up to 800'と'10-50'→ 大小両対応が根拠。"},
-  "1-1":{tip:"条件・要件問題は'must/need to/required/in order to'の周辺と'provided/if'節に注目。",mem:"特典・割引の条件は文書後半（Special rates/Discount部分）に記載されることが多い。"},
-  "1-2":{tip:"資格問題（who may receive）は'eligible/qualify/available to/for'周辺を探す。",mem:"割引・特典の対象者は'Nonprofit/member/registered'などの限定語の後に明記される。"},
-  "2-0":{tip:"NOT問題は各選択肢を本文と丁寧に照合する。明記されていない情報は正解にならない。",mem:"'Hot water will be unavailable between 9 A.M. and 1 P.M.'が正解の根拠。時間帯に注意。"},
-  "2-1":{tip:"how to問題は手順・方法が書かれた部分（'please contact/visit'）を探す。",mem:"'at least two days in advance'（少なくとも2日前に）という条件の確認も重要。"},
-  "2-2":{tip:"what is stated問題は選択肢の情報を本文で確認する。言い換えに注意。",mem:"'Cold water service will not be affected'が根拠。'not affected'='remains unchanged'。"},
-  "3-0":{tip:"会社・製品の説明問題は冒頭段落に集中。第1文・第2文が答えになることが多い。",mem:"'designs biodegradable packaging from agricultural waste'が根拠。paraphraseに注意。"},
-  "3-1":{tip:"理由・原因問題はダイレクトクォート（引用文）の前後か、'because/due to'周辺に注目。",mem:"CEO発言の前後に'increasing demand'という根拠がある。引用文は答えに直結することが多い。"},
-  "3-2":{tip:"使途・計画問題は'plan to/intend to/aim to/will use A to do'を探す。",mem:"'plans to use to expand manufacturing capacity and enter three new international markets'が根拠。"},
-  "4-0":{tip:"数字・期間の問題は本文の数値を正確に読む。間違えやすい数字（30日・90日）が複数登場する。",mem:"Standard Returns（通常返品）= 30日。Defective Items（欠陥品）= 90日。混同しない。"},
-  "4-1":{tip:"手順問題は'before/prior to'という条件の前の動作と指示文（'please + 動詞'）に注目。",mem:"'contact customer support before returning any defective item'が根拠。beforeに注目。"},
-  "4-2":{tip:"not eligible問題は'cannot/may not/are not eligible'周辺とNon-returnable Itemsセクションを確認。",mem:"'Software licenses…cannot be returned or exchanged under any circumstances'が根拠。"},
-  "5-0":{tip:"ダブルパッセージはまずEメールを読み、必要に応じてスケジュール・表と照合する。",mem:"'confirm your enrollment in Module 2'がEメールの直接の根拠。"},
-  "5-1":{tip:"deadline問題は'by/no later than/before'の後の日付に注目。",mem:"'All reading must be completed by September 19'が根拠。日付の混同に注意。"},
-  "5-2":{tip:"what to bring問題は指示文（'please bring/kindly bring'）の直後を確認。",mem:"'bring a printed confirmation email and a valid employee ID'が根拠文。andで2つ。"},
-  "5-3":{tip:"ダブルパッセージでは両方の文書を照合する問題が出る。スケジュール表を丁寧に読む。",mem:"表の'Team Dynamics'の行の'Location'列を確認 → Room B。"},
-  "6-0":{tip:"数字問題は本文中の具体的な数値を正確に確認する。複数の数字が出る場合は特に注意。",mem:"記事の'an upgrade of all 220 guest rooms'が根拠。400（conference center）と混同しない。"},
-  "6-1":{tip:"stated goal問題は企業の目標・方針リスト（'three priorities'など）が記載された部分を探す。",mem:"'three priorities: modernizing…, improving energy efficiency, and expanding'のリストを確認。"},
-  "6-2":{tip:"what did X praise問題はレビューの肯定表現（'impressed by/outstanding/excellent'）に注目。",mem:"'rooms are sleek and modern, conference facilities were outstanding'が称賛部分の根拠。"},
-  "6-3":{tip:"complaint問題はレビューの'however/but/my only complaint'の後に問題点が記載される。",mem:"'My only complaint is that…I had to wait nearly 45 minutes for a table'が根拠。"},
+  "0-0":{full_ja:"なぜこのメールは送られましたか？",tip:"メールの目的問題は件名（Subject）や第1段落冒頭に注目。'This is to inform/remind/announce'などを探す。",mem:"目的問題は選択肢を先に読み、本文でキーワードを探すスキャニングが有効。",wrong:{0:"本文に会社の組織再編についての記述はない",2:"緊急連絡先のメールアドレスは既存の情報で、新しいシステムを導入したとは書かれていない",3:"クライアントとの会議を再スケジュールするという内容は本文に含まれていない"}},
+  "0-1":{full_ja:"休日前に従業員は何をするよう求められていますか？",tip:"行動指示問題は'please + 動詞'または'ensure/make sure + that節'を探す。",mem:"'please ensure they are addressed'（対処するようにしてください）が指示の核心部分。",wrong:{0:"休暇申請フォームの提出については本文に記述がない",1:"全員出席の会議については本文に記述がない",3:"新しいポリシーについてクライアントに連絡するとは書かれていない"}},
+  "0-2":{full_ja:"緊急時に誰に連絡するべきですか？",tip:"連絡先問題は本文の'contact/reach/call + 人/部署'の周辺とメール/電話番号に注目。",mem:"連絡先・担当者問題は文書の末尾近くに答えが来ることが多い。",wrong:{0:"Laura Bennett に直接連絡するとは書かれておらず、on-call チームのメールが指定されている",2:"HR部門への連絡については本文に記述がない",3:"クライアントサービスチームへの連絡については本文に記述がない"}},
+  "1-0":{full_ja:"Skyviewカンファレンスセンターについて何が示されていますか？",tip:"what is indicated/true問題は本文事実をそのまま言い換えた選択肢を選ぶ。誇張・未記載は不正解。",mem:"paraphrase（言い換え）を意識する。'up to 800'と'10-50'→ 大小両対応が根拠。",wrong:{0:"本文には「Located in the heart of the city（市内中心部）」とあり、郊外とは書かれていない",2:"本文に「Full-service catering」と明記されており、ケータリングサービスは提供されている",3:"会員制の予約システムについては本文に記述がない"}},
+  "1-1":{full_ja:"特別な平日料金を受けるためにお客様は何をしなければなりませんか？",tip:"条件・要件問題は'must/need to/required/in order to'の周辺と'provided/if'節に注目。",mem:"特典・割引の条件は文書後半（Special rates/Discount部分）に記載されることが多い。",wrong:{1:"会員登録については本文に記述がない",2:"週末の予約については本文に条件として記述されていない",3:"一定金額以上の支出については本文に条件として記述がない"}},
+  "1-2":{full_ja:"誰が割引を受けられる可能性がありますか？",tip:"資格問題（who may receive）は'eligible/qualify/available to/for'周辺を探す。",mem:"割引・特典の対象者は'Nonprofit/member/registered'などの限定語の後に明記される。",wrong:{0:"100名以上の団体予約については本文に割引条件として記述がない",1:"オンライン予約者への割引については本文に記述がない",3:"リピーター向けの割引については本文に記述がない"}},
+  "2-0":{full_ja:"午前9時から午後1時の間、何が利用できなくなりますか？",tip:"NOT問題は各選択肢を本文と丁寧に照合する。明記されていない情報は正解にならない。",mem:"'Hot water will be unavailable between 9 A.M. and 1 P.M.'が正解の根拠。時間帯に注意。",wrong:{0:"「Cold water service will not be affected」と明記されており、冷水は利用可能",1:"階段は工事中も利用するよう指示されており、利用不可とは書かれていない",3:"エレベーターは終日（8:00-16:00）使用不可で、9時-1時に限定されていない"}},
+  "2-1":{full_ja:"大きな荷物の移動について助けが必要な場合、居住者はどうすればいいですか？",tip:"how to問題は手順・方法が書かれた部分（'please contact/visit'）を探す。",mem:"'at least two days in advance'（少なくとも2日前に）という条件の確認も重要。",wrong:{0:"管理オフィスへのメールについては本文に記述がない（内線電話が指定されている）",2:"フロントデスクへの当日来訪については本文に記述がない",3:"メンテナンススタッフへのメモについては本文に記述がない"}},
+  "2-2":{full_ja:"冷水サービスについて何が述べられていますか？",tip:"what is stated問題は選択肢の情報を本文で確認する。言い換えに注意。",mem:"'Cold water service will not be affected'が根拠。'not affected'='remains unchanged'。",wrong:{0:"冷水が終日停止するとは書かれていない。影響を受けないと明記されている",1:"冷水が午前中のみ停止するという記述は本文にない",3:"特定の階に限定されるという記述は本文にない"}},
+  "3-0":{full_ja:"EcoPackage Solutionsは何を製造していますか？",tip:"会社・製品の説明問題は冒頭段落に集中。第1文・第2文が答えになることが多い。",mem:"'designs biodegradable packaging from agricultural waste'が根拠。paraphraseに注意。",wrong:{0:"電子機器のリサイクル装置については本文に記述がない",2:"再利用可能なショッピングバッグについては本文に記述がない",3:"有機食品については本文に記述がない"}},
+  "3-1":{full_ja:"Amanda Torresは会社の成長の理由として何を挙げていますか？",tip:"理由・原因問題はダイレクトクォート（引用文）の前後か、'because/due to'周辺に注目。",mem:"CEO発言の前後に'increasing demand'という根拠がある。引用文は答えに直結することが多い。",wrong:{0:"政府補助金については本文に言及がない",1:"原材料コストの低下については本文に言及がない",3:"新技術の特許については本文に言及がない"}},
+  "3-2":{full_ja:"EcoPackageは最近の資金調達をどのように活用する予定ですか？",tip:"使途・計画問題は'plan to/intend to/aim to/will use A to do'を探す。",mem:"'plans to use to expand manufacturing capacity and enter three new international markets'が根拠。",wrong:{0:"上級幹部の採用については本文に記述がない",1:"競合他社の買収については本文に記述がない",3:"新製品ラインの開発については本文に記述がない"}},
+  "4-0":{full_ja:"通常の返品は何日以内にしなければなりませんか？",tip:"数字・期間の問題は本文の数値を正確に読む。間違えやすい数字（30日・90日）が複数登場する。",mem:"Standard Returns（通常返品）= 30日。Defective Items（欠陥品）= 90日。混同しない。",wrong:{0:"7日間という返品期限は本文に記述がない（7-10 business days は返金処理期間）",1:"14日間という返品期限は本文に記述がない",3:"90日間は欠陥品ポリシーの期限であり、通常返品には適用されない"}},
+  "4-1":{full_ja:"欠陥品を返品する前にお客様は何をしなければなりませんか？",tip:"手順問題は'before/prior to'という条件の前の動作と指示文（'please + 動詞'）に注目。",mem:"'contact customer support before returning any defective item'が根拠。beforeに注目。",wrong:{0:"実店舗への来訪については本文に欠陥品返品の手順として記述がない",2:"オンラインフォームの記入については本文に記述がない",3:"配送ラベルを待つことについては本文に記述がない（自分で連絡してからRMA番号を取得する）"}},
+  "4-2":{full_ja:"ソフトウェアライセンスについて何が示されていますか？",tip:"not eligible問題は'cannot/may not/are not eligible'周辺とNon-returnable Itemsセクションを確認。",mem:"'Software licenses…cannot be returned or exchanged under any circumstances'が根拠。",wrong:{0:"ストアクレジットへの交換については本文に記述がない（返品・交換不可）",1:"欠陥品ポリシーの適用除外としてNon-Returnable Itemsに分類されている",3:"14日以内の返品期限は本文に記述がない（いかなる状況でも返品不可と明記）"}},
+  "5-0":{full_ja:"Yanoさんはどのモジュールに登録しましたか？",tip:"ダブルパッセージはまずEメールを読み、必要に応じてスケジュール・表と照合する。",mem:"'confirm your enrollment in Module 2'がEメールの直接の根拠。",wrong:{0:"Module 1（リーダーシップの基礎）への登録確認は本文にない",2:"Module 3（戦略的意思決定）への言及は本文にない",3:"Module 4（変革管理）への言及は本文にない"}},
+  "5-1":{full_ja:"事前読み物はいつまでに終わらせなければなりませんか？",tip:"deadline問題は'by/no later than/before'の後の日付に注目。",mem:"'All reading must be completed by September 19'が根拠。日付の混同に注意。",wrong:{0:"September 5 はメールの送信日であり、事前読み物の締め切りではない",1:"September 15 は本文に記述がない日付",3:"September 22 は最初のセッションの日付で、読み物の締め切りではない"}},
+  "5-2":{full_ja:"参加者は最初のセッションに何を持参するよう求められていますか？",tip:"what to bring問題は指示文（'please bring/kindly bring'）の直後を確認。",mem:"'bring a printed confirmation email and a valid employee ID'が根拠文。andで2つ。",wrong:{0:"ノートパソコンとヘッドフォンについては本文に持参物として記述がない",2:"完成した課題については本文に持参物として記述がない",3:"参加費の支払いについては本文に記述がない（駐車場は無料と書かれている）"}},
+  "5-3":{full_ja:"スケジュールによると、Team Dynamicsはどこで行われますか？",tip:"ダブルパッセージでは両方の文書を照合する問題が出る。スケジュール表を丁寧に読む。",mem:"表の'Team Dynamics'の行の'Location'列を確認 → Room B。",wrong:{0:"Room A はSeptember 22のCommunication Styles と Active Listening Skillsの会場",2:"Room C は本文のスケジュール表に存在しない",3:"オンライン開催については本文に記述がない"}},
+  "6-0":{full_ja:"Horizon Hotelの客室数は何室ですか？",tip:"数字問題は本文中の具体的な数値を正確に確認する。複数の数字が出る場合は特に注意。",mem:"記事の'an upgrade of all 220 guest rooms'が根拠。400（conference center）と混同しない。",wrong:{0:"100室という数字は本文に記述がない",1:"150室という数字は本文に記述がない",3:"400はカンファレンスセンターの収容人数であり、客室数ではない"}},
+  "6-1":{full_ja:"改装の目標として挙げられていることのひとつは何ですか？",tip:"stated goal問題は企業の目標・方針リスト（'three priorities'など）が記載された部分を探す。",mem:"'three priorities: modernizing…, improving energy efficiency, and expanding'のリストを確認。",wrong:{0:"レストランの座席拡張については改装の3つの優先事項に含まれていない",1:"新しいルームサービスについては本文に言及がない",3:"ロイヤルティプログラムの開始については本文に記述がない"}},
+  "6-2":{full_ja:"James R.はホテルの何を称賛しましたか？",tip:"what did X praise問題はレビューの肯定表現（'impressed by/outstanding/excellent'）に注目。",mem:"'rooms are sleek and modern, conference facilities were outstanding'が称賛部分の根拠。",wrong:{0:"レストランのサービスは席についてからは良かったが、長い待ち時間の不満も述べており純粋な称賛ではない",2:"屋外プールやジムについてレビューに言及はない",3:"フロントデスタッフの親切さについてレビューに言及はない"}},
+  "6-3":{full_ja:"James R.はどのような問題を経験しましたか？",tip:"complaint問題はレビューの'however/but/my only complaint'の後に問題点が記載される。",mem:"'My only complaint is that…I had to wait nearly 45 minutes for a table'が根拠。",wrong:{0:"部屋の準備が遅れていたという記述はレビューにない",1:"Wi-Fiが悪かったという記述はレビューにない（AV equipmentは良かったと書かれている）",3:"会議室のダブルブッキングについてはレビューに記述がない"}},
 };
 
 // ── Rich explanation builders ──
@@ -1312,18 +1454,40 @@ function buildRichExpP5(q,ex){
   </div>`;
 }
 function buildRichExpP6(q,ex){
+  let wrongHtml='';
+  if(ex.wrong){
+    const wrongs=q.opts.map((o,j)=>{
+      if(j===q.ans)return null;
+      const w=ex.wrong[j];
+      return w?`<div style="margin-bottom:4px">❌ (${chr(j)}) <strong>${esc(o)}</strong>：${esc(w)}</div>`:null;
+    }).filter(Boolean).join('');
+    if(wrongs)wrongHtml=`<div class="rich-section"><span class="rich-label">❌ 不正解の理由</span>${wrongs}</div>`;
+  }
   return `<div class="rich-exp">
     <div class="rich-en">正解：${esc(q.opts[q.ans])}</div>
     <div class="rich-ja">${esc(ex.full_ja)}</div>
     <div class="rich-section"><span class="rich-label">📌 文法ポイント</span>${esc(q.exp)}</div>
+    ${wrongHtml}
     <div class="rich-section"><span class="rich-label">⭐ 重要ポイント</span>${esc(ex.tip)}</div>
     <div class="rich-section"><span class="rich-label">💡 覚え方のコツ</span>${esc(ex.mem)}</div>
   </div>`;
 }
 function buildRichExpP7(q,ex){
+  let wrongHtml='';
+  if(ex.wrong){
+    const wrongs=q.opts.map((o,j)=>{
+      if(j===q.ans)return null;
+      const w=ex.wrong[j];
+      return w?`<div style="margin-bottom:4px">❌ (${chr(j)}) <strong>${esc(o)}</strong>：${esc(w)}</div>`:null;
+    }).filter(Boolean).join('');
+    if(wrongs)wrongHtml=`<div class="rich-section"><span class="rich-label">❌ 不正解の理由</span>${wrongs}</div>`;
+  }
+  const jaHtml=ex.full_ja?`<div class="rich-ja">${esc(ex.full_ja)}</div>`:'';
   return `<div class="rich-exp">
     <div class="rich-en">正解：${esc(q.opts[q.ans])}</div>
-    <div class="rich-section"><span class="rich-label">📌 文法ポイント</span>${esc(q.exp)}</div>
+    ${jaHtml}
+    <div class="rich-section"><span class="rich-label">📌 解説</span>${esc(q.exp)}</div>
+    ${wrongHtml}
     <div class="rich-section"><span class="rich-label">⭐ 重要ポイント</span>${esc(ex.tip)}</div>
     <div class="rich-section"><span class="rich-label">💡 覚え方のコツ</span>${esc(ex.mem)}</div>
   </div>`;
@@ -1679,16 +1843,11 @@ function checkInstant(i){
   inp.disabled=true;
   const userAns=inp.value.trim();
   const q=INSTANT[i];
-  const actEl=document.getElementById(`inst-act-${i}`);
-  actEl.innerHTML=`
-    <div style="font-size:.8rem;color:var(--sub);margin-bottom:6px">自己評価してください：</div>
-    <div class="selfeval">
-      <button class="btn-correct" onclick="evalInstant(${i},true)">○ 正解</button>
-      <button class="btn-wrong2" onclick="evalInstant(${i},false)">× 不正解</button>
-    </div>`;
+  const isCorrect=userAns?checkInstantMatch(userAns,q):false;
   const resEl=document.getElementById(`inst-res-${i}`);
   resEl.className='inst-result show checking';
-  resEl.innerHTML=buildAnswerHtml(q,userAns,null);
+  resEl.innerHTML=buildAnswerHtml(q,userAns,isCorrect);
+  evalInstant(i,isCorrect);
 }
 
 function skipInstant(i){
@@ -1740,16 +1899,55 @@ function evalInstant(i,isCorrect){
   showNextBtn('instant');
 }
 
+function wordDiff(userStr,modelStr){
+  const tok=s=>s.replace(/[.,!?'"]/g,'').split(/\s+/).filter(Boolean);
+  const uw=tok(userStr),mw=tok(modelStr);
+  const m=uw.length,n=mw.length;
+  const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++){
+    if(uw[i-1].toLowerCase()===mw[j-1].toLowerCase())dp[i][j]=dp[i-1][j-1]+1;
+    else dp[i][j]=Math.max(dp[i-1][j],dp[i][j-1]);
+  }
+  const ur=[],mr=[];
+  let i=m,j=n;
+  while(i>0||j>0){
+    if(i>0&&j>0&&uw[i-1].toLowerCase()===mw[j-1].toLowerCase()){ur.unshift({w:uw[i-1],ok:true});mr.unshift({w:mw[j-1],ok:true});i--;j--;}
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])){mr.unshift({w:mw[j-1],ok:false});j--;}
+    else{ur.unshift({w:uw[i-1],ok:false});i--;}
+  }
+  const rTok=(toks,bg,col)=>toks.map(t=>t.ok?esc(t.w):`<span style="background:${bg};color:${col};border-radius:3px;padding:0 2px;font-weight:600">${esc(t.w)}</span>`).join(' ');
+  return{userHtml:rTok(ur,'#fee2e2','#dc2626'),modelHtml:rTok(mr,'#dcfce7','#16a34a')};
+}
+
 function buildAnswerHtml(q,userAns,result){
   let html='';
-  if(userAns)html+=`<div style="margin-bottom:8px"><span style="font-size:.76rem;color:var(--sub)">あなたの回答：</span><br><span style="color:var(--text)">${esc(userAns)}</span></div>`;
-  html+=`<div class="model-answer"><strong>模範解答：</strong>${esc(q.en)}</div>`;
+  if(userAns&&result===false){
+    const diff=wordDiff(userAns,q.en);
+    html+=`<div style="margin-bottom:8px"><span style="font-size:.76rem;color:var(--sub)">あなたの回答：</span><br><span style="color:var(--text)">${diff.userHtml}</span></div>`;
+    html+=`<div class="model-answer"><strong>模範解答：</strong>${diff.modelHtml}</div>`;
+  }else{
+    if(userAns)html+=`<div style="margin-bottom:8px"><span style="font-size:.76rem;color:var(--sub)">あなたの回答：</span><br><span style="color:var(--text)">${esc(userAns)}</span></div>`;
+    html+=`<div class="model-answer"><strong>模範解答：</strong>${esc(q.en)}</div>`;
+  }
   if(q.alt)html+=`<div style="font-size:.78rem;color:var(--sub);margin-top:2px">別解：${esc(q.alt)}</div>`;
   html+=`<div class="inst-exp">💡 ${q.exp}</div>`;
   return html;
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// 英作文の自動丸つけ用：正規化（小文字・記号除去・空白正規化）
+function normalizeAns(s){
+  return String(s).toLowerCase().replace(/[.!?,'"]/g,'').replace(/\s+/g,' ').trim();
+}
+function checkInstantMatch(userAns,q){
+  const u=normalizeAns(userAns);
+  if(!u)return false;
+  if(u===normalizeAns(q.en))return true;
+  if(q.alt&&u===normalizeAns(q.alt))return true;
+  if(q.alts){for(const a of q.alts){if(u===normalizeAns(a))return true;}}
+  return false;
+}
 
 // ============================================================
 // ONE-AT-A-TIME NAVIGATION
@@ -2158,6 +2356,26 @@ function getLocalDateKey(){
   return `${y}-${m}-${day}`;
 }
 
+// ── 連続学習日数（ストリーク）計算 ──────────────────────────────
+function showFullApp(part){
+  document.getElementById('tabs-bar').style.display='';
+  document.getElementById('main-content').style.display='';
+  if(part)activateTab(part);
+}
+
+function calcStreak(){
+  const daily=JSON.parse(localStorage.getItem(LS_DAILY)||'{}');
+  let streak=0;
+  let d=getLocalDateKey();
+  if(!(daily[d]&&daily[d].answered>0))d=addDaysLocal(d,-1);
+  while(daily[d]&&daily[d].answered>0){
+    streak++;
+    d=addDaysLocal(d,-1);
+    if(streak>365)break;
+  }
+  return streak;
+}
+
 // ── Phase 10: 忘却曲線ベース復習スケジュール ──────────────────
 // reviewLevel → 次の復習までの日数
 function getReviewIntervalDays(level){
@@ -2355,6 +2573,8 @@ function reviewKeyFromId(id){
 }
 
 function activateTab(part){
+  document.getElementById('main-content').style.display='';
+  document.getElementById('tabs-bar').style.display=part==='daily-ten'?'none':'';
   document.querySelectorAll('.part-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>{
     t.classList.remove('active');
@@ -3245,55 +3465,55 @@ function buildDailyTenQuestions(){
   const result=[];
   function add(id){if(!seen.has(id)){seen.add(id);result.push(id);}}
 
-  // ── 優先1: 忘却曲線復習期限（最大5問、Part横断） ──────────────
-  getDueReviewQuestions(hist).slice(0,5).forEach(([id])=>add(id));
-
-  // ── 残り枠をPart別配分で埋める ────────────────────────────────
-  // 目標配分: p5=4, p6=2, p7=2, instant=2（合計10）
-  // 復習期限で既に埋まった枠を差し引く
-  const quota={p5:4,p6:2,p7:2,instant:2};
-  result.forEach(id=>{const p=partFromId(id);if(p&&quota[p]>0)quota[p]--;});
-
-  // Part別候補リスト: 苦手 > 未回答 > 通常復習（最終回答が古い順）
-  const weakList=getWeakQuestions(hist);
+  const dueIds=new Set(getDueReviewQuestions(hist).map(([id])=>id));
+  const weakIds=new Set(getWeakQuestions(hist).map(([id])=>id));
   const unansweredList=getUnansweredIds(hist);
-  const candidates={};
-  ['p5','p6','p7','instant'].forEach(part=>{
-    const pool=[];
-    weakList.forEach(([id])=>{if(partFromId(id)===part&&!seen.has(id))pool.push(id);});
-    unansweredList.forEach(id=>{if(partFromId(id)===part&&!seen.has(id))pool.push(id);});
-    Object.entries(hist)
-      .filter(([id,r])=>partFromId(id)===part&&!r.graduatedAt&&!seen.has(id)&&!pool.includes(id))
-      .sort((a,b)=>(a[1].lastAnsweredAt||'').localeCompare(b[1].lastAnsweredAt||''))
-      .forEach(([id])=>pool.push(id));
-    candidates[part]=pool;
-  });
 
-  // quota分を各Partから補充
-  ['p5','p6','p7','instant'].forEach(part=>{
-    candidates[part].slice(0,quota[part]).forEach(id=>add(id));
-  });
+  // ── P5（3問）: 復習期限 > 苦手 > 未回答 > 古い順 ──────────────
+  const p5pool=[];
+  dueIds.forEach(id=>{if(id.startsWith('p5-'))p5pool.push(id);});
+  weakIds.forEach(id=>{if(id.startsWith('p5-')&&!p5pool.includes(id))p5pool.push(id);});
+  unansweredList.forEach(id=>{if(id.startsWith('p5-')&&!p5pool.includes(id))p5pool.push(id);});
+  Object.entries(hist).filter(([id,r])=>id.startsWith('p5-')&&!r.graduatedAt&&!p5pool.includes(id))
+    .sort((a,b)=>(a[1].lastAnsweredAt||'').localeCompare(b[1].lastAnsweredAt||''))
+    .forEach(([id])=>p5pool.push(id));
+  p5pool.slice(0,3).forEach(id=>add(id));
 
-  // ── 10問未満の場合: p6→p7→instant→p5 の順でラウンドロビン補充 ──
-  // quota未充足の Part を先に試し、P5 への過剰偏重を防ぐ
-  if(result.length<10){
-    const fallbackOrder=['p6','p7','instant','p5'];
-    let changed=true;
-    while(result.length<10&&changed){
-      changed=false;
-      fallbackOrder.forEach(part=>{
-        if(result.length<10){
-          const next=candidates[part].find(id=>!seen.has(id));
-          if(next!==undefined){add(next);changed=true;}
-        }
-      });
+  // ── P6セット: 復習期限含む > 苦手含む > 全問未回答 > 古い順 ───
+  function pickSet(arr,prefix){
+    for(let si=0;si<arr.length;si++){
+      if(arr[si].qs.some((_,qi)=>dueIds.has(`${prefix}-${si}-${qi}`)))return si;
     }
+    for(let si=0;si<arr.length;si++){
+      if(arr[si].qs.some((_,qi)=>weakIds.has(`${prefix}-${si}-${qi}`)))return si;
+    }
+    for(let si=0;si<arr.length;si++){
+      if(arr[si].qs.every((_,qi)=>!hist[`${prefix}-${si}-${qi}`]))return si;
+    }
+    let oldest=null,oldestDate='9999-99-99';
+    for(let si=0;si<arr.length;si++){
+      const dates=arr[si].qs.map((_,qi)=>hist[`${prefix}-${si}-${qi}`]?.lastAnsweredAt||'').filter(Boolean);
+      const last=dates.length?[...dates].sort().pop():'0000-00-00';
+      if(last<oldestDate){oldest=si;oldestDate=last;}
+    }
+    return oldest;
   }
+  const p6si=pickSet(P6,'p6');
+  if(p6si!==null)P6[p6si].qs.forEach((_,qi)=>add(`p6-${p6si}-${qi}`));
 
-  const counts={p5:0,p6:0,p7:0,instant:0};
-  result.forEach(id=>{const p=partFromId(id);if(p)counts[p]++;});
-  console.log('[daily-ten] generated plan',result,'part counts',counts);
-  return result.slice(0,10);
+  // ── P7セット ──────────────────────────────────────────────────
+  const p7si=pickSet(P7,'p7');
+  if(p7si!==null)P7[p7si].qs.forEach((_,qi)=>add(`p7-${p7si}-${qi}`));
+
+  // ── 英作文（1問）: 復習期限 > 苦手 > 未回答 ─────────────────
+  const instPool=[];
+  dueIds.forEach(id=>{if(id.startsWith('instant-'))instPool.push(id);});
+  weakIds.forEach(id=>{if(id.startsWith('instant-')&&!instPool.includes(id))instPool.push(id);});
+  unansweredList.forEach(id=>{if(id.startsWith('instant-')&&!instPool.includes(id))instPool.push(id);});
+  instPool.slice(0,1).forEach(id=>add(id));
+
+  console.log('[daily-ten] generated plan',result);
+  return result;
 }
 
 function loadOrCreateDailyPlan(){
@@ -3358,40 +3578,39 @@ function renderDailyTen(){
     plan.questionIds.forEach(id=>{const p=partFromId(id);if(p)partCounts[p]++;});
     const partStr=`Part5 ${partCounts.p5}問｜Part6 ${partCounts.p6}問｜Part7 ${partCounts.p7}問｜英作文 ${partCounts.instant}問`;
 
-    const btnLabel=allDone?'✅ 今日は完了！':done===0?'今日の10問を始める':'今日の10問を続ける';
+    const btnLabel=allDone?'今日は完了！':done===0?'今日の問題を始める':'続きから始める';
     const btnClass=allDone?'daily-ten-btn all-done':'daily-ten-btn';
     const btnAttr=allDone?'':'onclick="startDailyTen()"';
+    const lead=allDone?'今日のセットは完了です。必要なら追加練習や履歴確認に進めます。'
+      :done===0?`今日のセットは ${total} 問です。まずはここから始めましょう。`
+      :`${remaining} 問残っています。途中からそのまま再開できます。`;
+    const reviewAction=dueC>0?'startRecommendedDueReview()'
+      :weakC>0?'startRecommendedWeakReview()'
+      :"showFullApp('history');renderHistory()";
 
-    // 今日の一歩カード
-    const daily2=JSON.parse(localStorage.getItem(LS_DAILY)||'{}');
-    const today2=getLocalDateKey();
-    const todayAns=(daily2[today2]||{answered:0}).answered;
-    const metGoal=todayAns>=1;
-    const stepStatusClass=metGoal?'step-card-status achieved':'step-card-status';
-    const stepStatusText=metGoal?'✅ 今日の目標達成！':`今日の回答: ${todayAns}問`;
-    const tenBtnLabel2=done===0?'今日の10問を始める':'今日の10問を続ける';
-    const stepHtml=`<div class="step-card">`
-      +`<div class="step-card-top"><div class="step-card-title">🎯 今日の一歩</div><div class="${stepStatusClass}">${stepStatusText}</div></div>`
-      +`<div class="step-hint">今日は1問だけでもOK。<br>押し間違えた回答は取り消せます。</div>`
-      +`<button class="step-main-btn" onclick="startOneQuestionMode()">まず1問だけ →</button>`
-      +`<div class="step-sub-row">`
-      +`<button class="step-sub-btn" onclick="startDailyTen()">${tenBtnLabel2}</button>`
-      +`<button class="step-sub-btn" onclick="startWeakTopicOneQuestion()">苦手論点を1問</button>`
-      +`</div></div>`;
-
-    el.innerHTML=stepHtml+`<div class="daily-ten-card">`
+    // ホームカード: まず始める導線を強くし、詳細は必要な時だけ開く
+    el.innerHTML=`<div class="daily-ten-card">`
       +`<div class="daily-ten-prog">`
       +`<div class="daily-ten-num">${done}<span style="font-size:.8rem;font-weight:500;color:var(--sub)"> / ${total}</span></div>`
       +`<div class="daily-ten-prog-label">今日の進捗</div>`
-      +`<div class="daily-ten-pbar" style="width:68px"><div class="daily-ten-pfill" style="width:${pct}%"></div></div>`
+      +`<div class="daily-ten-pbar"><div class="daily-ten-pfill" style="width:${pct}%"></div></div>`
       +`</div>`
-      +`<div class="daily-ten-divider"></div>`
       +`<div class="daily-ten-body">`
-      +`<div class="daily-ten-title">今日の10問${remaining>0&&done>0?`（残り${remaining}問）`:allDone?' — 完了！':''}</div>`
-      +(parts.length?`<div class="daily-ten-breakdown">${parts.join(' ／ ')}</div>`:'')
-      +`<div class="daily-ten-breakdown" style="font-size:.72rem;color:var(--sub);margin-top:2px">${partStr}</div>`
+      +`<div class="daily-ten-title">今日の問題${remaining>0&&done>0?`（残り${remaining}問）`:allDone?' — 完了！':''}</div>`
+      +`<div class="daily-ten-lead">${lead}</div>`
+      +`<details class="daily-ten-details">`
+      +`<summary>内訳を見る</summary>`
+      +`<div class="daily-ten-detail-body">`
+      +(parts.length?`${parts.join(' ／ ')}<br>`:'')
+      +`${partStr}</div></details>`
       +`</div>`
-      +`<button class="${btnClass}" ${btnAttr}>${btnLabel}</button>`
+      +`<div class="daily-ten-actions"><button class="${btnClass}" ${btnAttr}>${btnLabel}</button></div>`
+      +`</div>`
+      +`<div class="home-nav">`
+      +`<button class="home-nav-btn" onclick="startOneQuestionMode()">まず1問</button>`
+      +`<button class="home-nav-btn" onclick="${reviewAction}">復習</button>`
+      +`<button class="home-nav-btn" onclick="showFullApp('topic');renderTopicTraining()">論点別</button>`
+      +`<button class="home-nav-btn" onclick="showFullApp('p5')">全問題</button>`
       +`</div>`;
   }catch(e){el.innerHTML='';}
 }
@@ -3521,10 +3740,11 @@ function getQuestionDataById(id){
       .replace(new RegExp('\\('+qnum+'\\) -------','g'),'<strong style="color:var(--primary);">('+qnum+') ___</strong>')
       .replace(/\((\d+)\) -------/g,'<span style="color:var(--sub)">($1) ___</span>')
       .replace(/\n/g,'<br>');
+    const expKey6=`${si}-${qi}`;
     return {id,part:'p6',label:'Part 6 — 長文穴埋め',type:'mc',
       stem:'空欄 ('+qnum+') に最も適切なものを選んでください。',
       opts:s.opts,ans:s.ans,
-      exp:'💡 '+esc(q.exp),
+      exp:P6_EXP[expKey6]?buildRichExpP6(q,P6_EXP[expKey6]):'💡 '+esc(q.exp),
       passage:pHtml,passageLabel:esc(set.type)+' — '+esc(set.title)};
   }
   const m7=id.match(/^p7-(\d+)-(\d+)$/);
@@ -3536,10 +3756,11 @@ function getQuestionDataById(id){
     const q=set.qs[qi];
     const s=shuffleOpts(q.opts,q.ans);
     const pHtml=set.double?(set.passageA+'<hr style="margin:10px 0;border-color:var(--border)">'+set.passageB):(set.passage||'');
+    const expKey7=`${si}-${qi}`;
     return {id,part:'p7',label:'Part 7 — 読解問題',type:'mc',
       stem:q.q,
       opts:s.opts,ans:s.ans,
-      exp:'💡 '+esc(q.exp),
+      exp:P7_EXP[expKey7]?buildRichExpP7(q,P7_EXP[expKey7]):'💡 '+esc(q.exp),
       passage:pHtml,passageLabel:esc(set.type)+' — '+esc(set.title)};
   }
   const mi=id.match(/^instant-(\d+)$/);
@@ -3664,10 +3885,13 @@ function showDailyTenInstantAnswer(){
   if(dtState.revealed)return;
   dtState.revealed=true;
   const data=dtState.data;
+  const inputEl=document.getElementById('dt-inst-input');
+  if(inputEl)inputEl.disabled=true;
+  const userAns=inputEl?inputEl.value.trim():'';
+  const isCorrect=userAns?checkInstantMatch(userAns,data):false;
   const ansEl=document.getElementById('dt-inst-answer');
-  if(ansEl){ansEl.innerHTML=buildAnswerHtml(data,'',null);ansEl.classList.add('show');}
-  const judgeRow=document.getElementById('dt-judge-row');
-  if(judgeRow)judgeRow.classList.add('show');
+  if(ansEl){ansEl.innerHTML=buildAnswerHtml(data,userAns,isCorrect);ansEl.classList.add('show');}
+  judgeInstantDailyTen(isCorrect);
 }
 
 function judgeInstantDailyTen(isCorrect){
@@ -3708,31 +3932,51 @@ function renderDailyTenResult(){
     const hist=JSON.parse(localStorage.getItem(LS_QHIST)||'{}');
     const total=dtState.sessionCorrect+dtState.sessionWrong;
     const rate=total>0?Math.round(dtState.sessionCorrect/total*100):0;
-    const reviewCount=Object.values(hist).filter(r=>r.inReview&&!r.graduatedAt).length;
-    const tomorrow=addDaysLocal(getLocalDateKey(),1);
-    const tomorrowDue=Object.values(hist).filter(r=>r.nextReviewAt&&r.nextReviewAt<=tomorrow&&!r.graduatedAt).length;
-    el.innerHTML=`<div class="dt-result">`
-      +`<div class="dt-result-title">今日の10問 完了！</div>`
-      +`<div class="dt-result-sub">${getLocalDateKey()} の学習</div>`
-      +`<div class="dt-result-stats">`
-      +`<div class="dt-stat"><div class="dt-stat-val">${total}</div><div class="dt-stat-label">回答数</div></div>`
+    const streak=calcStreak();
+    const tomorrowDue=Object.values(hist).filter(r=>r.nextReviewAt&&r.nextReviewAt<=addDaysLocal(getLocalDateKey(),1)&&!r.graduatedAt).length;
+    const streakMsg=streak>=2?`🔥 ${streak}日連続達成！ 明日も来たら${streak+1}日連続`
+      :streak===1?`🔥 今日で1日目！ 明日も来たら2日連続`
+      :`明日から連続記録を作ろう`;
+    el.innerHTML=`<div class="dt-result" style="text-align:center">`
+      +`<div style="font-size:2.5rem;margin-bottom:10px">🎉</div>`
+      +`<div class="dt-result-title">今日の問題、完了！</div>`
+      +`<div class="dt-result-sub" style="margin-bottom:20px">よくできました。また明日！</div>`
+      +`<div class="dt-result-stats" style="margin-bottom:16px">`
       +`<div class="dt-stat ok"><div class="dt-stat-val">${dtState.sessionCorrect}</div><div class="dt-stat-label">正解</div></div>`
       +`<div class="dt-stat ng"><div class="dt-stat-val">${dtState.sessionWrong}</div><div class="dt-stat-label">ミス</div></div>`
       +`<div class="dt-stat"><div class="dt-stat-val">${rate}%</div><div class="dt-stat-label">正答率</div></div>`
-      +`<div class="dt-stat"><div class="dt-stat-val">${reviewCount}</div><div class="dt-stat-label">復習中の問題</div></div>`
-      +`<div class="dt-stat"><div class="dt-stat-val">${tomorrowDue}</div><div class="dt-stat-label">明日の復習数</div></div>`
       +`</div>`
-      +`<div class="dt-result-btns">`
-      +`<button class="dt-result-btn prim" onclick="exitDailyTenMode()">Part 5 に戻る</button>`
-      +`<button class="dt-result-btn" onclick="activateTab('history');renderHistory()">履歴を見る</button>`
-      +`<button class="dt-result-btn" onclick="restartDailyTenProgress()">今日の10問を最初からやり直す</button>`
+      +`<div style="background:#fef3c7;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:.88rem;color:#92400e">${streakMsg}</div>`
+      +(tomorrowDue>0?`<div style="font-size:.78rem;color:var(--sub);margin-bottom:16px">明日の復習予定：${tomorrowDue}問</div>`:'')
+      +`<button class="dt-result-btn prim" style="width:100%;padding:14px;font-size:1rem;margin-bottom:10px" onclick="exitDailyTenMode()">また明日！</button>`
+      +`<button class="dt-result-btn" style="width:100%;padding:12px;margin-bottom:10px" onclick="extendDailyPlan()">続けてもう一セット解く →</button>`
+      +`<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">`
+      +`<button class="dt-result-btn" onclick="showFullApp('history');renderHistory()">履歴を見る</button>`
+      +`<button class="dt-result-btn" onclick="showFullApp('p5')">もっと練習する</button>`
+      +`<button class="dt-result-btn" onclick="restartDailyTenProgress()">やり直す</button>`
       +`</div></div>`;
   }catch(e){el.innerHTML='';}
 }
 
+function extendDailyPlan(){
+  try{
+    const plan=loadOrCreateDailyPlan();
+    const existingIds=new Set(plan.questionIds);
+    const newIds=buildDailyTenQuestions().filter(id=>!existingIds.has(id));
+    if(newIds.length===0){
+      alert('今日解ける新しい問題がありません。');
+      return;
+    }
+    plan.questionIds=[...plan.questionIds,...newIds];
+    plan.updatedAt=new Date().toISOString();
+    localStorage.setItem(LS_DAILY_PLAN,JSON.stringify(plan));
+    startDailyTenMode();
+  }catch(e){console.error('[extendDailyPlan]',e);}
+}
+
 function exitDailyTenMode(){
   if(oqState&&oqState.active){exitOneQuestionMode();return;}
-  activateTab('p5');
+  activateTab('daily-ten');
 }
 
 function startDailyTen(){
@@ -3917,6 +4161,7 @@ function startWeakTopicOneQuestion(){
 loadState();
 renderP5();renderP6();renderP7();renderInstant();
 updateDailyUI();
+renderDailyTen();
 </script>
 </body>
 </html>
